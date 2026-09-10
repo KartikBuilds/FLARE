@@ -1,0 +1,80 @@
+---
+title: Architecture
+description: How FLARE is actually built — the pipeline, the adapters, and the monorepo it lives in.
+---
+
+## Monorepo layout
+
+```
+apps/web            Next.js App Router frontend (TypeScript, Tailwind CSS, Motion, GSAP)
+packages/ui          Design-system primitives + original SVG illustration components
+packages/schemas      Zod schemas mirroring the analyzer's Pydantic contracts
+packages/graph        React Flow node/edge types + fund-flow layout helpers
+packages/rules        Versioned detector registry spec, consumed by docs and the UI
+services/analyzer    Python/FastAPI analysis engine — runs inside Docker (Python 3.12)
+contracts/benchmarks Foundry project: vulnerable / corrected / safe-control fixtures
+research/incidents   Structured, cited case-study data
+```
+
+The frontend and the analyzer are deliberately separate services with a typed contract
+between them (mirrored in `packages/schemas` on the TypeScript side and Pydantic models on
+the Python side), so the web app can render meaningfully even when the analyzer is
+unavailable, slow, or disabled.
+
+## The analysis pipeline
+
+```
+input
+  → safe extraction (path-traversal guards, size/extension limits, isolated workspace)
+  → project validation
+  → compiler-version detection (solc-select)
+  → compilation
+  → Slither extraction
+  → normalized intermediate representation (contracts, functions, storage, call graph)
+  → asset entry/exit discovery
+  → state-transition extraction
+  → dependency graph generation (NetworkX)
+  → FLARE detector registry execution
+  → optional Foundry/Anvil validation (local-only, never a public network)
+  → risk calculation (see Risk Methodology)
+  → explanation generation (optional AI layer)
+  → versioned report
+```
+
+Every stage's output is cached by content hash, so re-analyzing an unchanged project (or one
+that only changed downstream of a cached stage) reuses prior work instead of recomputing it.
+
+## Adapter boundaries
+
+FLARE is built through explicit adapter interfaces, so a capability is either genuinely
+implemented behind one, or clearly marked as an interface-only stub — never silently assumed:
+
+| Adapter | Status | Notes |
+| --- | --- | --- |
+| Source provider (files/ZIP, GitHub URL) | Implemented | Safe extraction, size/extension limits |
+| Source provider (verified contract address) | Optional | Requires a user-supplied, free block-explorer API key |
+| Static analyzer (Slither) | Implemented | Runs inside the Dockerized Python 3.12 environment |
+| Chain adapter — EVM/Solidity | Implemented | The only chain this prototype actually analyzes |
+| Chain adapter — Solana/Rust | Interface only | Not implemented; never claimed as working — see Limitations |
+| Validation provider (Foundry/Anvil) | Implemented | Local-only execution; contracts are never deployed publicly |
+| AI provider | Optional, disabled by default | Explains existing findings only; cannot create one |
+| Report renderer | Implemented | JSON + self-contained HTML |
+
+## Why Docker for the analyzer
+
+`services/analyzer` — Slither, `solc-select`, and Foundry — runs inside a Python 3.12
+container rather than depending on whatever Python happens to be on the host. This keeps the
+analyzer's toolchain reproducible and keeps untrusted project code and compiler downloads
+isolated from the host machine (see the security model in
+[`docs/LIMITATIONS.md`](https://github.com/KartikBuilds/FLARE/blob/main/docs/LIMITATIONS.md)
+and `SECURITY.md`).
+
+## Performance and safety measures
+
+- Content-hash result caching and reuse of compilation artifacts across re-analysis.
+- Analyzer timeouts, concurrency limits, and background job status rather than blocking
+  requests.
+- Project-size safeguards (file count, total size, extraction limits) enforced before any
+  analysis work begins.
+- Route-level code splitting and lazy-loaded heavy visualizations (the fund-flow graph and
+  charts) on the frontend.

@@ -1,0 +1,37 @@
+---
+title: References
+description: External sources this research draws on and cites — every link is meant to be checked.
+---
+
+## Incident sources
+
+Full citation lists live alongside the structured data in `research/incidents/*.json`;
+consolidated here for convenience.
+
+- [A major vulnerability has frozen hundreds of millions of dollars of Ethereum](https://techcrunch.com/2017/11/07/a-major-vulnerability-has-frozen-hundreds-of-millions-of-dollars-of-ethereum) — TechCrunch, on the Parity multisig library freeze.
+- [Parity CEO is confident that $150M in frozen Ethereum isn't lost forever](https://techcrunch.com/2017/12/05/parity-ceo-says-shes-confident-that-its-280m-in-frozen-ethereum-isnt-lost-forever) — TechCrunch.
+- [Broken code traps $24m of Lido staked SOL — and holders want their tokens back](https://www.dlnews.com/articles/defi/lido-stsol-holders-stuck-after-code-bug-blocks-withdrawals/) — DL News, on the Lido-on-Solana withdrawal bug.
+- [Lido On Solana Sunset](https://blog.lido.fi/sunset-lido-on-solana/) — Lido's own wind-down announcement.
+- [Depeg of $3B restaking token ezETH causes over $60M in DeFi liquidations](https://protos.com/depeg-of-3b-restaking-token-ezeth-causes-over-60m-in-defi-liquidations/) — Protos, on the Renzo ezETH de-peg.
+- [Gemholic Zksync Blunder](https://cracka.medium.com/gemholic-zksync-blunder-d218096b1a7b) — Medium, on the original transfer-logic lock.
+- [Gemholic accused of rug pull after moving $3.3 million in recently recovered funds](https://www.theblock.co/post/299161/gemholic-accused-of-rug-pull-after-moving-3-3-million-in-recently-recovered-funds-vanishing-from-social-media) — The Block, on the post-unlock allegation.
+
+## Tooling this project is built on
+
+- [Slither](https://github.com/crytic/slither) — Trail of Bits' static analysis framework for Solidity; the foundation of FLARE's extraction stage.
+- [Foundry](https://book.getfoundry.sh/) — the local, offline toolchain (`forge`/`anvil`) used for FLARE's validation adapter.
+- [solc-select](https://github.com/crytic/solc-select) — Solidity compiler version management, used during the compilation stage.
+- [NetworkX](https://networkx.org/) — the graph library behind FLARE's dependency and fund-flow graph construction.
+- [React Flow](https://reactflow.dev/) — renders the fund-flow graph in the analysis workspace.
+
+## Standards and classification references
+
+- [EIP-20: Token Standard](https://eips.ethereum.org/EIPS/eip-20) — the ERC-20 interface several transfer-logic detectors reason about deviations from.
+- [SWC Registry](https://swcregistry.io/) — the Smart Contract Weakness Classification, a prior art reference point for how the wider community catalogs Solidity vulnerability classes (FLARE's taxonomy is narrower and specific to fund-lock/availability failures, not a replacement for SWC's broader scope).
+- [Solidity documentation](https://docs.soliditylang.org/) — language semantics referenced throughout the detector specifications, in particular around `delegatecall`, `selfdestruct`, and the gas-stipend behavior of `.transfer()`/`.send()`.
+
+## A note on citation practice
+
+Every incident figure on this site links back to one of the sources above (or is marked
+unverified when it doesn't). If a link above goes stale, please open an issue — broken
+citations should be fixed, not quietly removed.

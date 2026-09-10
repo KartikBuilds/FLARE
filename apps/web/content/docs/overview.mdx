@@ -1,0 +1,67 @@
+---
+title: Overview
+description: Understanding fund-lock vulnerabilities and the FLARE approach.
+---
+
+## What is a fund-lock?
+
+A **fund-lock** occurs when digital assets held by a smart-contract system become
+irreversibly — or practically — inaccessible, because of protocol design, dependency
+failures, state transitions, or logic errors. A fund-lock is not the same thing as a theft:
+no attacker necessarily gains the funds. The defining feature is that **no legitimate party
+can reach a withdrawal, redemption, migration, or recovery path** under any state the
+protocol can actually reach.
+
+This distinguishes FLARE's scope from a general smart-contract security audit. Reentrancy
+bugs, price-oracle manipulation, and access-control mistakes that let an attacker drain
+funds are important — and often overlap with fund-lock risk — but FLARE's central question
+is narrower and more specific:
+
+> Can every asset entering this protocol reach a legitimate exit under realistically
+> reachable states?
+
+## Why this is a distinct problem
+
+Most public smart-contract security research is organized around **exploitability**: can an
+attacker extract value they should not have? Fund-locks are different — they are failures of
+**availability**, not confidentiality or integrity. A contract can be free of every classic
+vulnerability class and still brick user funds because:
+
+- it depends on a library contract that can be destroyed (Parity, 2017),
+- its withdrawal path was never actually tested under every reachable protocol state (Lido
+  on Solana, 2024),
+- it had no rescue mechanism for a transfer method incompatible with its deployment chain
+  (Gemholic, 2023),
+- or it had no native redemption path at all while depending entirely on secondary-market
+  liquidity (Renzo ezETH, 2024).
+
+None of these are "hacks" in the traditional sense. All of them left real users unable to
+get their own assets back, for real amounts of time — in Parity's case, permanently.
+
+## FLARE's approach
+
+FLARE combines four things, each documented in depth elsewhere in this section:
+
+1. A **five-category taxonomy** ([Fund-Lock Taxonomy](/docs/taxonomy)) that organizes the
+   fund-lock vulnerability class into library dependencies, withdrawal failures, missing
+   recovery, state transitions, and transfer logic.
+2. A **deterministic detector registry** ([Detector Registry](/docs/detectors)) built on
+   Slither's static analysis output — every finding must carry source-level evidence; no
+   finding is ever created from an AI opinion alone.
+3. A **graph model** of how assets move through a protocol — entry points, storage,
+   dependencies, and exit functions — used to check whether an exit is actually reachable,
+   not just present in the source code.
+4. A **transparent risk score** ([Risk Methodology](/docs/risk-methodology)) that combines
+   severity, confidence, exposure, reachability, and analysis coverage into one documented
+   formula — never an unexplained AI probability.
+
+An optional AI layer can explain findings in plain language once they exist; it cannot
+create them. The full pipeline runs with AI disabled.
+
+## Where to go next
+
+- [Fund-Lock Taxonomy](/docs/taxonomy) — the five categories in detail.
+- [Research Objectives](/docs/objectives) — what this research program set out to answer.
+- [Methodology](/docs/methodology) — the four-phase research process behind FLARE.
+- [Case Studies](/docs/case-studies) — five real, sourced incidents mapped to the taxonomy.
+- [Architecture](/docs/architecture) — how the platform is actually built.

@@ -1,0 +1,67 @@
+---
+title: Limitations
+description: What FLARE does not do, stated plainly rather than discovered by a user.
+---
+
+This page is updated as the implementation changes — a limitation removed here means the
+corresponding milestone actually shipped, checked against real tests, not just described. The
+canonical, most current version always lives at
+[`docs/LIMITATIONS.md`](https://github.com/KartikBuilds/FLARE/blob/main/docs/LIMITATIONS.md)
+in the repository.
+
+## Chain support
+
+Only the EVM/Solidity analyzer is implemented. The Solana/Rust adapter referenced in
+[Architecture](/docs/architecture) is an interface-only stub — it defines the shape a future
+implementation would take and is not connected to any working analysis. Any Solana-related
+case study on this site (Lido on Solana) is documentation only; it cannot be reproduced by
+running the FLARE engine.
+
+## No trained machine-learning model
+
+FLARE does not ship a trained graph neural network or any other trained ML detection model.
+Detector logic is deterministic, hand-specified rules over Slither's static-analysis output —
+see [Detector Registry](/docs/detectors). If a GNN or other learned model is added in the
+future, this page will say so only once it has a documented training process and a reported
+evaluation, not before.
+
+## AI assistance is optional and secondary
+
+When an AI provider is configured, it may explain existing deterministic findings, summarize
+architecture, or suggest a remediation checklist. It cannot create a confirmed finding,
+fabricate a source location, or claim a validation result that didn't happen. The full
+pipeline — intake through risk scoring — runs identically with AI disabled, which is also the
+default.
+
+## Detector registry scope
+
+The registry ships ten detectors, two per taxonomy category, deliberately smaller than an
+exhaustive list — see [Detector Registry](/docs/detectors) for why quality per detector was
+prioritized over count, and [Benchmark Plan](/docs/benchmark) for exactly how each one is
+scored. A contract free of findings from these ten detectors is not thereby proven free of
+every fund-lock risk; it means these ten specific, documented conditions were checked for and
+not found.
+
+## Case-study data
+
+Five incidents are documented in [Case Studies](/docs/case-studies). One — "Perfect
+Finance" (2023) — could not be independently corroborated in public reporting as of this
+research and is explicitly marked unverified rather than described as fact. Dollar figures
+for verified incidents are approximate where they depend on which historical token price was
+used for the conversion (most notably Parity, 2017); we report the underlying token amount as
+the primary verified fact.
+
+## Benchmark scope
+
+Forty fixture contracts across ten detectors validate that each detector's specific,
+documented condition behaves as intended (including on adversarial "looks similar but isn't"
+fixtures). This is not a claim of validation against the full diversity of real-world
+Solidity, and a passing benchmark result should be read as "these conditions are checked
+correctly," not "this tool finds every fund-lock in arbitrary code."
+
+## What "verified" via Foundry means
+
+Where the validation adapter confirms a finding through a local, offline Foundry/Anvil run,
+that means a concrete proof-of-concept executed against the compiled contract and produced
+the predicted outcome — not that the finding was checked against a live or forked mainnet
+state, and never against a public network.

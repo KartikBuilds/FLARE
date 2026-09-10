@@ -1,0 +1,41 @@
+---
+title: Detector Registry
+description: A versioned, evidence-based detector registry — deterministic logic only, never a confirmed finding from an AI opinion alone.
+---
+
+Every FLARE detector has a stable id (`FLARE-<CATEGORY>-<NUMBER>`), a single primary
+taxonomy category, a version, and — non-negotiably — a concrete evidence requirement stated
+in terms of the source code, not a model's confidence score. A detector cannot mark a finding
+"confirmed" without pointing at the exact construct that triggers it.
+
+## What "deterministic" means here
+
+A FLARE detector's logic is a fixed, reviewable procedure over the normalized intermediate
+representation Slither produces (contracts, functions, storage layout, the call graph, and —
+where available — control-flow/state information). Running the same source through the same
+detector version always produces the same finding, with the same evidence. There is no
+sampling, no prompting, and no step where an LLM decides whether a finding is real.
+
+## What we require before a detector ships
+
+Detector **quality matters more than detector count**. Before a detector enters the registry
+below, it must have:
+
+- deterministic analysis logic operating on the normalized IR,
+- an exact evidence requirement (source file, line span, and the specific construct),
+- a mapping to one primary [taxonomy](/docs/taxonomy) category,
+- a vulnerable fixture in `contracts/benchmarks/` that it correctly flags,
+- a corrected counterpart of that same fixture that it correctly does *not* flag,
+- a safe negative control unrelated to the vulnerable fixture that it also does not flag, and
+- a dedicated false-positive test — a contract that looks superficially similar to the
+  vulnerable pattern but isn't one.
+
+That bar is why the registry below has ten detectors rather than a much larger, shallower
+list — see the [Benchmark Plan](/docs/benchmark) for how each one is actually scored.
+
+## Registry status
+
+Every detector's evidence rule and fixture set is designed and documented; `status` below
+reflects whether `services/analyzer` has shipped the working Python implementation yet. This
+page is generated from the same spec (`packages/rules`) that implementation is built against,
+so it can't silently drift out of sync.

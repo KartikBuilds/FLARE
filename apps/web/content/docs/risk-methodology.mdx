@@ -1,0 +1,96 @@
+---
+title: Risk Methodology
+description: A transparent, documented formula — never an unexplained AI probability.
+---
+
+The FLARE score is a number from 0–100 computed by a fixed, published formula. Given the same
+findings and the same coverage inputs, it always produces the same score. No step in this
+calculation is delegated to a language model.
+
+## Per-finding contribution
+
+Each finding produces a contribution score:
+
+```
+contribution = severity_weight[severity] × confidence × reachability × (1 − recovery_offset)
+```
+
+**Severity weight** — a ceiling on how much a single finding of that severity can contribute:
+
+| Severity | Weight |
+| --- | --- |
+| Critical | 100 |
+| High | 70 |
+| Medium | 40 |
+| Low | 15 |
+
+**Confidence** (0.0–1.0) — the detector's own confidence in the finding. A finding backed by
+a passing Foundry proof-of-concept is floored at 0.9; a static-only finding with no dynamic
+validation is capped at 0.75, reflecting the extra uncertainty of not having executed
+anything.
+
+**Reachability** (0.0–1.0) — how the vulnerable path can actually be reached:
+
+| Reachability | Factor | Meaning |
+| --- | --- | --- |
+| Public | 1.0 | Reachable from any unauthenticated caller |
+| Privileged | 0.7 | Reachable only via an admin/owner-gated role |
+| Theoretical | 0.4 | No concrete call path found; flagged from structure alone |
+
+**Recovery offset** (0.0–0.6) — reduces the contribution when a *different*, verified-working
+recovery path exists for the same assets elsewhere in the contract: `0.0` none, `0.3` a
+manual/governance-mediated process exists, `0.6` a fully automated alternative exit is
+verified working.
+
+## Overall score
+
+```
+FLARE_score = max(contribution across all findings) × coverage_multiplier
+```
+
+We take the **maximum**, not a sum — stacking many low-severity findings should not fake a
+critical score. `coverage_multiplier` starts at 1.0 and is reduced when the analysis itself
+was incomplete:
+
+| Condition | Penalty |
+| --- | --- |
+| Source could not be fully resolved (missing imports) | −0.15 |
+| Compilation failed entirely (heuristic-only fallback) | −0.30 |
+| Unresolved external dependency interfaces | −0.10 |
+| Inline assembly/Yul present and not analyzed | −0.10 |
+| External contracts referenced are unverified | −0.05 |
+| No Foundry/Anvil dynamic validation performed at all | −0.10 |
+
+`coverage_multiplier` is floored at 0.5 and the same number is surfaced in the UI as the
+analysis's **confidence/coverage** figure — one honest number, not two similar-looking ones
+that could quietly disagree.
+
+## Risk bands
+
+| Score | Band |
+| --- | --- |
+| 80–100 | Critical |
+| 60–79 | High |
+| 35–59 | Medium |
+| 15–34 | Low |
+| 0–14 | Minimal |
+
+## Worked example
+
+A `FLARE-STATE-001` finding (Critical, weight 100) with a passing Foundry proof-of-concept
+(confidence floored at 0.9), reachable from any depositor (reachability 1.0), with no
+alternative recovery path (offset 0.0):
+
+```
+contribution = 100 × 0.9 × 1.0 × (1 − 0.0) = 90
+```
+
+If the same contract's assembly block couldn't be analyzed (−0.10 coverage) and one external
+dependency was unverified (−0.05), `coverage_multiplier = 0.85`:
+
+```
+FLARE_score = 90 × 0.85 = 76.5 → High
+```
+
+The report shows both the raw contribution and the coverage penalty that produced the final
+number, not just the result.

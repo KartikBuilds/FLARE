@@ -1,0 +1,55 @@
+---
+title: Benchmark Plan
+description: How FLARE's detector registry is actually measured, not just described.
+---
+
+## Fixture structure
+
+Each of the ten registry detectors ([Detector Registry](/docs/detectors)) ships with exactly
+four small, purposeful Solidity fixtures in `contracts/benchmarks/`, rather than a large pile
+of near-duplicate examples padded to hit a count:
+
+1. **Vulnerable** — triggers the detector; the minimal contract that demonstrates the
+   fund-lock condition the detector exists to catch.
+2. **Corrected** — the same contract with the specific issue fixed and nothing else changed,
+   so the detector must *not* fire on it.
+3. **Safe negative control** — an unrelated, legitimately safe contract that looks nothing
+   like the vulnerable pattern; guards against a detector that fires too broadly.
+4. **False-positive test** — a contract that is superficially similar to the vulnerable
+   pattern (same function names, similar structure) but is not actually vulnerable; this is
+   the fixture most likely to catch an overly aggressive detector.
+
+That's 40 fixture contracts total (10 × 4), each with a `ground-truth.json` recording the
+expected finding (or explicitly, the expected absence of one), the taxonomy category, and a
+short explanation a reviewer can check by hand.
+
+## Foundry tests
+
+Where a fund-lock condition can be demonstrated executably (for example, a withdrawal that
+reverts under every reachable state), the fixture also has a Foundry test that proves it —
+not just a static-analysis claim. This is the same local-only Foundry/Anvil environment the
+analyzer's validation adapter uses; benchmark fixtures and live analysis validation share one
+execution path rather than two that could quietly disagree.
+
+## Scoring
+
+The benchmark runner (`services/analyzer` — see [Architecture](/docs/architecture)) executes
+the full detector registry against every fixture and reports:
+
+- **Precision** — of everything FLARE flagged, how much was a real, ground-truth-confirmed
+  finding.
+- **Recall** — of everything that should have been flagged, how much FLARE actually caught.
+- **False-positive rate** on the dedicated false-positive fixtures specifically, reported
+  separately from the general precision figure since that's the number most likely to be
+  inflated by an easy benchmark.
+
+Results are written to `evaluation/` as a versioned report, and the dashboard's "Recent
+benchmark result" card reads the same file — it is never a hand-typed number.
+
+## What this benchmark does not claim
+
+Forty fixtures across ten detectors is enough to check that each detector's specific,
+documented condition behaves correctly — it is not a claim that FLARE has been validated
+against the full diversity of real-world Solidity. See [Limitations](/docs/limitations) for
+what a passing benchmark here does and doesn't tell you about an arbitrary contract in the
+wild.

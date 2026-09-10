@@ -1,0 +1,22 @@
+---
+title: Case Studies
+description: Real incidents, real lessons — every figure below is sourced and its verification status disclosed.
+---
+
+Every incident on this page is represented as structured, cited data in the repository at
+`research/incidents/*.json`, validated against a shared schema (`packages/schemas`) before it
+can render anywhere in the app. Nothing below is hard-coded into a page component — the home
+page, this page, and the aggregate figures shown throughout the site all read from the same
+five files.
+
+Each entry discloses:
+
+- **Amount category** — whether a dollar figure represents *locked principal*, *cascading
+  liquidation impact*, or an *unverified* claim. These are never summed together, because
+  they measure different things.
+- **Verification status** — `verified`, `disputed`, or `unverified`. One entry below is
+  marked unverified: we could not independently corroborate it in public reporting as of
+  this research, and we chose to keep it visible with that flag rather than quietly drop it
+  or invent supporting detail.
+- **Primary sources** — direct links to the reporting or documentation a fact is drawn from.
+- **Limitations** — what we could *not* confirm about each incident, stated explicitly.

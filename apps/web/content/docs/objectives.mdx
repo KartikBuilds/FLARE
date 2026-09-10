@@ -1,0 +1,52 @@
+---
+title: Research Objectives
+description: The five objectives this research program set out to answer.
+---
+
+FLARE is organized around five research objectives (RO1–RO5). Each one has a corresponding
+part of the implementation — the full mapping from objective to code is kept up to date in
+[`docs/RESEARCH_ALIGNMENT.md`](https://github.com/KartikBuilds/FLARE/blob/main/docs/RESEARCH_ALIGNMENT.md)
+in the repository, so the claims below can always be checked against what actually exists.
+
+## RO1 — Build a verifiable incident corpus
+
+Collect real fund-lock incidents, verify their facts against primary sources where possible,
+and represent disputed or unconfirmed details honestly rather than silently smoothing them
+over. This objective is implemented by the structured data in `research/incidents/` and
+surfaced through the [Case Studies](/docs/case-studies) interface — including, deliberately,
+one incident we could **not** verify, kept visible and flagged rather than dropped.
+
+## RO2 — Define a checkable taxonomy and a matching detector registry
+
+A taxonomy is only useful to an analysis tool if every category corresponds to something a
+detector can actually check for in source. RO2 produced the five-category
+[taxonomy](/docs/taxonomy) and the versioned [detector registry](/docs/detectors) that
+implements it — every detector maps to exactly one primary taxonomy category (secondary
+mappings are recorded, not hidden) and requires source-level evidence to fire.
+
+## RO3 — Compare FLARE against existing tools on a controlled benchmark
+
+Claims about detection quality are only meaningful with a denominator. RO3 produced the
+[benchmark suite](/docs/benchmark): paired vulnerable/corrected contracts and safe negative
+controls with ground-truth labels, scored for precision and recall — including how FLARE's
+deterministic findings compare with running Slither alone on the same fixtures, so the
+registry's added value (or lack of it, where that's the honest result) is visible rather than
+asserted.
+
+## RO4 — Ship a working prototype, not just a specification
+
+A taxonomy and a benchmark plan are not evidence that an analysis pipeline actually works end
+to end. RO4 is the platform itself: intake → compilation → Slither extraction → graph
+construction → detector execution → optional validation → risk scoring → report, documented
+in [Architecture](/docs/architecture) and runnable locally with free, open-source tooling
+only.
+
+## RO5 — Translate findings into recommendations beyond the tool itself
+
+A detector registry helps a developer scanning one contract. RO5 asks what the same evidence
+implies for people who aren't running FLARE directly: recommendations for protocol
+developers (patterns to avoid), governance processes (what a DAO should require before
+trusting a new dependency), token/interface standards (where ambiguity in a standard itself
+enables a fund-lock class), and — more speculatively — what a fund-lock taxonomy like this
+one could mean for on-chain insurance underwriting. These recommendations are gathered
+alongside the research-alignment document rather than treated as a separate afterthought.

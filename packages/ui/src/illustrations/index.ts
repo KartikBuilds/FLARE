@@ -9,5 +9,6 @@ export { PipelineModule } from "./PipelineModule";
 export { TaxonomyIcon } from "./TaxonomyIcons";
 export { BookStack } from "./BookStack";
 export { AstronautFigure } from "./AstronautFigure";
+export { OrbitDiagram } from "./OrbitDiagram";
 export { HatchDef, Bolt, BoltRow, IllustrationFrame, useIllustrationId, round2 } from "./shared";
 export type { IllustrationProps } from "./shared";

@@ -1,0 +1,15 @@
+---
+title: Fund-Lock Taxonomy
+description: A comprehensive taxonomy of smart-contract fund-lock vulnerabilities.
+---
+
+FLARE organizes the fund-lock vulnerability class into five categories. The taxonomy was
+derived by working backwards from documented incidents (see [Case Studies](/docs/case-studies))
+and existing static-analysis literature, then checking that every category maps to a
+concrete, source-level condition a deterministic detector can check for — not a vague
+description that would force a detector to guess.
+
+Each category below links to the detectors that implement it (see
+[Detector Registry](/docs/detectors)) and to at least one real incident that motivated it.
+The five categories are not mutually exclusive: a single incident can — and often does — span
+more than one, which is itself informative about how fund-locks tend to compound.

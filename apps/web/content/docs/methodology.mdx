@@ -1,0 +1,55 @@
+---
+title: Methodology
+description: The four-phase research process behind FLARE, and how each phase constrains the next.
+---
+
+FLARE's research process runs in four phases. Each phase produces an artifact the next phase
+depends on, so the later phases are constrained by — and accountable to — the earlier ones,
+rather than being designed independently and glued together at the end.
+
+## Phase 1 — Incident review and problem framing
+
+Starting point: read post-mortems, audit reports, and incident write-ups for publicly
+documented fund-lock events, and check each fact against at least one primary or
+near-primary source before treating it as established. Where a fact could not be
+independently verified, it is labeled unverified rather than presented as fact — see
+[Case Studies](/docs/case-studies) for how that plays out in practice, including one incident
+we ultimately could not corroborate at all.
+
+This phase also draws the boundary between fund-locks and adjacent problems (theft,
+oracle manipulation, governance capture) that share some mechanisms but are not the same
+failure mode — see [Overview](/docs/overview).
+
+## Phase 2 — Taxonomy and detector design
+
+Group the incidents from Phase 1 into categories, then discard any category that can't be
+restated as a concrete, source-level condition. This produced the five-category
+[taxonomy](/docs/taxonomy). For each category, define the smallest set of deterministic
+detectors that catch the motivating incidents without relying on semantic judgment a static
+analyzer can't make reliably — documented in the [Detector Registry](/docs/detectors), each
+with a required evidence type and a false-positive test.
+
+## Phase 3 — Prototype implementation
+
+Build the actual pipeline: safe intake, compiler resolution, Slither-based extraction, a
+normalized intermediate representation, a fund-flow/dependency graph, the detector registry,
+optional Foundry/Anvil validation, and a documented risk score. Every phase-3 component must
+work with the optional AI layer fully disabled, per the project's non-negotiable
+deterministic-evidence requirement — see [Architecture](/docs/architecture) and
+[Risk Methodology](/docs/risk-methodology).
+
+## Phase 4 — Benchmark evaluation
+
+Score the Phase 3 prototype against the [benchmark suite](/docs/benchmark) built alongside
+it: paired vulnerable/corrected fixtures and safe negative controls, each with a
+ground-truth label. Report precision and recall honestly, including cases where the
+registry produces a false positive or misses a fixture it should have caught — a benchmark
+that only ever reports success isn't a benchmark. Where results are weaker than a claim would
+imply, that's recorded in [Limitations](/docs/limitations) rather than omitted.
+
+## Why phases, not a single design pass
+
+Treating this as four sequential, artifact-producing phases — rather than one combined
+"design the whole system" pass — is what keeps Phase 3's implementation answerable to Phase
+1's evidence and Phase 2's taxonomy, instead of the taxonomy quietly bending to fit whatever
+was easiest to implement.
