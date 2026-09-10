@@ -46,7 +46,12 @@ export function RiskDistributionChart() {
         <p className="mt-6 font-sans text-sm text-muted">No findings to distribute yet.</p>
       ) : (
         <div className="mt-2 flex items-center gap-6">
-          <div className="h-40 w-40 shrink-0">
+          {/* Decorative: the adjacent legend list already gives an accessible
+              equivalent (name + value) for every slice. `inert` (not just
+              aria-hidden) is required — Recharts puts a tabindex="0" group
+              inside the SVG for keyboard nav, which aria-hidden alone would
+              leave focusable while invisible to assistive tech. */}
+          <div className="h-40 w-40 shrink-0" inert>
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={data} dataKey="value" innerRadius={44} outerRadius={68} paddingAngle={2} stroke="none">

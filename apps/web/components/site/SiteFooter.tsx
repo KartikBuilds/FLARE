@@ -44,7 +44,7 @@ export function SiteFooter() {
             <p className="mt-6 font-display text-4xl font-bold tracking-tight text-balance sm:text-5xl">
               TRACE THE EXIT.
             </p>
-            <p className="mt-4 font-condensed text-[12px] uppercase tracking-[0.1em] text-paper/50">
+            <p className="mt-4 font-condensed text-[12px] uppercase tracking-[0.1em] text-paper/70">
               Open protocols. Safer ecosystems.
             </p>
           </div>
@@ -52,7 +52,7 @@ export function SiteFooter() {
           <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
             {columns.map((column) => (
               <div key={column.heading}>
-                <p className="font-condensed text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/40">
+                <p className="font-condensed text-[11px] font-semibold uppercase tracking-[0.12em] text-paper/65">
                   {column.heading}
                 </p>
                 <ul className="mt-4 space-y-3">
@@ -72,7 +72,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 flex flex-col gap-4 border-t border-charcoal-line pt-6 text-[12px] text-paper/40 sm:flex-row sm:items-center sm:justify-between">
+        <div className="mt-16 flex flex-col gap-4 border-t border-charcoal-line pt-6 text-[12px] text-paper/65 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} FLARE Research. Findings are advisory, not a guarantee of asset safety.</p>
           <a
             href="https://github.com/KartikBuilds/FLARE"

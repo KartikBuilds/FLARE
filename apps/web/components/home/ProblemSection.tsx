@@ -45,15 +45,13 @@ export function ProblemSection() {
             <dl className="mt-6 divide-y divide-line border-y border-line">
               {incidents.map((incident) => (
                 <div key={incident.id} className="flex items-center justify-between gap-4 py-3">
-                  <div className="min-w-0">
-                    <dt className="truncate font-sans text-sm text-ink">
-                      {incident.name.replace(" — Unverified", "")}{" "}
-                      <span className="text-muted">
-                        ({incident.year}
-                        {incident.ecosystem !== "Ethereum" ? `, ${incident.ecosystem}` : ""})
-                      </span>
-                    </dt>
-                  </div>
+                  <dt className="min-w-0 truncate font-sans text-sm text-ink">
+                    {incident.name.replace(" — Unverified", "")}{" "}
+                    <span className="text-muted">
+                      ({incident.year}
+                      {incident.ecosystem !== "Ethereum" ? `, ${incident.ecosystem}` : ""})
+                    </span>
+                  </dt>
                   <dd className="flex shrink-0 items-center gap-2">
                     {incident.amount.category === "unverified" ? (
                       <Badge tone="warning">Unverified</Badge>

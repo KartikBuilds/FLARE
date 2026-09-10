@@ -16,10 +16,14 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "pnpm -r --if-present lint",
     "test": "pnpm -r --if-present test",
+    "e2e": "playwright test",
+    "e2e:install": "playwright install --with-deps chromium",
     "format": "prettier --write \"**/*.{ts,tsx,md,mdx,json,css}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx,json,css}\" --cache"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.10.1",
+    "@playwright/test": "^1.49.1",
     "prettier": "^3.3.3"
   }
 }

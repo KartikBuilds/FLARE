@@ -49,7 +49,7 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="border-t border-charcoal-line pt-4">
-        <p className="font-condensed text-[10.5px] uppercase tracking-[0.08em] text-paper/35">
+        <p className="font-condensed text-[10.5px] uppercase tracking-[0.08em] text-paper/65">
           Open protocols. Safer ecosystems.
         </p>
       </div>

@@ -26,12 +26,10 @@ export function ResearchSection() {
           <dl className="mt-10 grid gap-5 sm:grid-cols-2">
             {pillars.map((pillar) => (
               <div key={pillar.name} className="border-l-2 border-line pl-4">
-                <div className="flex flex-wrap items-center gap-2">
-                  <dt className="font-condensed text-[12px] font-semibold uppercase tracking-[0.06em]">
-                    {pillar.name}
-                  </dt>
+                <dt className="flex flex-wrap items-center gap-2 font-condensed text-[12px] font-semibold uppercase tracking-[0.06em]">
+                  {pillar.name}
                   <Badge tone={pillar.tone}>{pillar.status}</Badge>
-                </div>
+                </dt>
                 <dd className="mt-1.5 font-sans text-[13px] leading-snug text-muted">{pillar.description}</dd>
               </div>
             ))}

@@ -28,16 +28,16 @@
   --color-charcoal-line: #38362a;
   --color-line: #c7c2af;
   --color-line-soft: #dad6c7;
-  --color-muted: #716c5c;
+  --color-muted: #5f5843;
   --color-muted-soft: #9a9584;
   --color-accent: #c9f24c;
   --color-accent-soft: #e5f9ab;
   --color-accent-ink: #1c2404;
-  --color-danger: #b8402f;
+  --color-danger: #8a2c1c;
   --color-danger-soft: #f3ded7;
-  --color-warning: #a86a1f;
+  --color-warning: #734810;
   --color-warning-soft: #f1e2c6;
-  --color-success: #3f7d55;
+  --color-success: #245030;
   --color-success-soft: #dbe9df;
 
   --radius-control: 0.625rem;

@@ -74,7 +74,7 @@ export function PipelineSection() {
                 <span
                   className={
                     "font-condensed text-[10.5px] font-medium uppercase tracking-[0.05em] " +
-                    (isActive ? "text-paper" : "text-paper/45")
+                    (isActive ? "text-paper" : "text-paper/65")
                   }
                 >
                   {stage.title}
