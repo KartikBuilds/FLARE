@@ -1,0 +1,41 @@
+[project]
+name = "flare-analyzer"
+version = "0.1.0"
+description = "FLARE analysis engine — FastAPI service running Slither, solc-select and Foundry inside Docker (Python 3.12)."
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "fastapi>=0.115,<0.116",
+  "uvicorn[standard]>=0.32,<0.33",
+  "pydantic>=2.9,<3",
+  "python-multipart>=0.0.12,<0.1",
+  "slither-analyzer>=0.10.4,<0.11",
+  "solc-select>=1.0.4,<2",
+  "networkx>=3.4,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=8.3,<9",
+  "pytest-asyncio>=0.24,<0.25",
+  "httpx>=0.27,<0.28",
+  "ruff>=0.7,<0.8",
+]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_mode = "auto"
+
+[tool.ruff]
+line-length = 110
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

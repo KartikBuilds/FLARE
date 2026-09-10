@@ -10,5 +10,5 @@ export const ENGINE_STATUS: {
   note: string;
 } = {
   implemented: false,
-  note: "The FastAPI analyzer service is not yet implemented in this milestone. Everything shown outside explicit DEMO data is architecture, not a live result.",
+  note: "The FastAPI analyzer service now runs real intake, compilation and Slither-based extraction (services/analyzer) — but the detector registry, fund-flow graph and risk scoring aren't wired in yet, so a live analysis would report zero findings. The dashboard stays on demo data until that's genuinely worth showing as live.",
 };

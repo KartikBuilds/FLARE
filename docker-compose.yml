@@ -1,0 +1,25 @@
+services:
+  analyzer:
+    # Forced to amd64: official solc static Linux builds (and some Foundry
+    # release assets) are far more reliably available for x86_64 than
+    # native linux/arm64, and running a *consistently* emulated container
+    # (via Rosetta/QEMU on Apple Silicon hosts) avoids the partial-arch
+    # mismatches that come from letting individual tools pick their own
+    # binary architecture inside an arm64 container.
+    platform: linux/amd64
+    build:
+      context: ./services/analyzer
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./services/analyzer:/srv/analyzer
+      - analyzer-data:/srv/analyzer/data
+    environment:
+      - FLARE_WORKSPACE_DIR=/srv/analyzer/workspaces
+      - FLARE_DB_PATH=/srv/analyzer/data/flare.db
+      - FLARE_AI_PROVIDER=disabled
+    # Never expose the analyzer's uploaded/compiled workspaces to a public
+    # network — this service is intended for local development and CI only.
+
+volumes:
+  analyzer-data:
