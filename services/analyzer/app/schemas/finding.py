@@ -3,10 +3,10 @@ schemas/analysis.py about keeping the two in sync by hand."""
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from app.schemas.base import CamelModel
 
 
-class Finding(BaseModel):
+class Finding(CamelModel):
     id: str
     detector_id: str
     detector_version: str

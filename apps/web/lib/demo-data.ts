@@ -1,4 +1,5 @@
 import type { AnalysisSummary, TaxonomyCategoryId } from "@flare/schemas";
+import { VAULTLINE_FINDINGS, VAULTLINE_GRAPH } from "./demo-findings";
 
 function daysAgo(n: number): string {
   const d = new Date();
@@ -25,6 +26,8 @@ export const DEMO_ANALYSES: AnalysisSummary[] = [
     coverage: 0.91,
     findingCount: 7,
     severityCounts: { critical: 1, high: 2, medium: 2, low: 2 },
+    findings: VAULTLINE_FINDINGS,
+    graph: VAULTLINE_GRAPH,
   },
   {
     id: "demo-meridian",
@@ -38,6 +41,8 @@ export const DEMO_ANALYSES: AnalysisSummary[] = [
     coverage: 0.88,
     findingCount: 3,
     severityCounts: { critical: 0, high: 1, medium: 1, low: 1 },
+    findings: [],
+    graph: null,
   },
   {
     id: "demo-orbit",
@@ -51,6 +56,8 @@ export const DEMO_ANALYSES: AnalysisSummary[] = [
     coverage: 0.95,
     findingCount: 4,
     severityCounts: { critical: 0, high: 1, medium: 2, low: 1 },
+    findings: [],
+    graph: null,
   },
   {
     id: "demo-northbridge",
@@ -64,6 +71,8 @@ export const DEMO_ANALYSES: AnalysisSummary[] = [
     coverage: 0.79,
     findingCount: 2,
     severityCounts: { critical: 0, high: 0, medium: 1, low: 1 },
+    findings: [],
+    graph: null,
   },
 ];
 

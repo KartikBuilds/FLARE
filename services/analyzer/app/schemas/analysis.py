@@ -7,9 +7,9 @@ from __future__ import annotations
 
 from enum import StrEnum
 
-from pydantic import BaseModel
-
+from app.schemas.base import CamelModel
 from app.schemas.finding import Finding
+from app.schemas.graph import FundFlowGraph
 from app.schemas.ir import ProjectIR
 
 
@@ -25,14 +25,14 @@ class AnalysisStatus(StrEnum):
     FAILED = "failed"
 
 
-class SeverityCounts(BaseModel):
+class SeverityCounts(CamelModel):
     critical: int = 0
     high: int = 0
     medium: int = 0
     low: int = 0
 
 
-class AnalysisSummary(BaseModel):
+class AnalysisSummary(CamelModel):
     id: str
     origin: str = "live"
     project_name: str
@@ -47,3 +47,4 @@ class AnalysisSummary(BaseModel):
     error: str | None = None
     ir: ProjectIR | None = None
     findings: list[Finding] = []
+    graph: FundFlowGraph | None = None

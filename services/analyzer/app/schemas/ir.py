@@ -5,22 +5,22 @@ API shape. Mirrors the shapes documented in docs/ARCHITECTURE.md."""
 
 from __future__ import annotations
 
-from pydantic import BaseModel
+from app.schemas.base import CamelModel
 
 
-class SourceLocation(BaseModel):
+class SourceLocation(CamelModel):
     file: str
     line_start: int
     line_end: int
 
 
-class CallIR(BaseModel):
+class CallIR(CamelModel):
     kind: str  # "internal" | "external" | "delegatecall" | "library" | "low_level"
     target: str
     source: SourceLocation | None = None
 
 
-class TransferCallIR(BaseModel):
+class TransferCallIR(CamelModel):
     """A `.transfer(...)` / `.send(...)` / `.transferFrom(...)` call site.
     `arg_count` is the discriminator between a native ETH transfer
     (`payable(x).transfer(amount)`, 1 arg) and an ERC-20-style transfer
@@ -33,7 +33,7 @@ class TransferCallIR(BaseModel):
     source: SourceLocation | None = None
 
 
-class StateVariableIR(BaseModel):
+class StateVariableIR(CamelModel):
     name: str
     type: str
     visibility: str
@@ -42,7 +42,7 @@ class StateVariableIR(BaseModel):
     enum_values: list[str] = []
 
 
-class FunctionIR(BaseModel):
+class FunctionIR(CamelModel):
     name: str
     contract: str
     visibility: str
@@ -61,7 +61,7 @@ class FunctionIR(BaseModel):
     source: SourceLocation | None = None
 
 
-class ContractIR(BaseModel):
+class ContractIR(CamelModel):
     name: str
     file: str
     is_library: bool = False
@@ -72,7 +72,7 @@ class ContractIR(BaseModel):
     functions: list[FunctionIR] = []
 
 
-class ProjectIR(BaseModel):
+class ProjectIR(CamelModel):
     solc_version: str
     contracts: list[ContractIR] = []
     compile_warnings: list[str] = []

@@ -1,10 +1,22 @@
 "use client";
 
+import { useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { Card, Badge, DemoBadge, LiveEngineBadge, AnimatedCounter } from "@flare/ui";
-import type { RiskBand } from "@flare/schemas";
+import { Download, FileJson } from "lucide-react";
+import { Card, Badge, DemoBadge, LiveEngineBadge, AnimatedCounter, Button, cn } from "@flare/ui";
+import type { GraphNode } from "@flare/graph";
+import type { Incident, RiskBand } from "@flare/schemas";
 import { useAnalysis } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
+import { FindingsList } from "@/components/analysis/FindingsList";
+import { NodeDetailPanel } from "@/components/analysis/NodeDetailPanel";
+
+// React Flow needs the DOM (ResizeObserver, etc.) — never rendered on the server.
+const AssetFlowGraph = dynamic(
+  () => import("@/components/analysis/AssetFlowGraph").then((m) => m.AssetFlowGraph),
+  { ssr: false, loading: () => <div className="h-[480px] animate-pulse rounded-[var(--radius-card)] bg-line-soft" /> },
+);
 
 const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   critical: "danger",
@@ -14,8 +26,31 @@ const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   minimal: "success",
 };
 
-export function AnalysisDetailClient({ id }: { id: string }) {
+const TABS = ["overview", "findings", "asset-flow", "report"] as const;
+type Tab = (typeof TABS)[number];
+const TAB_LABELS: Record<Tab, string> = {
+  overview: "Overview",
+  findings: "Findings",
+  "asset-flow": "Asset Flow",
+  report: "Report",
+};
+
+function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+export function AnalysisDetailClient({ id, incidents }: { id: string; incidents: Incident[] }) {
   const { data: analysis, isLoading, isError } = useAnalysis(id);
+  const [tab, setTab] = useState<Tab>("overview");
+  const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
 
   if (isLoading) {
     return <p className="px-5 py-10 font-sans text-sm text-muted sm:px-8 lg:px-10">Loading…</p>;
@@ -68,7 +103,11 @@ export function AnalysisDetailClient({ id }: { id: string }) {
         </Card>
         <Card>
           <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
-            {analysis.coverage !== null ? <AnimatedCounter value={Math.round(analysis.coverage * 100)} formatter={(n) => `${n}%`} /> : "—"}
+            {analysis.coverage !== null ? (
+              <AnimatedCounter value={Math.round(analysis.coverage * 100)} formatter={(n) => `${n}%`} />
+            ) : (
+              "—"
+            )}
           </p>
           <p className="mt-2 font-sans text-sm text-ink">Coverage / Confidence</p>
         </Card>
@@ -80,28 +119,96 @@ export function AnalysisDetailClient({ id }: { id: string }) {
         </Card>
       </div>
 
-      <Card className="mt-6">
-        <h2 className="font-sans text-base font-semibold text-ink">Findings by severity</h2>
-        <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          {(["critical", "high", "medium", "low"] as const).map((sev) => (
-            <div key={sev}>
-              <p className="font-display text-2xl font-bold tabular-nums">{analysis.severityCounts[sev] ?? 0}</p>
-              <p className="font-condensed text-[11px] uppercase tracking-[0.06em] text-muted">{sev}</p>
-            </div>
-          ))}
-        </div>
-      </Card>
+      <div role="tablist" aria-label="Analysis workspace" className="mt-8 flex gap-1 border-b border-line">
+        {TABS.map((t) => (
+          <button
+            key={t}
+            role="tab"
+            aria-selected={tab === t}
+            onClick={() => setTab(t)}
+            className={cn(
+              "relative px-4 py-2.5 font-condensed text-[13px] font-medium uppercase tracking-[0.05em] transition-colors",
+              tab === t ? "text-ink" : "text-muted hover:text-ink",
+            )}
+          >
+            {TAB_LABELS[t]}
+            {tab === t && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-ink" />}
+          </button>
+        ))}
+      </div>
 
-      <Card className="mt-6 border-dashed">
-        <p className="font-sans text-sm text-ink-soft">
-          The full findings list, source-level evidence, asset-flow graph, state model,
-          dependency view, validation status and tool comparison land here once{" "}
-          <Link href="/docs/architecture" className="underline decoration-line underline-offset-2 hover:decoration-ink">
-            the graph and validation milestone
-          </Link>{" "}
-          is implemented. This overview reflects everything the analyzer currently reports.
-        </p>
-      </Card>
+      <div className="mt-6">
+        {tab === "overview" && (
+          <div className="space-y-6">
+            <Card>
+              <h2 className="font-sans text-base font-semibold text-ink">Findings by severity</h2>
+              <div className="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-4">
+                {(["critical", "high", "medium", "low"] as const).map((sev) => (
+                  <div key={sev}>
+                    <p className="font-display text-2xl font-bold tabular-nums">
+                      {analysis.severityCounts[sev] ?? 0}
+                    </p>
+                    <p className="font-condensed text-[11px] uppercase tracking-[0.06em] text-muted">{sev}</p>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            {analysis.findings.length === 0 && (
+              <Card className="border-dashed">
+                <p className="font-sans text-sm text-ink-soft">
+                  No findings from the current ten-detector registry. See{" "}
+                  <Link href="/docs/detectors" className="underline decoration-line underline-offset-2 hover:decoration-ink">
+                    Detector Registry
+                  </Link>{" "}
+                  for exactly what was checked.
+                </p>
+              </Card>
+            )}
+          </div>
+        )}
+
+        {tab === "findings" && <FindingsList findings={analysis.findings} incidents={incidents} />}
+
+        {tab === "asset-flow" &&
+          (analysis.graph ? (
+            <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
+              <AssetFlowGraph graph={analysis.graph} onSelectNode={setSelectedNode} />
+              <NodeDetailPanel node={selectedNode} findings={analysis.findings} />
+            </div>
+          ) : (
+            <Card className="border-dashed">
+              <p className="font-sans text-sm text-ink-soft">
+                No fund-flow graph is available for this analysis yet.
+              </p>
+            </Card>
+          ))}
+
+        {tab === "report" && (
+          <Card>
+            <h2 className="font-sans text-base font-semibold text-ink">Download report</h2>
+            <p className="mt-2 max-w-lg font-sans text-sm text-muted">
+              A versioned JSON report with the full IR, findings and graph. A self-contained HTML
+              report and a dedicated Tool Comparison / State Model / Dependencies view are planned
+              — see{" "}
+              <Link href="/docs/architecture" className="underline decoration-line underline-offset-2 hover:decoration-ink">
+                Architecture
+              </Link>
+              .
+            </p>
+            <Button
+              type="button"
+              className="mt-4"
+              arrow="none"
+              onClick={() => downloadJson(`flare-report-${analysis.id}.json`, analysis)}
+            >
+              <FileJson className="mr-2 inline size-4" aria-hidden="true" />
+              Download JSON
+              <Download className="ml-2 inline size-4" aria-hidden="true" />
+            </Button>
+          </Card>
+        )}
+      </div>
     </div>
   );
 }

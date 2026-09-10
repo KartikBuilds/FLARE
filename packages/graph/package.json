@@ -1,5 +1,5 @@
 {
-  "name": "@flare/schemas",
+  "name": "@flare/graph",
   "version": "0.1.0",
   "private": true,
   "main": "./src/index.ts",
@@ -8,7 +8,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@flare/graph": "workspace:*",
     "zod": "^3.24.1"
   },
   "devDependencies": {

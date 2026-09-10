@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { FundFlowGraph } from "@flare/graph";
 import { TaxonomyCategoryId } from "./taxonomy";
 
 export const Severity = z.enum(["critical", "high", "medium", "low"]);
@@ -66,5 +67,7 @@ export const AnalysisSummary = z.object({
   coverage: z.number().min(0).max(1).nullable(),
   findingCount: z.number().int(),
   severityCounts: SeverityCounts,
+  findings: z.array(Finding).default([]),
+  graph: FundFlowGraph.nullable().default(null),
 });
 export type AnalysisSummary = z.infer<typeof AnalysisSummary>;

@@ -76,3 +76,4 @@ pnpm-debug.log*
 
 # Turbo (unused but harmless if it appears)
 .turbo/
+.claude/

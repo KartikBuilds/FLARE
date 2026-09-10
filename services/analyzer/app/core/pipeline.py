@@ -1,7 +1,6 @@
-"""Orchestrates intake -> compile -> Slither -> IR -> detectors for one
-analysis and persists the result. Graph construction, Foundry validation
-and full risk scoring are added on top of this in later milestones (see
-docs/ARCHITECTURE.md)."""
+"""Orchestrates intake -> compile -> Slither -> detectors -> graph ->
+validation -> persisted result for one analysis. Full risk scoring is
+added on top of this in a later milestone (see docs/ARCHITECTURE.md)."""
 
 from __future__ import annotations
 
@@ -10,7 +9,9 @@ from pathlib import Path
 
 from app.core.cache import compute_content_hash, get_cached_ir, store_cached_ir
 from app.core.compiler import CompileError, compile_check
+from app.core.graph import build_fund_flow_graph
 from app.core.slither_service import SlitherAnalysisError, run_slither
+from app.core.validation import validate_findings
 from app.db.database import db_session
 from app.detectors.registry import run_all_detectors
 from app.schemas.analysis import AnalysisStatus, AnalysisSummary, SeverityCounts
@@ -59,12 +60,14 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
         summary = summary.model_copy(update={"status": AnalysisStatus.COMPILING})
         _save(summary, content_hash)
 
+        # Always compiled fresh — the validation stage below needs real
+        # bytecode/ABI, and solc compilation is cheap relative to Slither.
+        compile_result = compile_check(files)
+
         cached_ir = get_cached_ir(content_hash)
         if cached_ir is not None:
             ir = cached_ir
         else:
-            compile_result = compile_check(files)
-
             summary = summary.model_copy(update={"status": AnalysisStatus.ANALYZING})
             _save(summary, content_hash)
 
@@ -75,10 +78,21 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
         _save(summary, content_hash)
 
         findings = run_all_detectors(ir, files)
+
+        summary = summary.model_copy(update={"status": AnalysisStatus.VALIDATING})
+        _save(summary, content_hash)
+
+        findings = validate_findings(findings, compile_result)
+
+        summary = summary.model_copy(update={"status": AnalysisStatus.SCORING})
+        _save(summary, content_hash)
+
         counts = SeverityCounts()
         for finding in findings:
             if hasattr(counts, finding.severity):
                 setattr(counts, finding.severity, getattr(counts, finding.severity) + 1)
+
+        fund_flow_graph = build_fund_flow_graph(ir, findings)
 
         summary = summary.model_copy(
             update={
@@ -88,6 +102,7 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
                 "finding_count": len(findings),
                 "severity_counts": counts,
                 "coverage": 1.0 if not ir.compile_warnings else 0.85,
+                "graph": fund_flow_graph,
             }
         )
         _save(summary, content_hash)
