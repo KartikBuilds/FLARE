@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-XFER-001",
+  "taxonomy": "transfer-logic",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "token.transfer(to, amount) is called as a bare statement; its return value is discarded."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "The return value is wrapped in require()."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No transfer/transferFrom calls exist in this contract."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "The return value is assigned to `ok` and checked via require() on the next line."
+    }
+  }
+}

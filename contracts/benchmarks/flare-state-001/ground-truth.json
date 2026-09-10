@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-STATE-001",
+  "taxonomy": "state-transitions",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "Closed is terminal, reachable, and withdraw() excludes it with no other exit function."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "withdrawAfterClose() remains available once Closed."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No payable function exists, so no assets can enter."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "reopen() transitions Closed back to Active — not truly terminal."
+    }
+  }
+}

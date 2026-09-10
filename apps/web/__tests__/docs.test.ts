@@ -57,4 +57,8 @@ describe("detector registry spec", () => {
     const ids = DETECTOR_REGISTRY.map((d) => d.id);
     expect(new Set(ids).size).toBe(ids.length);
   });
+
+  it("reports all ten as implemented, matching services/analyzer/app/detectors", () => {
+    for (const d of DETECTOR_REGISTRY) expect(d.status).toBe("implemented");
+  });
 });

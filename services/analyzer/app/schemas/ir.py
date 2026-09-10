@@ -20,11 +20,26 @@ class CallIR(BaseModel):
     source: SourceLocation | None = None
 
 
+class TransferCallIR(BaseModel):
+    """A `.transfer(...)` / `.send(...)` / `.transferFrom(...)` call site.
+    `arg_count` is the discriminator between a native ETH transfer
+    (`payable(x).transfer(amount)`, 1 arg) and an ERC-20-style transfer
+    (`token.transfer(to, amount)`, 2-3 args)."""
+
+    raw: str
+    method: str  # "transfer" | "send" | "transferFrom"
+    arg_count: int
+    is_checked: bool  # wrapped in require()/assert(), or its result assigned
+    source: SourceLocation | None = None
+
+
 class StateVariableIR(BaseModel):
     name: str
     type: str
     visibility: str
     contract: str
+    is_enum: bool = False
+    enum_values: list[str] = []
 
 
 class FunctionIR(BaseModel):
@@ -37,7 +52,12 @@ class FunctionIR(BaseModel):
     calls: list[CallIR] = []
     contains_selfdestruct: bool = False
     contains_delegatecall: bool = False
-    uses_low_level_transfer: bool = False  # .transfer()/.send() specifically
+    uses_low_level_transfer: bool = False  # any .transfer()/.send(), regardless of arg count
+    delegatecall_targets: list[str] = []  # best-effort target expression text before .delegatecall(
+    requires: list[str] = []  # raw require(...)/assert(...) statements
+    assigns_to: list[str] = []  # state variable names this function writes to
+    assignment_statements: list[str] = []  # raw "var = value" text, for value-level matching
+    transfer_calls: list[TransferCallIR] = []
     source: SourceLocation | None = None
 
 

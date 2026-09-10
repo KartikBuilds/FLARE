@@ -25,11 +25,18 @@ short explanation a reviewer can check by hand.
 
 ## Foundry tests
 
-Where a fund-lock condition can be demonstrated executably (for example, a withdrawal that
-reverts under every reachable state), the fixture also has a Foundry test that proves it —
-not just a static-analysis claim. This is the same local-only Foundry/Anvil environment the
-analyzer's validation adapter uses; benchmark fixtures and live analysis validation share one
-execution path rather than two that could quietly disagree.
+Alongside the 40 detection fixtures, `contracts/benchmarks/src/demos/` and
+`contracts/benchmarks/test/` contain three standalone, executable Foundry demonstrations —
+one library-dependency scenario, one terminal-state scenario, and one fixed-gas-stipend
+transfer scenario — that prove the underlying fund-lock mechanism actually happens, not just
+that a static pattern matches. Building the library-dependency demo surfaced a real, verified
+finding: the classic "selfdestruct bricks a dependent contract" mechanism no longer reproduces
+unmodified on post-Cancun EVM rules (EIP-6780) — see
+[Limitations](/docs/limitations#a-verified-correction-selfdestructs-behavior-changed-under-eip-6780)
+for the full explanation, kept as a passing test that documents the corrected behavior rather
+than a deleted demo. These Foundry tests run entirely locally; a *validation adapter* that
+runs a generated proof-of-concept against an arbitrary live analysis result is a separate,
+not-yet-implemented piece — see [Architecture](/docs/architecture).
 
 ## Scoring
 

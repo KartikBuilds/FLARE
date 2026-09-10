@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-LIB-002",
+  "taxonomy": "library-dependencies",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "Lib is destructible and Consumer delegatecalls to it with no migration function."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "MigratableConsumer has a migrateLibrary function."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No selfdestruct exists anywhere in the project, and PlainConsumer never delegatecalls."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "UpgradableConsumer already has an upgradeImplementation function."
+    }
+  }
+}

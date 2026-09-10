@@ -1,0 +1,9 @@
+[profile.default]
+src = "src"
+test = "test"
+out = "out"
+libs = ["lib"]
+solc_version = "0.8.24"
+
+# Local-only. These fixtures are never deployed anywhere but Anvil/the
+# local EVM Foundry spins up for `forge test` — see SECURITY.md.

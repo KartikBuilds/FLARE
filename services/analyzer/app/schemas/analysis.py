@@ -9,6 +9,7 @@ from enum import StrEnum
 
 from pydantic import BaseModel
 
+from app.schemas.finding import Finding
 from app.schemas.ir import ProjectIR
 
 
@@ -45,3 +46,4 @@ class AnalysisSummary(BaseModel):
     severity_counts: SeverityCounts = SeverityCounts()
     error: str | None = None
     ir: ProjectIR | None = None
+    findings: list[Finding] = []

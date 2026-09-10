@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, Badge } from "@flare/ui";
 import { RESEARCH_PILLARS } from "@/lib/research-pillars";
 import { ENGINE_STATUS } from "@/lib/engine-status";
+import { getBenchmarkResult } from "@/lib/benchmark";
 
 export function ResearchStatusCard() {
   return (
@@ -50,13 +51,43 @@ export function EngineHealthCard() {
 }
 
 export function BenchmarkResultCard() {
+  const result = getBenchmarkResult();
+
   return (
     <Card>
-      <h2 className="font-sans text-base font-semibold text-ink">Recent Benchmark Result</h2>
-      <p className="mt-4 font-sans text-sm text-muted">
-        The benchmark suite has not been run yet — it ships with the detector registry
-        implementation.
-      </p>
+      <div className="flex items-center justify-between">
+        <h2 className="font-sans text-base font-semibold text-ink">Recent Benchmark Result</h2>
+        {result && <Badge tone="success">Generated</Badge>}
+      </div>
+
+      {result ? (
+        <>
+          <div className="mt-4 grid grid-cols-2 gap-4">
+            <div>
+              <p className="font-display text-3xl font-bold tabular-nums">
+                {result.precision !== null ? `${Math.round(result.precision * 100)}%` : "—"}
+              </p>
+              <p className="font-condensed text-[11px] uppercase tracking-[0.06em] text-muted">Precision</p>
+            </div>
+            <div>
+              <p className="font-display text-3xl font-bold tabular-nums">
+                {result.recall !== null ? `${Math.round(result.recall * 100)}%` : "—"}
+              </p>
+              <p className="font-condensed text-[11px] uppercase tracking-[0.06em] text-muted">Recall</p>
+            </div>
+          </div>
+          <p className="mt-3 font-sans text-xs text-muted">
+            {result.total_cases} fixture cases · {result.true_positives + result.true_negatives} correct
+            {result.false_positives + result.false_negatives > 0 &&
+              ` · ${result.false_positives + result.false_negatives} misclassified`}
+          </p>
+        </>
+      ) : (
+        <p className="mt-4 font-sans text-sm text-muted">
+          No benchmark report has been generated in this checkout yet.
+        </p>
+      )}
+
       <Link
         href="/docs/benchmark"
         className="mt-4 inline-block font-condensed text-[11.5px] uppercase tracking-[0.06em] text-ink underline decoration-line underline-offset-4"

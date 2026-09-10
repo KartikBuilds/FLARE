@@ -1,8 +1,7 @@
-"""Orchestrates intake -> compile -> Slither -> IR for one analysis and
-persists the result. Detector execution, graph construction, validation
-and risk scoring are added on top of this in later milestones (see
-docs/ARCHITECTURE.md) — as of this milestone the pipeline's job is to
-reliably turn source files into a normalized ProjectIR."""
+"""Orchestrates intake -> compile -> Slither -> IR -> detectors for one
+analysis and persists the result. Graph construction, Foundry validation
+and full risk scoring are added on top of this in later milestones (see
+docs/ARCHITECTURE.md)."""
 
 from __future__ import annotations
 
@@ -13,7 +12,8 @@ from app.core.cache import compute_content_hash, get_cached_ir, store_cached_ir
 from app.core.compiler import CompileError, compile_check
 from app.core.slither_service import SlitherAnalysisError, run_slither
 from app.db.database import db_session
-from app.schemas.analysis import AnalysisStatus, AnalysisSummary
+from app.detectors.registry import run_all_detectors
+from app.schemas.analysis import AnalysisStatus, AnalysisSummary, SeverityCounts
 
 
 def _save(summary: AnalysisSummary, content_hash: str) -> None:
@@ -71,10 +71,22 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
             ir = run_slither(files, compile_result.solc_version)
             store_cached_ir(content_hash, ir)
 
+        summary = summary.model_copy(update={"status": AnalysisStatus.DETECTING})
+        _save(summary, content_hash)
+
+        findings = run_all_detectors(ir, files)
+        counts = SeverityCounts()
+        for finding in findings:
+            if hasattr(counts, finding.severity):
+                setattr(counts, finding.severity, getattr(counts, finding.severity) + 1)
+
         summary = summary.model_copy(
             update={
                 "status": AnalysisStatus.COMPLETE,
                 "ir": ir,
+                "findings": findings,
+                "finding_count": len(findings),
+                "severity_counts": counts,
                 "coverage": 1.0 if not ir.compile_warnings else 0.85,
             }
         )

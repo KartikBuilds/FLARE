@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-WD-001",
+  "taxonomy": "withdrawal-failures",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "withdraw() requires msg.sender == address(0), which can never be true."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "withdraw() checks the caller's own balance instead."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No impossible conditions anywhere in this contract."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "The address(0) check guards a different variable (beneficiary), not msg.sender."
+    }
+  }
+}

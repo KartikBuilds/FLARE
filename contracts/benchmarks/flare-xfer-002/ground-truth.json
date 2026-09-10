@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-XFER-002",
+  "taxonomy": "transfer-logic",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "to.transfer(amount) forwards a fixed 2300 gas stipend with no call()-based fallback."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "Uses call()-based transfer with an explicit success check instead."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "Only an ERC-20 transfer exists — no native ETH transfer."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "A call()-based fallback path exists alongside the fixed-stipend transfer in the same function."
+    }
+  }
+}

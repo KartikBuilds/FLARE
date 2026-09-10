@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-STATE-002",
+  "taxonomy": "state-transitions",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "redeem() requires Open; lock() moves to Locked with no reverse transition."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "unlock() transitions Locked back to Open."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "redeem() has no enum state guard at all."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "No function ever actually transitions state to Locked."
+    }
+  }
+}

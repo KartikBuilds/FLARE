@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-WD-002",
+  "taxonomy": "withdrawal-failures",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "unlocked gates withdraw() but no function ever sets it to true."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "unlock() sets unlocked = true."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "withdraw() has no boolean-flag guard."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "withdraw() requires !paused (negated), the opposite polarity of the vulnerable pattern."
+    }
+  }
+}

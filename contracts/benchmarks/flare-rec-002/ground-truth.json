@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-REC-002",
+  "taxonomy": "missing-recovery",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "emergencyWithdraw() carries the same whenNotPaused modifier as deposit(), with no alternative exit."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "emergencyWithdraw() has no pause modifier."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No pause mechanism exists in this contract."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "forceRescue() is an unpausable alternative exit."
+    }
+  }
+}

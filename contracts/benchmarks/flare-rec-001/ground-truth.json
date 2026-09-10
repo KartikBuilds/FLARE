@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-REC-001",
+  "taxonomy": "missing-recovery",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "Accepts ETH via deposit() with no rescue/sweep/recover function anywhere."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "rescueTokens() is present."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "This contract never accepts value at all."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "recoverStuckETH() already exists and matches the rescue-function keyword."
+    }
+  }
+}

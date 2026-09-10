@@ -1,0 +1,332 @@
+{
+  "precision": 1.0,
+  "recall": 1.0,
+  "total_cases": 40,
+  "true_positives": 10,
+  "true_negatives": 30,
+  "false_positives": 0,
+  "false_negatives": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "detector_id": "FLARE-LIB-001",
+      "case_file": "flare-lib-001/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-001",
+      "case_file": "flare-lib-001/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-001",
+      "case_file": "flare-lib-001/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-001",
+      "case_file": "flare-lib-001/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-002",
+      "case_file": "flare-lib-002/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-002",
+      "case_file": "flare-lib-002/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-002",
+      "case_file": "flare-lib-002/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-LIB-002",
+      "case_file": "flare-lib-002/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-001",
+      "case_file": "flare-rec-001/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-001",
+      "case_file": "flare-rec-001/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-001",
+      "case_file": "flare-rec-001/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-001",
+      "case_file": "flare-rec-001/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-002",
+      "case_file": "flare-rec-002/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-002",
+      "case_file": "flare-rec-002/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-002",
+      "case_file": "flare-rec-002/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-REC-002",
+      "case_file": "flare-rec-002/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-001",
+      "case_file": "flare-state-001/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-001",
+      "case_file": "flare-state-001/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-001",
+      "case_file": "flare-state-001/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-001",
+      "case_file": "flare-state-001/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-002",
+      "case_file": "flare-state-002/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-002",
+      "case_file": "flare-state-002/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-002",
+      "case_file": "flare-state-002/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-STATE-002",
+      "case_file": "flare-state-002/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-001",
+      "case_file": "flare-wd-001/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-001",
+      "case_file": "flare-wd-001/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-001",
+      "case_file": "flare-wd-001/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-001",
+      "case_file": "flare-wd-001/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-002",
+      "case_file": "flare-wd-002/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-002",
+      "case_file": "flare-wd-002/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-002",
+      "case_file": "flare-wd-002/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-WD-002",
+      "case_file": "flare-wd-002/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-001",
+      "case_file": "flare-xfer-001/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-001",
+      "case_file": "flare-xfer-001/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-001",
+      "case_file": "flare-xfer-001/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-001",
+      "case_file": "flare-xfer-001/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-002",
+      "case_file": "flare-xfer-002/vulnerable.sol",
+      "expected": true,
+      "actual": true,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-002",
+      "case_file": "flare-xfer-002/corrected.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-002",
+      "case_file": "flare-xfer-002/safe-negative.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    },
+    {
+      "detector_id": "FLARE-XFER-002",
+      "case_file": "flare-xfer-002/false-positive.sol",
+      "expected": false,
+      "actual": false,
+      "outcome": "true_negative",
+      "error": null
+    }
+  ]
+}

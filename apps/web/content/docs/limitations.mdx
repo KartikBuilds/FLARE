@@ -38,9 +38,29 @@ default.
 The registry ships ten detectors, two per taxonomy category, deliberately smaller than an
 exhaustive list — see [Detector Registry](/docs/detectors) for why quality per detector was
 prioritized over count, and [Benchmark Plan](/docs/benchmark) for exactly how each one is
-scored. A contract free of findings from these ten detectors is not thereby proven free of
-every fund-lock risk; it means these ten specific, documented conditions were checked for and
-not found.
+scored (currently 100% precision and recall across all 40 fixtures — a real, generated result,
+not an asserted one). A contract free of findings from these ten detectors is not thereby
+proven free of every fund-lock risk; it means these ten specific, documented conditions were
+checked for and not found. The detection logic is heuristic (pattern-matching over Slither's
+IR, not full symbolic execution or formal verification), so it can miss semantically
+equivalent code written differently than the patterns it looks for.
+
+## A verified correction: selfdestruct's behavior changed under EIP-6780
+
+FLARE-LIB-002 models the Parity (2017) mechanism: a dependency contract's `selfdestruct`
+bricking everything that delegatecalls into it. While building the executable Foundry
+demonstration for this detector
+(`contracts/benchmarks/test/LibraryDestructionLock.t.sol`), we found that this no longer
+reproduces as originally written: since the Dencun upgrade (EIP-6780, March 2024),
+`selfdestruct` only clears an account's code when called in the *same transaction* that
+created it. A later-transaction `selfdestruct` — Parity's actual scenario, and every
+"someone destroys a live dependency" story — now only transfers the account's ETH balance and
+leaves its code in place. We verified this directly against Foundry's local EVM rather than
+assuming it, and the test documents the corrected behavior instead of silently deleting the
+demo or asserting something false. The detector's *static* condition (a delegatecall
+dependency with a reachable selfdestruct and no migration path) remains a legitimate design
+smell worth flagging, but a fresh reproduction of the full historical failure mode requires
+either the same-transaction case EIP-6780 still allows, or a chain that predates Dencun.
 
 ## Case-study data
 
@@ -61,7 +81,11 @@ correctly," not "this tool finds every fund-lock in arbitrary code."
 
 ## What "verified" via Foundry means
 
-Where the validation adapter confirms a finding through a local, offline Foundry/Anvil run,
-that means a concrete proof-of-concept executed against the compiled contract and produced
-the predicted outcome — not that the finding was checked against a live or forked mainnet
-state, and never against a public network.
+`contracts/benchmarks/test/` contains real, passing Foundry tests that executably demonstrate
+three of the ten fund-lock mechanisms (library destruction, a terminal state trap, and a
+fixed-gas-stipend transfer failure) — proof that the underlying scenario is real, not just
+statically pattern-matched. This is separate from a *validation adapter* wired into the live
+analysis pipeline (which would run a generated proof-of-concept against an arbitrary uploaded
+contract's specific finding) — that per-analysis validation step is not implemented yet; see
+[Architecture](/docs/architecture). Either way, "Foundry-verified" always means a local,
+offline execution — never a live or forked mainnet state, and never a public network.

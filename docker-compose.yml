@@ -14,6 +14,8 @@ services:
     volumes:
       - ./services/analyzer:/srv/analyzer
       - analyzer-data:/srv/analyzer/data
+      - ./contracts:/srv/contracts
+      - ./evaluation:/srv/evaluation
     environment:
       - FLARE_WORKSPACE_DIR=/srv/analyzer/workspaces
       - FLARE_DB_PATH=/srv/analyzer/data/flare.db

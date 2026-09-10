@@ -34,7 +34,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Unprotected delegatecall to a mutable address",
     taxonomy: "library-dependencies",
     defaultSeverity: "critical",
-    status: "planned",
+    status: "implemented",
     summary:
       "A function performs delegatecall to an address read from mutable storage, with no access control on who can change that address and no check that it points at a fixed, audited library.",
     evidenceRequirement:
@@ -47,7 +47,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Destructible library dependency with no replacement path",
     taxonomy: "library-dependencies",
     defaultSeverity: "critical",
-    status: "planned",
+    status: "implemented",
     summary:
       "A contract's core logic lives in a separately deployed library-style contract that (a) contains a reachable selfdestruct and (b) has no migration function allowing dependents to repoint at a new implementation.",
     evidenceRequirement:
@@ -60,7 +60,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Withdrawal function with an unsatisfiable condition",
     taxonomy: "withdrawal-failures",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "A withdrawal/redeem function contains a require()/revert condition that symbolic or reachability analysis shows can never be true given every state the contract's own functions can produce.",
     evidenceRequirement:
@@ -72,7 +72,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Unreachable withdrawal branch",
     taxonomy: "withdrawal-failures",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "Withdrawal logic is guarded by a state (enum value, boolean flag) that no function in the contract ever sets to the required value — the branch exists in source but is dead code for every deployer/user.",
     evidenceRequirement:
@@ -84,7 +84,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "No rescue path for unsupported received assets",
     taxonomy: "missing-recovery",
     defaultSeverity: "medium",
-    status: "planned",
+    status: "implemented",
     summary:
       "The contract can end up holding an ERC-20 token it was not designed to manage (no allowlist enforced on transfer-in) but exposes no owner-only sweep/rescue function to recover it.",
     evidenceRequirement:
@@ -97,7 +97,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Pause mechanism disables recovery, not just operation",
     taxonomy: "missing-recovery",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "A `whenNotPaused`-style modifier is applied to the contract's own emergency-withdraw/rescue function, so pausing the contract — often intended to protect users during an incident — also removes the only escape hatch.",
     evidenceRequirement:
@@ -109,7 +109,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Terminal state reachable with non-zero assets",
     taxonomy: "state-transitions",
     defaultSeverity: "critical",
-    status: "planned",
+    status: "implemented",
     summary:
       "A state machine has a terminal value (no outgoing transitions) that is reachable from the initial state, and no function callable while in that terminal state can move the contract's asset balance to zero.",
     evidenceRequirement:
@@ -122,7 +122,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "One-way transition disables a previously available redemption",
     taxonomy: "state-transitions",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "A function that was callable (and could redeem assets) in state A becomes permanently uncallable after an irreversible transition to state B, with no equivalent function available in B.",
     evidenceRequirement:
@@ -135,7 +135,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Unchecked return value from transfer/transferFrom",
     taxonomy: "transfer-logic",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "The contract calls an ERC-20 transfer/transferFrom and does not check (or require) a truthy return value, so a non-reverting token that returns false on failure lets the contract believe a transfer succeeded when it did not.",
     evidenceRequirement:
@@ -147,7 +147,7 @@ export const DETECTOR_REGISTRY: DetectorSpec[] = [
     name: "Fixed-gas-stipend transfer incompatible with the deployment chain",
     taxonomy: "transfer-logic",
     defaultSeverity: "high",
-    status: "planned",
+    status: "implemented",
     summary:
       "The contract moves value using Solidity's .transfer()/.send() (a fixed ~2300 gas stipend) with no fallback path, on a chain or through a proxy where that stipend is insufficient for the recipient's logic to complete.",
     evidenceRequirement:

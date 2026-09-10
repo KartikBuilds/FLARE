@@ -1,0 +1,22 @@
+{
+  "detector_id": "FLARE-LIB-001",
+  "taxonomy": "library-dependencies",
+  "cases": {
+    "vulnerable.sol": {
+      "expect_finding": true,
+      "explanation": "setImplementation has no access control, so anyone can repoint the delegatecall target."
+    },
+    "corrected.sol": {
+      "expect_finding": false,
+      "explanation": "setImplementation is gated by onlyOwner."
+    },
+    "safe-negative.sol": {
+      "expect_finding": false,
+      "explanation": "No delegatecall exists anywhere in this contract."
+    },
+    "false-positive.sol": {
+      "expect_finding": false,
+      "explanation": "The delegatecall target has no setter at all — it can only be set once, in the constructor."
+    }
+  }
+}
