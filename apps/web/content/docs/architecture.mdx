@@ -56,9 +56,10 @@ implemented behind one, or clearly marked as an interface-only stub — never si
 | Static analyzer (Slither) | Implemented | Runs inside the Dockerized Python 3.12 environment |
 | Chain adapter — EVM/Solidity | Implemented | The only chain this prototype actually analyzes |
 | Chain adapter — Solana/Rust | Interface only | Not implemented; never claimed as working — see Limitations |
-| Validation provider (Foundry/Anvil) | Implemented | Local-only execution; contracts are never deployed publicly |
-| AI provider | Optional, disabled by default | Explains existing findings only; cannot create one |
-| Report renderer | Implemented | JSON + self-contained HTML |
+| Validation provider (Foundry/Anvil) | Implemented, scoped | Local-only execution, never a public network; wired into the live pipeline for FLARE-WD-001/002 only so far |
+| Risk scoring | Specified, not wired in | Formula fully documented (Risk Methodology); `flareScore` is `null` on real analyses today |
+| AI provider | Not implemented | No code path calls an AI provider yet; the pipeline works fully without one either way |
+| Report renderer | Partial | JSON download works today; self-contained HTML report not built yet |
 
 ## Why Docker for the analyzer
 

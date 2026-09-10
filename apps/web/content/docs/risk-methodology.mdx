@@ -3,6 +3,12 @@ title: Risk Methodology
 description: A transparent, documented formula — never an unexplained AI probability.
 ---
 
+**Status: specified, not yet wired into the live pipeline.** This formula is the contract any
+scoring implementation must match, and it's what the demo data on the dashboard illustrates —
+but `services/analyzer` doesn't compute it yet, so a real analysis today reports findings and a
+fund-flow graph with `flareScore: null`, not a live number. See
+[Limitations](/docs/limitations) and the detector registry's own status for what *is* wired in.
+
 The FLARE score is a number from 0–100 computed by a fixed, published formula. Given the same
 findings and the same coverage inputs, it always produces the same score. No step in this
 calculation is delegated to a language model.
