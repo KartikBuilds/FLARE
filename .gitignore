@@ -1,0 +1,76 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+**/node_modules/
+
+# Next.js
+.next/
+out/
+apps/web/.next/
+apps/web/out/
+next-env.d.ts
+
+# Build outputs
+dist/
+build/
+**/dist/
+**/build/
+storybook-static/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+services/analyzer/.venv/
+
+# Foundry
+contracts/benchmarks/cache/
+contracts/benchmarks/out/
+contracts/benchmarks/broadcast/
+contracts/benchmarks/lib/
+
+# Solc / slither
+.solc-select/
+*.solc
+
+# Env / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# SQLite runtime data
+*.sqlite3
+*.sqlite3-journal
+services/analyzer/data/*.db
+
+# Analyzer runtime workspaces
+services/analyzer/workspaces/
+services/analyzer/.cache/
+
+# Test / coverage artifacts
+coverage/
+.nyc_output/
+playwright-report/
+test-results/
+apps/web/playwright-report/
+apps/web/test-results/
+
+# Editor / OS
+.DS_Store
+**/.DS_Store
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Turbo (unused but harmless if it appears)
+.turbo/
