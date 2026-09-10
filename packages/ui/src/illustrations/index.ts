@@ -1,2 +1,13 @@
 export { FlareMark } from "./FlareMark";
-export { HatchDef, Bolt, BoltRow, IllustrationFrame, useIllustrationId } from "./shared";
+export { CoinAsset } from "./CoinAsset";
+export { VaultModule } from "./VaultModule";
+export { ProtocolCore } from "./ProtocolCore";
+export { PipeSegment } from "./PipeSegment";
+export { JunctionBox } from "./JunctionBox";
+export { HourglassGlyph } from "./HourglassGlyph";
+export { PipelineModule } from "./PipelineModule";
+export { TaxonomyIcon } from "./TaxonomyIcons";
+export { BookStack } from "./BookStack";
+export { AstronautFigure } from "./AstronautFigure";
+export { HatchDef, Bolt, BoltRow, IllustrationFrame, useIllustrationId, round2 } from "./shared";
+export type { IllustrationProps } from "./shared";

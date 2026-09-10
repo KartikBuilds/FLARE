@@ -17,6 +17,7 @@
     "react-dom": "^19"
   },
   "dependencies": {
+    "@flare/schemas": "workspace:*",
     "motion": "^12.4.0",
     "lucide-react": "^0.474.0",
     "clsx": "^2.1.1"

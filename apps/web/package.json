@@ -11,13 +11,15 @@
     "test": "vitest run"
   },
   "dependencies": {
+    "@flare/schemas": "workspace:*",
     "@flare/ui": "workspace:*",
     "clsx": "^2.1.1",
     "lucide-react": "^0.474.0",
     "motion": "^12.4.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "zod": "^3.24.1"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

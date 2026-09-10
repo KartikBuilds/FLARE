@@ -1,0 +1,37 @@
+{
+  "id": "lido-stsol-2024",
+  "name": "Lido on Solana (stSOL) Withdrawal Bug",
+  "ecosystem": "Solana",
+  "year": 2024,
+  "architecture": "Liquid staking token (stSOL) program mid-way through a governance-approved sunset and migration away from Solana.",
+  "rootCause": "Following an October 2023 DAO vote to wind down Lido on Solana, the web frontend for unstaking was removed in February 2024 and holders were directed to a CLI-based unstaking flow. A bug in the unstaking/withdrawal contract logic then prevented affected stSOL holders from redeeming through that path.",
+  "fundLockMechanism": "The withdrawal path itself failed during a protocol state transition (active staking -> sunset/wind-down): the code path holders were told to use to exit stopped working, with no alternative redemption route offered at the time.",
+  "taxonomy": ["withdrawal-failures", "state-transitions"],
+  "amount": {
+    "valueUsd": 24000000,
+    "displayLabel": "112,000+ stSOL (>$24M reported, Feb 2024)",
+    "category": "locked-principal",
+    "asOf": "2024-02",
+    "note": "Our design references originally sketched this incident at ~$38M; independent reporting we could verify (dlnews.com, Feb 2024) puts the affected balance at over 112,000 stSOL worth more than $24M at the time. We use the sourced figure, not the earlier placeholder."
+  },
+  "amountVerificationStatus": "verified",
+  "recoveryAttempts": "The Lido-on-Solana operating team (P2P) continued working on the wind-down process after the bug was reported; holders pursued CLI-based unstaking as the intended remaining path. We did not find a dated public confirmation that every affected holder was made whole, so we do not claim full resolution.",
+  "primarySources": [
+    {
+      "title": "Broken code traps $24m of Lido staked SOL — and holders want their tokens back",
+      "url": "https://www.dlnews.com/articles/defi/lido-stsol-holders-stuck-after-code-bug-blocks-withdrawals/",
+      "publisher": "DL News"
+    },
+    {
+      "title": "Lido On Solana Sunset",
+      "url": "https://blog.lido.fi/sunset-lido-on-solana/",
+      "publisher": "Lido"
+    },
+    {
+      "title": "Lido Finance Sunsets Solana Staking Product After DAO Vote",
+      "url": "https://www.coindesk.com/tech/2023/10/17/lido-finance-sunsets-solana-staking-product-after-dao-vote",
+      "publisher": "CoinDesk"
+    }
+  ],
+  "limitations": "Solana/stSOL is outside FLARE's currently implemented EVM/Solidity analyzer (the Solana adapter is an interface-only stub — see docs/LIMITATIONS.md); this case study is documentation-only and cannot be reproduced through the FLARE engine today. We could not confirm a precise final resolution date or whether 100% of affected balances were ultimately recovered."
+}

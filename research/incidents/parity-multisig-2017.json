@@ -1,0 +1,32 @@
+{
+  "id": "parity-multisig-2017",
+  "name": "Parity Multisig Library Freeze",
+  "ecosystem": "Ethereum",
+  "year": 2017,
+  "architecture": "Shared, delegatecall-linked library contract backing hundreds of independently deployed Parity multisig wallets.",
+  "rootCause": "The shared wallet library contract was deployed without being initialized. On 6 November 2017, a user (GitHub handle devops199) called initWallet on the uninitialized library, becoming its sole owner, then called its kill() function, self-destructing the library contract.",
+  "fundLockMechanism": "Every wallet that delegatecall'd into the library depended on its bytecode for all wallet logic, including withdrawals. Once the library self-destructed, that bytecode no longer existed at its address, so every dependent wallet's withdrawal logic became permanently unreachable — a single library dependency bricking hundreds of otherwise-independent wallets at once.",
+  "taxonomy": ["library-dependencies"],
+  "amount": {
+    "valueUsd": 150000000,
+    "displayLabel": "513,774 ETH (~$150M at contemporary valuation)",
+    "category": "locked-principal",
+    "asOf": "2017-11-06",
+    "note": "513,774.16 ETH is the widely reported frozen amount; its USD value is commonly cited around $150M using November 2017 pricing, but ranges toward $280M+ in sources using later ETH prices. We report the ETH amount as the primary verified figure."
+  },
+  "amountVerificationStatus": "verified",
+  "recoveryAttempts": "EIP-999 proposed a hard fork to restore the destroyed library's code and unlock the wallets; it did not reach consensus and was not adopted. As of this writing the funds remain inaccessible on-chain.",
+  "primarySources": [
+    {
+      "title": "A major vulnerability has frozen hundreds of millions of dollars of Ethereum",
+      "url": "https://techcrunch.com/2017/11/07/a-major-vulnerability-has-frozen-hundreds-of-millions-of-dollars-of-ethereum",
+      "publisher": "TechCrunch"
+    },
+    {
+      "title": "Parity CEO is confident that $150M in frozen Ethereum isn't lost forever",
+      "url": "https://techcrunch.com/2017/12/05/parity-ceo-says-shes-confident-that-its-280m-in-frozen-ethereum-isnt-lost-forever",
+      "publisher": "TechCrunch"
+    }
+  ],
+  "limitations": "USD valuation is sensitive to the ETH/USD price used and the date of conversion; different reputable outlets report figures from roughly $150M to $300M+ for the same 513,774 ETH. We treat the ETH-denominated amount as the verified fact and the USD figure as an approximation."
+}

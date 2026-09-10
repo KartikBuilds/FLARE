@@ -1,0 +1,38 @@
+{
+  "id": "gemholic-zksync-2023",
+  "name": "Gemholic zkSync Transfer Lock",
+  "ecosystem": "zkSync Era (Ethereum L2)",
+  "year": 2023,
+  "architecture": "Token-sale contract deployed on zkSync Era, paying out ETH via Solidity's built-in .transfer().",
+  "rootCause": "In April 2023, Gemholic raised roughly 921 ETH through a token sale contract that used Solidity's .transfer()/.send(), which forwards a fixed 2300-gas stipend. zkSync Era's execution/gas model at the time did not support calls constrained to that fixed stipend the way Ethereum L1 does, so the transfer calls failed, and the contract had no fallback withdrawal mechanism.",
+  "fundLockMechanism": "A transfer method that is safe and idiomatic on Ethereum L1 was incompatible with the deployment chain's execution model, and the contract had no alternate withdrawal path — a direct instance of unsafe reliance on non-portable transfer semantics with no recovery mechanism.",
+  "taxonomy": ["transfer-logic", "missing-recovery"],
+  "amount": {
+    "valueUsd": 1700000,
+    "displayLabel": "921 ETH raised (~$1.7M, April 2023), locked ~14 months",
+    "category": "locked-principal",
+    "asOf": "2023-04",
+    "note": "This is the amount that was actually inaccessible due to the transfer-logic bug. A separate, later allegation (below) involves a larger figure and is not part of this fund-lock amount."
+  },
+  "amountVerificationStatus": "verified",
+  "recoveryAttempts": "zkSync's June 2024 v24 mainnet upgrade changed gas-forwarding behavior in a way that unblocked the stuck .transfer() calls, restoring Gemholic's access to the funds roughly fourteen months after they were locked.",
+  "primarySources": [
+    {
+      "title": "Gemholic Zksync Blunder",
+      "url": "https://cracka.medium.com/gemholic-zksync-blunder-d218096b1a7b",
+      "publisher": "Medium (Cracka)"
+    },
+    {
+      "title": "Gemholic accused of rug pull after moving $3.3 million in recently recovered funds, vanishing from social media",
+      "url": "https://www.theblock.co/post/299161/gemholic-accused-of-rug-pull-after-moving-3-3-million-in-recently-recovered-funds-vanishing-from-social-media",
+      "publisher": "The Block"
+    },
+    {
+      "title": "ZkSync's Gemholic project suspected $3.5M rug pull",
+      "url": "https://cointelegraph.com/news/gemholic-scam-suspected-rug-pull-zksync",
+      "publisher": "Cointelegraph"
+    }
+  ],
+  "limitations": "Immediately after the funds unlocked in June 2024, reporting alleges the Gemholic team moved the (by-then more valuable, ~$3.3-3.5M) funds to Ethereum mainnet and disappeared — described in the press as a suspected rug pull. That allegation is a separate, disputed governance/trust failure that happened after recovery, not a fund-lock mechanism, so we exclude it from the fund-lock amount above and flag it here rather than folding it in silently.",
+  "disputedNotes": "The post-unlock fund movement is reported as a suspected rug pull by The Block and Cointelegraph but, to our knowledge, has not been resolved through legal process; we present it as an allegation, not a confirmed fact."
+}

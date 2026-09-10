@@ -1,0 +1,32 @@
+{
+  "id": "renzo-ezeth-2024",
+  "name": "Renzo Protocol ezETH De-Peg",
+  "ecosystem": "Ethereum",
+  "year": 2024,
+  "architecture": "Liquid restaking token (LRT) representing restaked ETH deposited into Renzo/EigenLayer, with native 1:1 redemption not yet live at the time.",
+  "rootCause": "At the time of the incident (24 April 2024), Renzo had not yet launched a native ezETH -> ETH redemption path (EigenLayer restaking withdrawals were not generally live). ezETH's price therefore depended entirely on secondary-market liquidity (chiefly a Uniswap pool). When Renzo's season-1 airdrop farming window closed, sell pressure overwhelmed that thin liquidity and price fell sharply below NAV before recovering.",
+  "fundLockMechanism": "This is a missing-recovery-path case rather than a code-level permanent lock: with no native exit, the only available exit was the secondary market, and that market failed under stress, leaving holders and leveraged positions unable to exit near fair value during the window. We include it because it demonstrates the taxonomy category concretely, and flag clearly that funds were not irrecoverably lost — price recovered and native redemption later became available.",
+  "taxonomy": ["missing-recovery"],
+  "amount": {
+    "valueUsd": 60000000,
+    "displayLabel": ">$60M in cross-protocol liquidations (not locked principal)",
+    "category": "liquidation-impact",
+    "asOf": "2024-04-24",
+    "note": "This figure is cascading liquidation losses across lending markets (Morpho, Gearbox, and others), reported by Protos citing PeckShield — a different kind of number than 'funds permanently locked'. We deliberately exclude it from any aggregate 'locked forever' total shown on the site."
+  },
+  "amountVerificationStatus": "verified",
+  "recoveryAttempts": "ezETH's price recovered within the same trading session as liquidity normalized; Renzo subsequently made native redemption available. No principal was permanently trapped in the way Parity's or Gemholic's was.",
+  "primarySources": [
+    {
+      "title": "Depeg of $3B restaking token ezETH causes over $60M in DeFi liquidations",
+      "url": "https://protos.com/depeg-of-3b-restaking-token-ezeth-causes-over-60m-in-defi-liquidations/",
+      "publisher": "Protos"
+    },
+    {
+      "title": "Renzo Restaked ETH Suffers a Brief Crash on Uniswap",
+      "url": "https://www.coindesk.com/markets/2024/04/24/renzo-restaked-eth-suffers-a-brief-crash-on-uniswap",
+      "publisher": "CoinDesk"
+    }
+  ],
+  "limitations": "This event is best understood as a missing-native-redemption / secondary-market liquidity failure, not a smart-contract bug that trapped funds — it is the least 'classic fund-lock' of the five case studies here, and we describe it that way rather than overstating the parallel."
+}

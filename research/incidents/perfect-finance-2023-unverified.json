@@ -1,0 +1,22 @@
+{
+  "id": "perfect-finance-2023-unverified",
+  "name": "\"Perfect Finance\" (2023) — Unverified",
+  "ecosystem": "Ethereum (as referenced; unconfirmed)",
+  "year": 2023,
+  "architecture": "Unknown — could not be independently confirmed.",
+  "rootCause": "Unknown — could not be independently confirmed.",
+  "fundLockMechanism": "This entry exists because an incident named \"Perfect Finance\" (2023, ~$3M) appears in FLARE's early design references. We deliberately searched public reporting (DeFi hack trackers, rekt.news leaderboard, De.Fi Rekt reports, general web search) as of September 2026 and could not find independent corroborating sources naming a protocol called \"Perfect Finance\" with a 2023 incident. Rather than invent a plausible-sounding root cause to fill the slot, we are labeling it unverified and excluding it from every FLARE statistic.",
+  "taxonomy": ["withdrawal-failures"],
+  "amount": {
+    "valueUsd": null,
+    "displayLabel": "Unverified — no confirmed amount",
+    "category": "unverified",
+    "asOf": null,
+    "note": "The $3M figure from the original design reference has no corroborating source we could locate and is not repeated here as fact."
+  },
+  "amountVerificationStatus": "unverified",
+  "recoveryAttempts": "Unknown — could not be independently confirmed.",
+  "primarySources": [],
+  "limitations": "This case study could not be verified against public reporting as of the research date. It is retained, clearly flagged, rather than silently dropped, so the gap is visible — and it is excluded from every aggregate figure FLARE displays (the 'affected in case studies' total, taxonomy counts used for marketing copy, etc.). If you have a primary source for this incident, FLARE's data model supports upgrading its verification status once one is added.",
+  "disputedNotes": "Unconfirmed as of 2026-09-10. Not counted in any FLARE total until a primary source is found."
+}

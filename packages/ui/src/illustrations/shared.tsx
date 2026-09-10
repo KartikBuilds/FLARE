@@ -1,6 +1,16 @@
 import * as React from "react";
 
 /**
+ * Rounds trig-derived SVG coordinates to 2dp. Server (Node/V8) and client
+ * (browser/V8) can compute the last bit of Math.cos/Math.sin differently,
+ * which serializes as a different decimal string and trips a hydration
+ * mismatch — rounding makes both sides agree on the same short string.
+ */
+export function round2(n: number): number {
+  return Math.round(n * 100) / 100;
+}
+
+/**
  * Stable unique id for SVG defs within a single illustration instance.
  * Uses React.useId() (not useRef/useState) so illustrations can render as
  * plain Server Components — no "use client" boundary required just to draw
