@@ -1,33 +1,7 @@
 import Link from "next/link";
 import { SectionLabel, Annotation, Badge } from "@flare/ui";
 import { BookStack } from "@flare/ui/illustrations";
-
-const pillars = [
-  {
-    name: "Static Analysis",
-    status: "Implemented",
-    tone: "success" as const,
-    description: "Slither-driven extraction of contracts, storage, calls and control flow into a normalized IR.",
-  },
-  {
-    name: "Graph Models",
-    status: "Implemented",
-    tone: "success" as const,
-    description: "A NetworkX dependency and fund-flow graph built from the IR, visualized with React Flow.",
-  },
-  {
-    name: "Formal Methods",
-    status: "Partial",
-    tone: "warning" as const,
-    description: "Local Foundry/Anvil execution validates specific findings; this is targeted validation, not full formal verification of arbitrary properties.",
-  },
-  {
-    name: "AI-Assisted Reasoning",
-    status: "Optional, explanation-only",
-    tone: "neutral" as const,
-    description: "When enabled, an AI provider may explain deterministic findings or summarize architecture — it never creates a finding on its own, and the core pipeline runs fully with it disabled.",
-  },
-];
+import { RESEARCH_PILLARS as pillars } from "@/lib/research-pillars";
 
 export function ResearchSection() {
   return (
