@@ -1,0 +1,65 @@
+{
+  "_notice": "Written and frozen before running the detector registry against this set — no detector logic was modified after seeing these results. See docs/BENCHMARK_METHODOLOGY.md's holdout section and evaluation/holdout-result.json for the actual run.",
+  "cases": {
+    "holdout-01-library-registry": {
+      "files": ["Registry.sol", "VaultRouter.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["library-dependencies"],
+      "explanation": "Registry.setExecutor has no access control; VaultRouter delegatecalls to whatever it currently returns. Multi-contract variant of the library-dependency pattern."
+    },
+    "holdout-02-bridge-relayer": {
+      "files": ["Bridge.sol", "Relayer.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["missing-recovery", "withdrawal-failures"],
+      "explanation": "Bridge.release only accepts calls from the fixed relayer address; Relayer can be permanently disabled with no replacement or fallback path for funds already deposited."
+    },
+    "holdout-03-pausable-vault": {
+      "files": ["PausableVault.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["state-transitions"],
+      "explanation": "pause() exists with no corresponding unpause() anywhere; once paused, withdraw() is permanently unreachable. Bool-flag pattern, not FLARE's dev-fixture enum pattern."
+    },
+    "holdout-04-unchecked-erc20-vault": {
+      "files": ["TokenVault.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["transfer-logic"],
+      "explanation": "transferFrom/transfer return values are never checked; a non-reverting-on-failure token desyncs internal accounting from actual balances."
+    },
+    "holdout-05-staking-no-exit": {
+      "files": ["StakingPool.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["missing-recovery", "withdrawal-failures"],
+      "explanation": "No user-facing withdrawal function exists anywhere for the pool's primary staked asset; the only balance-reducing function burns funds rather than returning them."
+    },
+    "holdout-06-immutable-wallet-library": {
+      "files": ["Lib.sol", "Wallet.sol"],
+      "expect_any_finding": true,
+      "taxonomy": ["library-dependencies"],
+      "explanation": "Wallet's library target is immutable (cannot be repointed), but the library itself (Lib.sol) has an unprotected selfdestruct — the Parity mechanism's shape, reproduced originally across two contracts."
+    },
+    "holdout-07-safe-vault-guarded": {
+      "files": ["GuardedVault.sol"],
+      "expect_any_finding": false,
+      "taxonomy": [],
+      "explanation": "Paired safe control for holdout-03: correct unpause() plus an always-available emergencyWithdraw()."
+    },
+    "holdout-08-safe-bridge-with-timeout": {
+      "files": ["SafeBridge.sol"],
+      "expect_any_finding": false,
+      "taxonomy": [],
+      "explanation": "Paired safe control for holdout-02: a timeout-based self-service claim removes the single-point-of-failure dependency on the relayer."
+    },
+    "holdout-09-safe-erc20-vault": {
+      "files": ["SafeTokenVault.sol"],
+      "expect_any_finding": false,
+      "taxonomy": [],
+      "explanation": "Paired safe control for holdout-04: every transfer's return value is checked and reverts on failure."
+    },
+    "holdout-10-safe-staking-with-withdraw": {
+      "files": ["SimpleStaking.sol"],
+      "expect_any_finding": false,
+      "taxonomy": [],
+      "explanation": "Paired safe control for holdout-05: an ordinary staking contract where every staker can always withdraw their own principal."
+    }
+  }
+}

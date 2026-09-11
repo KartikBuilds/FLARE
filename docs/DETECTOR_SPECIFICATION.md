@@ -66,6 +66,20 @@ Milestone 6 commit): a constructor's initial state assignment was initially misr
 `.call{value: x}(...)` wasn't recognized as a low-level call because the call-options brace
 syntax doesn't contain a bare `.call(`.
 
+## Known precision gap: FLARE-REC-001 (found by holdout testing, not fixed yet)
+
+`FLARE-REC-001` flags any value-accepting contract that has no function whose *name* matches
+`rescue|sweep|recover` — it never checks whether an ordinary, differently-named, always-reachable
+withdrawal function already exists for the asset the contract is actually designed to hold. The
+independent holdout benchmark (`contracts/holdout/`, see
+[`BENCHMARK_METHODOLOGY.md`](BENCHMARK_METHODOLOGY.md) and
+[`evaluation/HOLDOUT_EVALUATION.md`](../evaluation/HOLDOUT_EVALUATION.md)) found this directly: 4
+of 4 safe holdout fixtures with a real, working, differently-named `withdraw`/`claimAfterTimeout`
+function were still flagged. The dev-set's own 4 fixtures for this detector never exercised that
+case. Tracked here rather than silently patched — the holdout ground truth was frozen
+specifically so a result like this couldn't be tuned away after the fact; fixing it belongs in a
+future detector-registry revision with its own fixture updates and a version bump.
+
 ## Non-negotiables
 
 - No detector may create a `Finding` without a concrete `FunctionIR.source` (file + line span).

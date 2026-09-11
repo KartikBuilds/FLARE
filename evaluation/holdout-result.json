@@ -1,0 +1,93 @@
+{
+  "suite": "holdout",
+  "precision": 0.6,
+  "recall": 1.0,
+  "total_cases": 10,
+  "true_positives": 6,
+  "true_negatives": 0,
+  "false_positives": 4,
+  "false_negatives": 0,
+  "errors": 0,
+  "cases": [
+    {
+      "case": "holdout-01-library-registry",
+      "expected": true,
+      "actual": true,
+      "finding_count": 1,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-02-bridge-relayer",
+      "expected": true,
+      "actual": true,
+      "finding_count": 2,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-03-pausable-vault",
+      "expected": true,
+      "actual": true,
+      "finding_count": 2,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-04-unchecked-erc20-vault",
+      "expected": true,
+      "actual": true,
+      "finding_count": 3,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-05-staking-no-exit",
+      "expected": true,
+      "actual": true,
+      "finding_count": 1,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-06-immutable-wallet-library",
+      "expected": true,
+      "actual": true,
+      "finding_count": 2,
+      "outcome": "true_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-07-safe-vault-guarded",
+      "expected": false,
+      "actual": true,
+      "finding_count": 3,
+      "outcome": "false_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-08-safe-bridge-with-timeout",
+      "expected": false,
+      "actual": true,
+      "finding_count": 3,
+      "outcome": "false_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-09-safe-erc20-vault",
+      "expected": false,
+      "actual": true,
+      "finding_count": 1,
+      "outcome": "false_positive",
+      "error": null
+    },
+    {
+      "case": "holdout-10-safe-staking-with-withdraw",
+      "expected": false,
+      "actual": true,
+      "finding_count": 2,
+      "outcome": "false_positive",
+      "error": null
+    }
+  ]
+}

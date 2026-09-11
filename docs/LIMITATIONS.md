@@ -67,6 +67,25 @@ working") is unreachable by this implementation, since distinguishing "fully aut
 silently inflates or deflates a score — the multiplier and offset are simply capped at what's
 actually computed.
 
+## Multi-file, import-based Solidity projects are not fully supported
+
+`services/analyzer/app/core/slither_service.py::run_slither` invokes Slither against a
+comma-joined list of file paths (crytic-compile's "solc" platform). That platform's own target
+validation (`crytic_compile/platform/solc.py::is_supported`) only accepts a single existing file
+path — a comma-joined multi-file string is silently treated as one nonexistent filename, and a
+bare directory is explicitly rejected unless it contains a recognized framework config
+(`foundry.toml`, `hardhat.config.js`, etc.), which an arbitrary GitHub/ZIP upload won't have.
+**Discovered directly**, not assumed: building the independent holdout benchmark
+(`contracts/holdout/`, see [`BENCHMARK_METHODOLOGY.md`](BENCHMARK_METHODOLOGY.md)) included
+genuinely multi-contract cases, and the very first run against them failed with `"Registry.sol,
+VaultRouter.sol" does not exist`. The holdout runner works around it by analyzing each file
+independently and unioning findings (correct for that benchmark's import-free companion-contract
+cases) — but a real uploaded project that spans multiple files *with actual `import` statements
+between them* is not correctly analyzed end to end by the live pipeline today: each file would
+need to be self-contained, or the project would need a recognized framework config. Fixing this
+properly means adopting crytic-compile's Standard JSON input platform
+(`solc_standard_json.py`), which does support genuine cross-file compilation — not yet done.
+
 ## Detector registry scope
 
 Ten detectors, two per taxonomy category — see [`DETECTOR_SPECIFICATION.md`](DETECTOR_SPECIFICATION.md)
