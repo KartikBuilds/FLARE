@@ -32,6 +32,23 @@ class SeverityCounts(CamelModel):
     low: int = 0
 
 
+class FindingScoreBreakdown(CamelModel):
+    """Per-finding factor values behind the analysis's overall FLARE score —
+    see docs/RISK_METHODOLOGY.md. Exposed so the UI can show *why* a score
+    is what it is, not just the final number."""
+
+    finding_id: str
+    severity_weight: float
+    confidence: float
+    reachability: str
+    reachability_weight: float
+    asset_exposure: float
+    dependency_criticality: float
+    recovery_offset: float
+    validated: bool
+    contribution: float
+
+
 class AnalysisSummary(CamelModel):
     id: str
     origin: str = "live"
@@ -41,7 +58,10 @@ class AnalysisSummary(CamelModel):
     created_at: str
     flare_score: float | None = None
     risk_band: str | None = None
+    formula_version: str | None = None
     coverage: float | None = None
+    coverage_notes: list[str] = []
+    score_breakdown: list[FindingScoreBreakdown] = []
     finding_count: int = 0
     severity_counts: SeverityCounts = SeverityCounts()
     error: str | None = None

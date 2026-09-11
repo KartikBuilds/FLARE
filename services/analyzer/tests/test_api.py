@@ -81,3 +81,38 @@ def test_upload_zip_rejects_zip_slip(tmp_path):
 def test_analyze_github_rejects_non_github_url():
     res = client.post("/analyses/github", json={"url": "https://gitlab.com/foo/bar"})
     assert res.status_code == 400
+
+
+def test_verified_address_returns_501_when_not_configured(monkeypatch):
+    import app.api.routes as routes_module
+
+    monkeypatch.setattr(routes_module.settings, "etherscan_api_key", None)
+    res = client.post("/analyses/verified-address", json={"address": "0x" + "11" * 20})
+    assert res.status_code == 501
+    assert "not configured" in res.json()["detail"]
+
+
+def test_analyze_benchmark_case_end_to_end(tmp_path, monkeypatch):
+    import app.api.routes as routes_module
+
+    detector_dir = tmp_path / "flare-lib-001"
+    detector_dir.mkdir()
+    (detector_dir / "vulnerable.sol").write_text(
+        "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.24;\ncontract V {}\n"
+    )
+    monkeypatch.setattr(routes_module.settings, "benchmarks_dir", tmp_path)
+
+    res = client.post("/analyses/benchmark", json={"case": "flare-lib-001/vulnerable.sol"})
+    assert res.status_code == 200
+    queued = res.json()
+    assert queued["status"] == "queued"
+    assert queued["projectName"] == "flare-lib-001/vulnerable.sol"
+
+    body = _poll_until_done(queued["id"])
+    assert body["status"] == "complete"
+    assert any(c["name"] == "V" for c in body["ir"]["contracts"])
+
+
+def test_analyze_benchmark_case_rejects_unknown_case():
+    res = client.post("/analyses/benchmark", json={"case": "../../etc/passwd"})
+    assert res.status_code == 400

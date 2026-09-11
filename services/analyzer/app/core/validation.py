@@ -140,7 +140,12 @@ def validate_findings(
             except Exception:
                 continue
 
-        return [f.model_copy(update={"validated": True}) if f.id in validated_ids else f for f in findings]
+        return [
+            f.model_copy(update={"validated": True, "confidence": max(f.confidence, 0.9)})
+            if f.id in validated_ids
+            else f
+            for f in findings
+        ]
     except ValidationUnavailable:
         return findings
     finally:

@@ -5,11 +5,27 @@ No detector here calls an LLM or any other non-deterministic service."""
 
 from __future__ import annotations
 
+import re
 from abc import ABC, abstractmethod
 from pathlib import Path
 
 from app.schemas.finding import Finding
 from app.schemas.ir import FunctionIR, ProjectIR, SourceLocation
+
+_GUARDED_MODIFIER_RE = re.compile(r"only|auth|admin|owner|restrict|guard", re.IGNORECASE)
+
+
+def reachability_for(function: FunctionIR) -> str:
+    """Deterministic heuristic, not a full access-control analysis: a
+    public/external function is "public" reachability unless it carries a
+    modifier whose *name* looks access-control-shaped (only.../auth.../
+    onlyOwner/...), in which case it's "privileged". Anything not directly
+    externally callable is "theoretical" — see docs/RISK_METHODOLOGY.md."""
+    if function.visibility not in ("public", "external"):
+        return "theoretical"
+    if any(_GUARDED_MODIFIER_RE.search(m) for m in function.modifiers):
+        return "privileged"
+    return "public"
 
 
 def build_source_map(files: list[Path]) -> dict[str, str]:
@@ -75,6 +91,7 @@ class Detector(ABC):
             taxonomy=self.taxonomy,
             severity=severity or self.default_severity,
             confidence=confidence,
+            reachability=reachability_for(function),
             file=location.file if location else "",
             line_start=location.line_start if location else 0,
             line_end=location.line_end if location else 0,

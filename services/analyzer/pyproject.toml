@@ -11,13 +11,13 @@ dependencies = [
   "slither-analyzer>=0.10.4,<0.11",
   "solc-select>=1.0.4,<2",
   "networkx>=3.4,<4",
+  "httpx>=0.27,<0.28",
 ]
 
 [project.optional-dependencies]
 dev = [
   "pytest>=8.3,<9",
   "pytest-asyncio>=0.24,<0.25",
-  "httpx>=0.27,<0.28",
   "ruff>=0.7,<0.8",
 ]
 

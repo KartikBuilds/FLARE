@@ -42,11 +42,12 @@ def build_fund_flow_graph(ir: ProjectIR, findings: list[Finding]) -> FundFlowGra
     blocked_node_ids: set[str] = set()
     findings_by_node: dict[str, list[str]] = {}
     for finding in findings:
-        if finding.taxonomy not in _BLOCKING_TAXONOMY:
-            continue
         # Findings key on file/line, not directly on a function id — recover
         # the function by matching the finding's source location back to a
-        # function in the same contract-scoped file.
+        # function in the same contract-scoped file. Every finding's node is
+        # recorded here (used by risk scoring's asset-exposure factor); only
+        # findings in a "broken exit" taxonomy category additionally mark
+        # the node as visually "blocked" in the fund-flow view.
         for contract in ir.contracts:
             for func in contract.functions:
                 if (
@@ -55,8 +56,9 @@ def build_fund_flow_graph(ir: ProjectIR, findings: list[Finding]) -> FundFlowGra
                     and func.source.line_start <= finding.line_start <= func.source.line_end
                 ):
                     node_id = _node_id(contract.name, func.name)
-                    blocked_node_ids.add(node_id)
                     findings_by_node.setdefault(node_id, []).append(finding.id)
+                    if finding.taxonomy in _BLOCKING_TAXONOMY:
+                        blocked_node_ids.add(node_id)
 
     graph = nx.DiGraph()
     all_function_names: dict[str, list[str]] = {}  # function name -> [node_ids] across contracts

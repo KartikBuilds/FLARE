@@ -73,10 +73,14 @@ in prose). `apps/web` consumes this through a typed contract (`packages/schemas`
 `packages/graph`) matched field-for-field with the Python side (`CamelModel` alias generation —
 see `services/analyzer/app/schemas/base.py`). See [`ARCHITECTURE.md`](ARCHITECTURE.md).
 
-**What RO4 does not yet include:** the full deterministic risk-scoring formula
+**Update:** the deterministic risk-scoring formula
 (`FLARE_score = max(contribution) × coverage_multiplier`, documented in
-[`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md)) is specified precisely but not yet wired into the
-live pipeline — a completed analysis today reports findings and a graph, not yet a score.
+[`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md), now v2.0.0) is wired into the live pipeline
+(`app/core/scoring.py`) — a completed analysis reports a real score, band, and full per-finding
+factor breakdown, with boundary/monotonicity/regression tests
+(`services/analyzer/tests/test_scoring.py`). What RO4 still does not include: the frontend's
+`/app/analysis/new` flow doesn't call the live API yet (tracked as the remaining piece of this
+objective — see [`LIMITATIONS.md`](LIMITATIONS.md)).
 
 ## RO5 — Developer, governance, standards and insurance recommendations
 

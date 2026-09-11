@@ -1,14 +1,18 @@
 """Safe intake for every source FLARE accepts: direct .sol uploads, a
-project ZIP, or a public GitHub URL. Every path here treats its input as
-untrusted — see SECURITY.md. Nothing in this module ever executes code
-from the analyzed project; it only reads and copies files."""
+project ZIP, a public GitHub URL, or a verified contract address. Every
+path here treats its input as untrusted — see SECURITY.md. Nothing in this
+module ever executes code from the analyzed project; it only reads and
+copies files."""
 
 from __future__ import annotations
 
+import json
 import re
 import subprocess
 import zipfile
 from pathlib import Path
+
+import httpx
 
 from app.config import settings
 
@@ -132,3 +136,109 @@ def clone_github_repo(url: str, dest: Path, timeout_seconds: int = 30) -> list[P
     if len(sol_files) > settings.max_upload_files:
         raise IntakeError(f"Repository contains more than {settings.max_upload_files} .sol files.")
     return sol_files
+
+
+ADDRESS_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
+
+# Etherscan (mainnet only, v1-compatible endpoint — works with any free-tier
+# key). Chain scope is documented in docs/LIMITATIONS.md, not silently
+# assumed.
+_ETHERSCAN_API_URL = "https://api.etherscan.io/api"
+
+
+def fetch_verified_source(address: str, api_key: str, dest: Path, timeout_seconds: int = 20) -> list[Path]:
+    """Fetches a verified contract's source from Etherscan and writes it to
+    dest as one or more .sol files. Never executes anything — the response
+    is source text, written to disk exactly like an upload."""
+    if not ADDRESS_RE.match(address.strip()):
+        raise IntakeError("Not a valid 0x-prefixed, 40-character contract address.")
+
+    try:
+        resp = httpx.get(
+            _ETHERSCAN_API_URL,
+            params={
+                "module": "contract",
+                "action": "getsourcecode",
+                "address": address.strip(),
+                "apikey": api_key,
+            },
+            timeout=timeout_seconds,
+        )
+        resp.raise_for_status()
+        payload = resp.json()
+    except httpx.HTTPError as exc:
+        raise IntakeError("Could not reach the block-explorer API.") from exc
+    except ValueError as exc:
+        raise IntakeError("Block-explorer API returned an unreadable response.") from exc
+
+    results = payload.get("result")
+    if payload.get("status") != "1" or not isinstance(results, list) or not results:
+        raise IntakeError("Block-explorer API returned no verified source for that address.")
+
+    entry = results[0]
+    source_code = (entry.get("SourceCode") or "").strip()
+    if not source_code:
+        raise IntakeError("That address has no verified source code on record.")
+
+    contract_name = entry.get("ContractName") or "Contract"
+    dest.mkdir(parents=True, exist_ok=True)
+    written: list[Path] = []
+
+    # Etherscan encodes a multi-file verified project as either
+    # `{{ "language": ..., "sources": {...} }}` (double-braced) or a plain
+    # JSON object with a "sources" key; a single-file contract is just raw
+    # Solidity text.
+    unwrapped = source_code
+    if unwrapped.startswith("{{") and unwrapped.endswith("}}"):
+        unwrapped = unwrapped[1:-1]
+
+    parsed_multi: dict | None = None
+    if unwrapped.startswith("{"):
+        try:
+            candidate = json.loads(unwrapped)
+            if isinstance(candidate, dict) and "sources" in candidate:
+                parsed_multi = candidate["sources"]
+        except (json.JSONDecodeError, TypeError):
+            parsed_multi = None
+
+    if parsed_multi:
+        for i, (file_key, file_obj) in enumerate(parsed_multi.items()):
+            content = file_obj.get("content", "") if isinstance(file_obj, dict) else ""
+            if not content:
+                continue
+            safe_name = Path(file_key).name or f"source_{i}.sol"
+            if not safe_name.endswith(".sol"):
+                safe_name += ".sol"
+            path = dest / safe_name
+            path.write_text(content, encoding="utf-8")
+            written.append(path)
+    else:
+        path = dest / f"{contract_name}.sol"
+        path.write_text(source_code, encoding="utf-8")
+        written.append(path)
+
+    if not written:
+        raise IntakeError("Verified source for that address contained no usable .sol content.")
+    return written
+
+
+def resolve_benchmark_case(case: str, benchmarks_root: Path) -> Path:
+    """Resolves a `<detector-dir>/<file>.sol` id (e.g.
+    'flare-lib-001/vulnerable.sol') to a real fixture file, rejecting
+    anything that isn't an exact, existing member of the fixture set — the
+    id is caller-supplied and must never be treated as a trustworthy path."""
+    parts = case.strip().split("/")
+    if len(parts) != 2 or not parts[0] or not parts[1]:
+        raise IntakeError("Invalid benchmark case id.")
+    detector_dir, filename = parts
+    if filename not in {"vulnerable.sol", "corrected.sol", "safe-negative.sol", "false-positive.sol"}:
+        raise IntakeError("Invalid benchmark case id.")
+
+    candidate = (benchmarks_root / detector_dir / filename).resolve()
+    try:
+        candidate.relative_to(benchmarks_root.resolve())
+    except ValueError as exc:
+        raise IntakeError("Invalid benchmark case id.") from exc
+    if not candidate.is_file():
+        raise IntakeError("Unknown benchmark case id.")
+    return candidate

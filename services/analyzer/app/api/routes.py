@@ -5,7 +5,15 @@ from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile
 
-from app.core.intake import IntakeError, clone_github_repo, extract_zip, validate_sol_files
+from app.config import settings
+from app.core.intake import (
+    IntakeError,
+    clone_github_repo,
+    extract_zip,
+    fetch_verified_source,
+    resolve_benchmark_case,
+    validate_sol_files,
+)
 from app.core.pipeline import queue_analysis, run_pipeline
 from app.core.workspace import cleanup_workspace, persistent_workspace
 from app.db.database import db_session
@@ -96,4 +104,51 @@ async def analyze_github(payload: dict, background_tasks: BackgroundTasks) -> An
     project_name = repo or owner
     summary = queue_analysis(workspace.name, project_name)
     background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
+    return summary
+
+
+@router.post("/analyses/verified-address", response_model=AnalysisSummary)
+async def analyze_verified_address(payload: dict, background_tasks: BackgroundTasks) -> AnalysisSummary:
+    if not settings.etherscan_api_key:
+        raise HTTPException(
+            status_code=501,
+            detail=(
+                "Verified-address intake is not configured — set FLARE_ETHERSCAN_API_KEY to "
+                "enable it. Every other intake method (files, ZIP, GitHub URL, benchmark case) "
+                "works without it."
+            ),
+        )
+
+    address = payload.get("address", "")
+    workspace = persistent_workspace()
+
+    try:
+        sol_files = fetch_verified_source(address, settings.etherscan_api_key, workspace / "extracted")
+    except IntakeError as exc:
+        cleanup_workspace(workspace)
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    project_name = address.strip()
+    summary = queue_analysis(workspace.name, project_name)
+    background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
+    return summary
+
+
+@router.post("/analyses/benchmark", response_model=AnalysisSummary)
+async def analyze_benchmark_case(payload: dict, background_tasks: BackgroundTasks) -> AnalysisSummary:
+    case = payload.get("case", "")
+    workspace = persistent_workspace()
+
+    try:
+        source_path = resolve_benchmark_case(case, settings.benchmarks_dir)
+    except IntakeError as exc:
+        cleanup_workspace(workspace)
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    dest = workspace / "extracted" / source_path.name
+    dest.write_bytes(source_path.read_bytes())
+
+    project_name = case
+    summary = queue_analysis(workspace.name, project_name)
+    background_tasks.add_task(_run_and_cleanup, workspace.name, [dest], project_name, workspace)
     return summary

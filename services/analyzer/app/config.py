@@ -24,6 +24,9 @@ class Settings:
     db_path: Path = field(default_factory=lambda: Path(os.environ.get("FLARE_DB_PATH", "/tmp/flare.db")))
     ai_provider: str = field(default_factory=lambda: os.environ.get("FLARE_AI_PROVIDER", "disabled"))
     etherscan_api_key: str | None = field(default_factory=lambda: os.environ.get("FLARE_ETHERSCAN_API_KEY"))
+    benchmarks_dir: Path = field(
+        default_factory=lambda: Path(os.environ.get("FLARE_BENCHMARKS_DIR", "/srv/contracts/benchmarks"))
+    )
 
     # Intake safety limits — enforced before any project touches the
     # filesystem beyond the isolated workspace. See SECURITY.md.

@@ -1,11 +1,14 @@
 import zipfile
 
+import httpx
 import pytest
 
 from app.core.intake import (
     IntakeError,
     extract_zip,
+    fetch_verified_source,
     parse_github_url,
+    resolve_benchmark_case,
     validate_sol_files,
 )
 
@@ -130,3 +133,90 @@ class TestParseGithubUrl:
     def test_rejects_malformed_url(self):
         with pytest.raises(IntakeError):
             parse_github_url("not a url")
+
+
+class TestFetchVerifiedSource:
+    def test_rejects_invalid_address(self, tmp_path):
+        with pytest.raises(IntakeError, match="valid 0x-prefixed"):
+            fetch_verified_source("not-an-address", "fake-key", tmp_path)
+
+    def test_parses_single_file_response(self, tmp_path, monkeypatch):
+        def fake_get(url, params, timeout):
+            return httpx.Response(
+                200,
+                request=httpx.Request("GET", "https://api.etherscan.io/api"),
+                json={
+                    "status": "1",
+                    "result": [
+                        {
+                            "SourceCode": "contract Token { function f() public {} }",
+                            "ContractName": "Token",
+                        }
+                    ],
+                },
+            )
+
+        monkeypatch.setattr(httpx, "get", fake_get)
+        files = fetch_verified_source("0x" + "11" * 20, "fake-key", tmp_path)
+        assert len(files) == 1
+        assert files[0].name == "Token.sol"
+        assert "contract Token" in files[0].read_text()
+
+    def test_parses_multi_file_response(self, tmp_path, monkeypatch):
+        multi_source = (
+            '{{"language":"Solidity","sources":{'
+            '"contracts/A.sol":{"content":"contract A {}"},'
+            '"contracts/B.sol":{"content":"contract B {}"}'
+            "}}}"
+        )
+
+        def fake_get(url, params, timeout):
+            return httpx.Response(
+                200,
+                request=httpx.Request("GET", "https://api.etherscan.io/api"),
+                json={
+                    "status": "1",
+                    "result": [{"SourceCode": multi_source, "ContractName": "A"}],
+                },
+            )
+
+        monkeypatch.setattr(httpx, "get", fake_get)
+        files = fetch_verified_source("0x" + "22" * 20, "fake-key", tmp_path)
+        names = sorted(f.name for f in files)
+        assert names == ["A.sol", "B.sol"]
+
+    def test_raises_when_no_verified_source(self, tmp_path, monkeypatch):
+        def fake_get(url, params, timeout):
+            return httpx.Response(
+                200,
+                request=httpx.Request("GET", "https://api.etherscan.io/api"),
+                json={"status": "0", "result": "Contract source code not verified"},
+            )
+
+        monkeypatch.setattr(httpx, "get", fake_get)
+        with pytest.raises(IntakeError, match="no verified source"):
+            fetch_verified_source("0x" + "33" * 20, "fake-key", tmp_path)
+
+
+class TestResolveBenchmarkCase:
+    def test_resolves_a_real_fixture(self, tmp_path):
+        detector_dir = tmp_path / "flare-lib-001"
+        detector_dir.mkdir()
+        (detector_dir / "vulnerable.sol").write_text("contract V {}")
+
+        resolved = resolve_benchmark_case("flare-lib-001/vulnerable.sol", tmp_path)
+        assert resolved == (detector_dir / "vulnerable.sol").resolve()
+
+    def test_rejects_path_traversal(self, tmp_path):
+        with pytest.raises(IntakeError):
+            resolve_benchmark_case("../../etc/passwd", tmp_path)
+
+    def test_rejects_unknown_filename(self, tmp_path):
+        detector_dir = tmp_path / "flare-lib-001"
+        detector_dir.mkdir()
+        with pytest.raises(IntakeError):
+            resolve_benchmark_case("flare-lib-001/evil.sol", tmp_path)
+
+    def test_rejects_missing_case(self, tmp_path):
+        with pytest.raises(IntakeError, match="Unknown benchmark case"):
+            resolve_benchmark_case("flare-lib-001/vulnerable.sol", tmp_path)

@@ -26,12 +26,19 @@ frontend (`apps/web/app/app/settings/page.tsx`) but no backend implementation ye
 pipeline runs identically either way, which is the point: AI, when it exists, will only explain
 existing findings, never create them.
 
-## Risk scoring is specified but not wired in
+## Risk scoring: implemented (v2.0.0), with two documented gaps
 
-[`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md) documents the complete FLARE-score formula. It is
-not implemented in `services/analyzer` yet — `AnalysisSummary.flareScore` is `null` on every
-real analysis today. The dashboard and demo data show illustrative scores explicitly labeled
-`DEMO`; nothing on a live analysis claims a score that wasn't actually computed.
+[`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md) documents the complete FLARE-score formula, and
+`services/analyzer/app/core/scoring.py` computes it on every real completed analysis —
+`AnalysisSummary.flareScore`/`riskBand`/`scoreBreakdown` are populated, not `null`. Two things
+remain honestly incomplete: (1) two of the six coverage-penalty conditions ("unresolved
+external dependency interfaces", "external contracts referenced are unverified") have no
+deterministic signal implemented yet, so they never fire — see `coverageNotes` on any analysis
+result; (2) `recovery_offset`'s highest tier (0.6, "fully automated alternative verified
+working") is unreachable by this implementation, since distinguishing "fully automated" from
+"manual/governance-mediated" recovery isn't decidable from static analysis alone. Neither gap
+silently inflates or deflates a score — the multiplier and offset are simply capped at what's
+actually computed.
 
 ## Detector registry scope
 

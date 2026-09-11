@@ -3,22 +3,24 @@ title: Risk Methodology
 description: A transparent, documented formula — never an unexplained AI probability.
 ---
 
-**Status: specified, not yet wired into the live pipeline.** This formula is the contract any
-scoring implementation must match, and it's what the demo data on the dashboard illustrates —
-but `services/analyzer` doesn't compute it yet, so a real analysis today reports findings and a
-fund-flow graph with `flareScore: null`, not a live number. See
-[Limitations](/docs/limitations) and the detector registry's own status for what *is* wired in.
+**Status: implemented — formula v2.0.0, wired into the live pipeline.** A real completed
+analysis reports a real `flareScore`, `riskBand`, and a full per-finding `scoreBreakdown` —
+not a `null`. See [Limitations](/docs/limitations) for what still isn't computed (two of the
+coverage-penalty rows below), and `docs/RISK_METHODOLOGY.md` in the repository for the full
+v1→v2 changelog.
 
 The FLARE score is a number from 0–100 computed by a fixed, published formula. Given the same
 findings and the same coverage inputs, it always produces the same score. No step in this
-calculation is delegated to a language model.
+calculation is delegated to a language model, and the score is never presented as a probability
+— it's a deterministic function of concrete evidence.
 
 ## Per-finding contribution
 
 Each finding produces a contribution score:
 
 ```
-contribution = severity_weight[severity] × confidence × reachability × (1 − recovery_offset)
+contribution = severity_weight[severity] × confidence × reachability_weight
+             × asset_exposure × dependency_criticality × (1 − recovery_offset)
 ```
 
 **Severity weight** — a ceiling on how much a single finding of that severity can contribute:
@@ -30,23 +32,33 @@ contribution = severity_weight[severity] × confidence × reachability × (1 −
 | Medium | 40 |
 | Low | 15 |
 
-**Confidence** (0.0–1.0) — the detector's own confidence in the finding. A finding backed by
-a passing Foundry proof-of-concept is floored at 0.9; a static-only finding with no dynamic
-validation is capped at 0.75, reflecting the extra uncertainty of not having executed
-anything.
+**Confidence** (0.0–1.0) — the detector's own declared confidence, raised to at least 0.9 once
+the finding has passed executable Foundry/Anvil validation. (v1 of this page described an
+additional 0.75 cap for unvalidated findings; that cap was dropped in implementation because
+detector-declared confidence is already a calibrated, per-pattern value — see the changelog in
+`docs/RISK_METHODOLOGY.md`.)
 
-**Reachability** (0.0–1.0) — how the vulnerable path can actually be reached:
+**Reachability** (0.0–1.0) — how the vulnerable path can actually be reached, from a
+deterministic heuristic over the flagged function's visibility and modifier names:
 
 | Reachability | Factor | Meaning |
 | --- | --- | --- |
-| Public | 1.0 | Reachable from any unauthenticated caller |
-| Privileged | 0.7 | Reachable only via an admin/owner-gated role |
-| Theoretical | 0.4 | No concrete call path found; flagged from structure alone |
+| Public | 1.0 | External/public, no access-control-shaped modifier |
+| Privileged | 0.7 | External/public but guarded by a modifier like `onlyOwner`/`onlyAdmin` |
+| Theoretical | 0.4 | Internal/private — not directly externally callable |
 
-**Recovery offset** (0.0–0.6) — reduces the contribution when a *different*, verified-working
-recovery path exists for the same assets elsewhere in the contract: `0.0` none, `0.3` a
-manual/governance-mediated process exists, `0.6` a fully automated alternative exit is
-verified working.
+**Asset exposure** (0.0–1.0, new in v2) — derived from the finding's node in the fund-flow
+graph: `1.0` for an entry/exit/blocked node (a real fund path), `0.6` for an internal/
+constructor node the graph still connects, `0.3` when nothing in the graph matches.
+
+**Dependency criticality** (0.0–1.0, new in v2) — `1.0` for a Library Dependencies finding,
+`0.6` for State Transitions/Missing Recovery, `0.3` otherwise.
+
+**Recovery offset** (0.0–0.3 in this implementation) — reduces the contribution when a
+genuinely *different*, working exit exists elsewhere in the same contract: `0.0` none (or the
+finding is itself a Missing Recovery finding), `0.3` an alternative exit path exists. The 0.6
+("fully automated alternative, verified working") tier from the original draft spec is never
+reached — there's no deterministic way to prove "fully automated" from static analysis alone.
 
 ## Overall score
 
@@ -58,18 +70,19 @@ We take the **maximum**, not a sum — stacking many low-severity findings shoul
 critical score. `coverage_multiplier` starts at 1.0 and is reduced when the analysis itself
 was incomplete:
 
-| Condition | Penalty |
-| --- | --- |
-| Source could not be fully resolved (missing imports) | −0.15 |
-| Compilation failed entirely (heuristic-only fallback) | −0.30 |
-| Unresolved external dependency interfaces | −0.10 |
-| Inline assembly/Yul present and not analyzed | −0.10 |
-| External contracts referenced are unverified | −0.05 |
-| No Foundry/Anvil dynamic validation performed at all | −0.10 |
+| Condition | Penalty | Computed today? |
+| --- | --- | --- |
+| Source could not be fully resolved (missing imports) | −0.15 | Yes |
+| Compilation failed entirely (heuristic-only fallback) | −0.30 | N/A — a failed compile never reaches scoring at all |
+| Unresolved external dependency interfaces | −0.10 | Not yet |
+| Inline assembly/Yul present and not analyzed | −0.10 | Yes |
+| External contracts referenced are unverified | −0.05 | Not yet |
+| No Foundry/Anvil dynamic validation performed at all | −0.10 | Yes |
 
 `coverage_multiplier` is floored at 0.5 and the same number is surfaced in the UI as the
-analysis's **confidence/coverage** figure — one honest number, not two similar-looking ones
-that could quietly disagree.
+analysis's **confidence/coverage** figure, alongside the specific reasons behind it
+(`coverageNotes`) — one honest number plus its reasoning, not two similar-looking figures that
+could quietly disagree.
 
 ## Risk bands
 
@@ -84,19 +97,20 @@ that could quietly disagree.
 ## Worked example
 
 A `FLARE-STATE-001` finding (Critical, weight 100) with a passing Foundry proof-of-concept
-(confidence floored at 0.9), reachable from any depositor (reachability 1.0), with no
-alternative recovery path (offset 0.0):
+(confidence floored at 0.9), reachable from any depositor (reachability 1.0), sitting on a
+"blocked" fund-flow node (asset exposure 1.0), a state-transitions finding (dependency
+criticality 0.6), with no alternative working exit anywhere in the contract (offset 0.0):
 
 ```
-contribution = 100 × 0.9 × 1.0 × (1 − 0.0) = 90
+contribution = 100 × 0.9 × 1.0 × 1.0 × 0.6 × (1 − 0.0) = 54
 ```
 
-If the same contract's assembly block couldn't be analyzed (−0.10 coverage) and one external
-dependency was unverified (−0.05), `coverage_multiplier = 0.85`:
+If the same contract's assembly block couldn't be analyzed (−0.10 coverage), `coverage_multiplier
+= 0.90`:
 
 ```
-FLARE_score = 90 × 0.85 = 76.5 → High
+FLARE_score = 54 × 0.90 = 48.6 → Medium
 ```
 
-The report shows both the raw contribution and the coverage penalty that produced the final
-number, not just the result.
+The report shows both the raw per-finding contribution and the coverage penalty (with its
+specific reasons) that produced the final number, not just the result.

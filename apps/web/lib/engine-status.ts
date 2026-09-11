@@ -10,5 +10,5 @@ export const ENGINE_STATUS: {
   note: string;
 } = {
   implemented: false,
-  note: "The FastAPI analyzer service now runs real intake, compilation and Slither-based extraction (services/analyzer) — but the detector registry, fund-flow graph and risk scoring aren't wired in yet, so a live analysis would report zero findings. The dashboard stays on demo data until that's genuinely worth showing as live.",
+  note: "The FastAPI analyzer service (services/analyzer) now runs the full deterministic pipeline end to end — intake, compilation, Slither extraction, all 10 detectors, the fund-flow graph, and the FLARE risk score — and every stage has passing tests. What's still missing is the frontend wiring: /app/analysis/new doesn't call the live API yet. The dashboard stays on demo data until that last connection is made and tested.",
 };

@@ -1,6 +1,6 @@
-"""Orchestrates intake -> compile -> Slither -> detectors -> graph ->
-validation -> persisted result for one analysis. Full risk scoring is
-added on top of this in a later milestone (see docs/ARCHITECTURE.md)."""
+"""Orchestrates intake -> compile -> Slither -> detectors -> validation ->
+graph -> deterministic FLARE score -> persisted result for one analysis.
+See docs/ARCHITECTURE.md and docs/RISK_METHODOLOGY.md."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from pathlib import Path
 from app.core.cache import compute_content_hash, get_cached_ir, store_cached_ir
 from app.core.compiler import CompileError, compile_check
 from app.core.graph import build_fund_flow_graph
+from app.core.scoring import FORMULA_VERSION, score_analysis
 from app.core.slither_service import SlitherAnalysisError, run_slither
 from app.core.validation import validate_findings
 from app.db.database import db_session
@@ -93,6 +94,7 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
                 setattr(counts, finding.severity, getattr(counts, finding.severity) + 1)
 
         fund_flow_graph = build_fund_flow_graph(ir, findings)
+        score_result = score_analysis(ir, findings, fund_flow_graph, files)
 
         summary = summary.model_copy(
             update={
@@ -101,7 +103,12 @@ def run_pipeline(analysis_id: str, files: list[Path], project_name: str) -> Anal
                 "findings": findings,
                 "finding_count": len(findings),
                 "severity_counts": counts,
-                "coverage": 1.0 if not ir.compile_warnings else 0.85,
+                "flare_score": score_result.score,
+                "risk_band": score_result.band,
+                "formula_version": FORMULA_VERSION,
+                "coverage": score_result.coverage.multiplier,
+                "coverage_notes": score_result.coverage.notes,
+                "score_breakdown": score_result.breakdown,
                 "graph": fund_flow_graph,
             }
         )

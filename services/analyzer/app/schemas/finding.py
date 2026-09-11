@@ -14,6 +14,7 @@ class Finding(CamelModel):
     taxonomy: str
     severity: str  # "critical" | "high" | "medium" | "low"
     confidence: float
+    reachability: str = "theoretical"  # "public" | "privileged" | "theoretical"
     file: str
     line_start: int
     line_end: int
