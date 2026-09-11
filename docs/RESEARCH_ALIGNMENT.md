@@ -52,9 +52,11 @@ represent disputed or unconfirmed details honestly.
   against every fixture and reports precision/recall; `evaluation/benchmark-result.json` is the
   generated (not hand-typed) output, currently 100% precision and 100% recall across all 40
   cases.
-- `contracts/benchmarks/test/*.t.sol` — three executable Foundry proofs (library destruction,
-  terminal-state lock, fixed-gas-stipend transfer) that the underlying fund-lock mechanisms
-  actually happen, not just that a static pattern matches.
+- `contracts/benchmarks/test/*.t.sol` — eight executable Foundry proofs, one for every
+  `high`/`critical`-severity detector but one (see [`BENCHMARK_METHODOLOGY.md`](BENCHMARK_METHODOLOGY.md)
+  for which and why), that the underlying fund-lock mechanisms actually happen — deposit,
+  trigger, failed exit, remaining balance, unavailable recovery — not just that a static pattern
+  matches.
 - **Cross-tool comparison — done.** `evaluation/cross_tool/` runs Slither (CLI) and Mythril
   against a frozen 20-fixture subset and reports precision/recall/F1/runtime alongside FLARE's
   own numbers on the same subset — see [`evaluation/tool-mapping.md`](../evaluation/tool-mapping.md)

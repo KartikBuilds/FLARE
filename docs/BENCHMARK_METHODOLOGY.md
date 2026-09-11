@@ -42,14 +42,30 @@ benchmark report.
 
 ## Executable proofs (Foundry)
 
-Three of the ten mechanisms also have standalone, executable Foundry demonstrations in
-`contracts/benchmarks/src/demos/` + `contracts/benchmarks/test/`:
+Eight of the ten mechanisms — every `high`/`critical`-severity detector but one (see below) —
+have standalone, executable Foundry demonstrations in `contracts/benchmarks/src/demos/` +
+`contracts/benchmarks/test/`. Each one records, as explicit assertions: a deposit, the exact
+triggering transaction/state change, the failed exit attempt, the remaining locked balance, and
+(where applicable) an attempted recovery that also fails:
 
-- `LibraryDestructionLock.t.sol` — a delegatecall dependency's selfdestruct.
-- `TerminalStateLock.t.sol` — a terminal enum state with no exit.
-- `FixedGasStipendLock.t.sol` — a `.transfer()` failing against a gas-hungry receiver.
+| Detector | Severity | Test |
+| --- | --- | --- |
+| `FLARE-LIB-001` | critical | `UnprotectedProxyLock.t.sol` — anyone repoints an unguarded delegatecall target |
+| `FLARE-LIB-002` | critical | `LibraryDestructionLock.t.sol` — a delegatecall dependency's selfdestruct |
+| `FLARE-WD-001` | high | `UnsatisfiableWithdrawLock.t.sol` — a guard no real caller can ever satisfy |
+| `FLARE-WD-002` | high | `NeverUnlockedLock.t.sol` — a guard flag nothing ever sets true |
+| `FLARE-REC-002` | high | `PausedForeverLock.t.sol` — pause blocks the emergency exit too |
+| `FLARE-STATE-001` | critical | `TerminalStateLock.t.sol` — a terminal enum state with no exit |
+| `FLARE-XFER-001` | high | `UncheckedReturnLock.t.sol` — an unchecked `false` return desyncs accounting |
+| `FLARE-XFER-002` | high | `FixedGasStipendLock.t.sol` — a `.transfer()` failing against a gas-hungry receiver |
 
-Building the first of these surfaced a genuine, verified research finding: since the Dencun
+**Not proven separately:** `FLARE-STATE-002` (high) — its mechanism (a one-way enum transition
+disabling a previously-working exit) is the exact same EVM behavior `TerminalStateLock.t.sol`
+already executes and asserts; a second demo would duplicate the same proof under a different
+name, not add new evidence. `FLARE-REC-001` (the one `medium`-severity detector) has no
+standalone demo — in scope only for `high`/`critical` detectors here.
+
+Building the LIB-002 proof surfaced a genuine, verified research finding: since the Dencun
 upgrade (EIP-6780, March 2024), `selfdestruct` only clears an account's code when called in the
 *same transaction* that created it — a later-transaction `selfdestruct` (Parity's actual
 scenario) now only moves the account's ETH balance and leaves its code in place. The test
@@ -61,6 +77,8 @@ Run them:
 ```bash
 docker compose run --rm -w /srv/contracts/benchmarks analyzer forge test
 ```
+
+16/16 passing.
 
 ## Independent holdout benchmark
 
