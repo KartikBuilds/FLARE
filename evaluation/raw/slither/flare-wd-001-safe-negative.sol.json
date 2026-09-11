@@ -1,0 +1,83 @@
+{
+  "tool": "slither",
+  "returncode": 255,
+  "elapsed_seconds": 1.406,
+  "timed_out": false,
+  "output": {
+    "success": true,
+    "error": null,
+    "results": {
+      "detectors": [
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "owner",
+              "source_mapping": {
+                "start": 227,
+                "length": 20,
+                "filename_relative": "../contracts/benchmarks/flare-wd-001/safe-negative.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-wd-001/safe-negative.sol",
+                "filename_short": "flare-wd-001/safe-negative.sol",
+                "is_dependency": false,
+                "lines": [
+                  8
+                ],
+                "starting_column": 5,
+                "ending_column": 25
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "SafeVault",
+                  "source_mapping": {
+                    "start": 153,
+                    "length": 612,
+                    "filename_relative": "../contracts/benchmarks/flare-wd-001/safe-negative.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-wd-001/safe-negative.sol",
+                    "filename_short": "flare-wd-001/safe-negative.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18,
+                      19,
+                      20,
+                      21,
+                      22,
+                      23,
+                      24,
+                      25,
+                      26,
+                      27,
+                      28
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                }
+              }
+            }
+          ],
+          "description": "SafeVault.owner (flare-wd-001/safe-negative.sol#8) should be immutable \n",
+          "markdown": "[SafeVault.owner](../contracts/benchmarks/flare-wd-001/safe-negative.sol#L8) should be immutable \n",
+          "first_markdown_element": "../contracts/benchmarks/flare-wd-001/safe-negative.sol#L8",
+          "id": "0e7b670207315be3c361e22c1f3944e505c54d38a6226fd5b456d31e36ae1253",
+          "check": "immutable-states",
+          "impact": "Optimization",
+          "confidence": "High"
+        }
+      ]
+    }
+  }
+}

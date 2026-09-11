@@ -1,0 +1,188 @@
+{
+  "tool": "slither",
+  "returncode": 255,
+  "elapsed_seconds": 1.362,
+  "timed_out": false,
+  "output": {
+    "success": true,
+    "error": null,
+    "results": {
+      "detectors": [
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "unlocked",
+              "source_mapping": {
+                "start": 218,
+                "length": 20,
+                "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_short": "flare-wd-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  7
+                ],
+                "starting_column": 5,
+                "ending_column": 25
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableLockbox",
+                  "source_mapping": {
+                    "start": 136,
+                    "length": 376,
+                    "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_short": "flare-wd-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                }
+              }
+            },
+            {
+              "type": "function",
+              "name": "withdraw",
+              "source_mapping": {
+                "start": 337,
+                "length": 173,
+                "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_short": "flare-wd-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  13,
+                  14,
+                  15,
+                  16,
+                  17
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableLockbox",
+                  "source_mapping": {
+                    "start": 136,
+                    "length": 376,
+                    "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_short": "flare-wd-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "withdraw(uint256)"
+              }
+            }
+          ],
+          "description": "VulnerableLockbox.unlocked (flare-wd-002/vulnerable.sol#7) is never initialized. It is used in:\n\t- VulnerableLockbox.withdraw(uint256) (flare-wd-002/vulnerable.sol#13-17)\n",
+          "markdown": "[VulnerableLockbox.unlocked](../contracts/benchmarks/flare-wd-002/vulnerable.sol#L7) is never initialized. It is used in:\n\t- [VulnerableLockbox.withdraw(uint256)](../contracts/benchmarks/flare-wd-002/vulnerable.sol#L13-L17)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-wd-002/vulnerable.sol#L7",
+          "id": "3a522d3c6d6a9921e931684f86d6f55c84775201aee25e1b8eaf3521ce25cee3",
+          "check": "uninitialized-state",
+          "impact": "High",
+          "confidence": "High"
+        },
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "unlocked",
+              "source_mapping": {
+                "start": 218,
+                "length": 20,
+                "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                "filename_short": "flare-wd-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  7
+                ],
+                "starting_column": 5,
+                "ending_column": 25
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableLockbox",
+                  "source_mapping": {
+                    "start": 136,
+                    "length": 376,
+                    "filename_relative": "../contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-wd-002/vulnerable.sol",
+                    "filename_short": "flare-wd-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableLockbox.unlocked (flare-wd-002/vulnerable.sol#7) should be constant \n",
+          "markdown": "[VulnerableLockbox.unlocked](../contracts/benchmarks/flare-wd-002/vulnerable.sol#L7) should be constant \n",
+          "first_markdown_element": "../contracts/benchmarks/flare-wd-002/vulnerable.sol#L7",
+          "id": "8b6584a827c63a8ac6d9d350f9afd496fdbb6e6c10151158cecd7b0b795729cc",
+          "check": "constable-states",
+          "impact": "Optimization",
+          "confidence": "High"
+        }
+      ]
+    }
+  }
+}

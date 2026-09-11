@@ -1,0 +1,11 @@
+{
+  "tool": "mythril",
+  "returncode": 0,
+  "elapsed_seconds": 37.503,
+  "timed_out": false,
+  "output": {
+    "error": null,
+    "issues": [],
+    "success": true
+  }
+}

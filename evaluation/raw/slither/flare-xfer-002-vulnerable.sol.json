@@ -1,0 +1,265 @@
+{
+  "tool": "slither",
+  "returncode": 255,
+  "elapsed_seconds": 1.344,
+  "timed_out": false,
+  "output": {
+    "success": true,
+    "error": null,
+    "results": {
+      "detectors": [
+        {
+          "elements": [
+            {
+              "type": "function",
+              "name": "pay",
+              "source_mapping": {
+                "start": 163,
+                "length": 94,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_short": "flare-xfer-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  6,
+                  7,
+                  8
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerablePayer",
+                  "source_mapping": {
+                    "start": 132,
+                    "length": 127,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_short": "flare-xfer-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "pay(address,uint256)"
+              }
+            },
+            {
+              "type": "node",
+              "name": "to.transfer(amount)",
+              "source_mapping": {
+                "start": 231,
+                "length": 19,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_short": "flare-xfer-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  7
+                ],
+                "starting_column": 9,
+                "ending_column": 28
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "pay",
+                  "source_mapping": {
+                    "start": 163,
+                    "length": 94,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_short": "flare-xfer-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      6,
+                      7,
+                      8
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerablePayer",
+                      "source_mapping": {
+                        "start": 132,
+                        "length": 127,
+                        "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_short": "flare-xfer-002/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "pay(address,uint256)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerablePayer.pay(address,uint256) (flare-xfer-002/vulnerable.sol#6-8) sends eth to arbitrary user\n\tDangerous calls:\n\t- to.transfer(amount) (flare-xfer-002/vulnerable.sol#7)\n",
+          "markdown": "[VulnerablePayer.pay(address,uint256)](../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L6-L8) sends eth to arbitrary user\n\tDangerous calls:\n\t- [to.transfer(amount)](../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L7)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L6-L8",
+          "id": "8d91a699cb30f724d125de8f197502f375ed83f73a4527b8d7574bb325140c24",
+          "check": "arbitrary-send-eth",
+          "impact": "High",
+          "confidence": "Medium"
+        },
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "to",
+              "source_mapping": {
+                "start": 176,
+                "length": 18,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_short": "flare-xfer-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  6
+                ],
+                "starting_column": 18,
+                "ending_column": 36
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "pay",
+                  "source_mapping": {
+                    "start": 163,
+                    "length": 94,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_short": "flare-xfer-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      6,
+                      7,
+                      8
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerablePayer",
+                      "source_mapping": {
+                        "start": 132,
+                        "length": 127,
+                        "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_short": "flare-xfer-002/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "pay(address,uint256)"
+                  }
+                }
+              }
+            },
+            {
+              "type": "node",
+              "name": "to.transfer(amount)",
+              "source_mapping": {
+                "start": 231,
+                "length": 19,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                "filename_short": "flare-xfer-002/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  7
+                ],
+                "starting_column": 9,
+                "ending_column": 28
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "pay",
+                  "source_mapping": {
+                    "start": 163,
+                    "length": 94,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                    "filename_short": "flare-xfer-002/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      6,
+                      7,
+                      8
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerablePayer",
+                      "source_mapping": {
+                        "start": 132,
+                        "length": 127,
+                        "filename_relative": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+                        "filename_short": "flare-xfer-002/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "pay(address,uint256)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerablePayer.pay(address,uint256).to (flare-xfer-002/vulnerable.sol#6) lacks a zero-check on :\n\t\t- to.transfer(amount) (flare-xfer-002/vulnerable.sol#7)\n",
+          "markdown": "[VulnerablePayer.pay(address,uint256).to](../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L6) lacks a zero-check on :\n\t\t- [to.transfer(amount)](../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L7)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-xfer-002/vulnerable.sol#L6",
+          "id": "b29b00903e51217abb829f02ba97f14e582a882100e2859b50b7866ce62691c1",
+          "check": "missing-zero-check",
+          "impact": "Low",
+          "confidence": "Medium"
+        }
+      ]
+    }
+  }
+}

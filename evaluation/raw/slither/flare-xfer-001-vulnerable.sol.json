@@ -1,0 +1,130 @@
+{
+  "tool": "slither",
+  "returncode": 255,
+  "elapsed_seconds": 1.361,
+  "timed_out": false,
+  "output": {
+    "success": true,
+    "error": null,
+    "results": {
+      "detectors": [
+        {
+          "elements": [
+            {
+              "type": "function",
+              "name": "sweep",
+              "source_mapping": {
+                "start": 252,
+                "length": 111,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                "filename_short": "flare-xfer-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  10,
+                  11,
+                  12
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableSweeper",
+                  "source_mapping": {
+                    "start": 219,
+                    "length": 146,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                    "filename_short": "flare-xfer-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      9,
+                      10,
+                      11,
+                      12,
+                      13
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "sweep(IERC20X1,address,uint256)"
+              }
+            },
+            {
+              "type": "node",
+              "name": "token.transfer(to,amount)",
+              "source_mapping": {
+                "start": 330,
+                "length": 26,
+                "filename_relative": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                "filename_short": "flare-xfer-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  11
+                ],
+                "starting_column": 9,
+                "ending_column": 35
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "sweep",
+                  "source_mapping": {
+                    "start": 252,
+                    "length": 111,
+                    "filename_relative": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                    "filename_short": "flare-xfer-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      10,
+                      11,
+                      12
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableSweeper",
+                      "source_mapping": {
+                        "start": 219,
+                        "length": 146,
+                        "filename_relative": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-xfer-001/vulnerable.sol",
+                        "filename_short": "flare-xfer-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          9,
+                          10,
+                          11,
+                          12,
+                          13
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "sweep(IERC20X1,address,uint256)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableSweeper.sweep(IERC20X1,address,uint256) (flare-xfer-001/vulnerable.sol#10-12) ignores return value by token.transfer(to,amount) (flare-xfer-001/vulnerable.sol#11)\n",
+          "markdown": "[VulnerableSweeper.sweep(IERC20X1,address,uint256)](../contracts/benchmarks/flare-xfer-001/vulnerable.sol#L10-L12) ignores return value by [token.transfer(to,amount)](../contracts/benchmarks/flare-xfer-001/vulnerable.sol#L11)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-xfer-001/vulnerable.sol#L10-L12",
+          "id": "1fa583e9ad84a19c09270626429c50eb66c7cfd58168ae13dfa4658fbc754aff",
+          "check": "unchecked-transfer",
+          "impact": "High",
+          "confidence": "Medium"
+        }
+      ]
+    }
+  }
+}

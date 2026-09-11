@@ -1,0 +1,819 @@
+{
+  "tool": "slither",
+  "returncode": 255,
+  "elapsed_seconds": 3.07,
+  "timed_out": false,
+  "output": {
+    "success": true,
+    "error": null,
+    "results": {
+      "detectors": [
+        {
+          "elements": [
+            {
+              "type": "function",
+              "name": "execute",
+              "source_mapping": {
+                "start": 392,
+                "length": 97,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  16,
+                  17,
+                  18
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableProxy",
+                  "source_mapping": {
+                    "start": 117,
+                    "length": 374,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18,
+                      19
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "execute(bytes)"
+              }
+            },
+            {
+              "type": "node",
+              "name": "implementation.delegatecall(data)",
+              "source_mapping": {
+                "start": 449,
+                "length": 33,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  17
+                ],
+                "starting_column": 9,
+                "ending_column": 42
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "execute",
+                  "source_mapping": {
+                    "start": 392,
+                    "length": 97,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "execute(bytes)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableProxy.execute(bytes) (flare-lib-001/vulnerable.sol#16-18) uses delegatecall to a input-controlled function id\n\t- implementation.delegatecall(data) (flare-lib-001/vulnerable.sol#17)\n",
+          "markdown": "[VulnerableProxy.execute(bytes)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18) uses delegatecall to a input-controlled function id\n\t- [implementation.delegatecall(data)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L17)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18",
+          "id": "f949e0dd313f79a9dda3f495d58b5c1d91f65208bc39c388f99b5bdd8b13501b",
+          "check": "controlled-delegatecall",
+          "impact": "High",
+          "confidence": "Medium"
+        },
+        {
+          "elements": [
+            {
+              "type": "function",
+              "name": "execute",
+              "source_mapping": {
+                "start": 392,
+                "length": 97,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  16,
+                  17,
+                  18
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableProxy",
+                  "source_mapping": {
+                    "start": 117,
+                    "length": 374,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18,
+                      19
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "execute(bytes)"
+              }
+            },
+            {
+              "type": "node",
+              "name": "implementation.delegatecall(data)",
+              "source_mapping": {
+                "start": 449,
+                "length": 33,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  17
+                ],
+                "starting_column": 9,
+                "ending_column": 42
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "execute",
+                  "source_mapping": {
+                    "start": 392,
+                    "length": 97,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "execute(bytes)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableProxy.execute(bytes) (flare-lib-001/vulnerable.sol#16-18) ignores return value by implementation.delegatecall(data) (flare-lib-001/vulnerable.sol#17)\n",
+          "markdown": "[VulnerableProxy.execute(bytes)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18) ignores return value by [implementation.delegatecall(data)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L17)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18",
+          "id": "fa4a07c499303c9c21675fd40ec0af9f5565354a270a2db459a4cef9b5876171",
+          "check": "unchecked-lowlevel",
+          "impact": "Medium",
+          "confidence": "Medium"
+        },
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "_implementation",
+              "source_mapping": {
+                "start": 196,
+                "length": 23,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  8
+                ],
+                "starting_column": 17,
+                "ending_column": 40
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "constructor",
+                  "source_mapping": {
+                    "start": 184,
+                    "length": 86,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      8,
+                      9,
+                      10
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "constructor(address)"
+                  }
+                }
+              }
+            },
+            {
+              "type": "node",
+              "name": "implementation = _implementation",
+              "source_mapping": {
+                "start": 231,
+                "length": 32,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  9
+                ],
+                "starting_column": 9,
+                "ending_column": 41
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "constructor",
+                  "source_mapping": {
+                    "start": 184,
+                    "length": 86,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      8,
+                      9,
+                      10
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "constructor(address)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableProxy.constructor(address)._implementation (flare-lib-001/vulnerable.sol#8) lacks a zero-check on :\n\t\t- implementation = _implementation (flare-lib-001/vulnerable.sol#9)\n",
+          "markdown": "[VulnerableProxy.constructor(address)._implementation](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L8) lacks a zero-check on :\n\t\t- [implementation = _implementation](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L9)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L8",
+          "id": "4301fd581fe98d6a4aae05a1fc34720bf93a11647fc92f04a6eb2353a64e0501",
+          "check": "missing-zero-check",
+          "impact": "Low",
+          "confidence": "Medium"
+        },
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "_implementation",
+              "source_mapping": {
+                "start": 303,
+                "length": 23,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  12
+                ],
+                "starting_column": 32,
+                "ending_column": 55
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "setImplementation",
+                  "source_mapping": {
+                    "start": 276,
+                    "length": 110,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      12,
+                      13,
+                      14
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "setImplementation(address)"
+                  }
+                }
+              }
+            },
+            {
+              "type": "node",
+              "name": "implementation = _implementation",
+              "source_mapping": {
+                "start": 347,
+                "length": 32,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  13
+                ],
+                "starting_column": 9,
+                "ending_column": 41
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "setImplementation",
+                  "source_mapping": {
+                    "start": 276,
+                    "length": 110,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      12,
+                      13,
+                      14
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "setImplementation(address)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "VulnerableProxy.setImplementation(address)._implementation (flare-lib-001/vulnerable.sol#12) lacks a zero-check on :\n\t\t- implementation = _implementation (flare-lib-001/vulnerable.sol#13)\n",
+          "markdown": "[VulnerableProxy.setImplementation(address)._implementation](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L12) lacks a zero-check on :\n\t\t- [implementation = _implementation](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L13)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L12",
+          "id": "9fc180fdb804be52d35d8f1dc9067fe7def40d7d6708c3eed9e44cdf913e3b10",
+          "check": "missing-zero-check",
+          "impact": "Low",
+          "confidence": "Medium"
+        },
+        {
+          "elements": [
+            {
+              "type": "function",
+              "name": "execute",
+              "source_mapping": {
+                "start": 392,
+                "length": 97,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  16,
+                  17,
+                  18
+                ],
+                "starting_column": 5,
+                "ending_column": 6
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "contract",
+                  "name": "VulnerableProxy",
+                  "source_mapping": {
+                    "start": 117,
+                    "length": 374,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      5,
+                      6,
+                      7,
+                      8,
+                      9,
+                      10,
+                      11,
+                      12,
+                      13,
+                      14,
+                      15,
+                      16,
+                      17,
+                      18,
+                      19
+                    ],
+                    "starting_column": 1,
+                    "ending_column": 2
+                  }
+                },
+                "signature": "execute(bytes)"
+              }
+            },
+            {
+              "type": "node",
+              "name": "implementation.delegatecall(data)",
+              "source_mapping": {
+                "start": 449,
+                "length": 33,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  17
+                ],
+                "starting_column": 9,
+                "ending_column": 42
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "execute",
+                  "source_mapping": {
+                    "start": 392,
+                    "length": 97,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      16,
+                      17,
+                      18
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "execute(bytes)"
+                  }
+                }
+              }
+            }
+          ],
+          "description": "Low level call in VulnerableProxy.execute(bytes) (flare-lib-001/vulnerable.sol#16-18):\n\t- implementation.delegatecall(data) (flare-lib-001/vulnerable.sol#17)\n",
+          "markdown": "Low level call in [VulnerableProxy.execute(bytes)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18):\n\t- [implementation.delegatecall(data)](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L17)\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L16-L18",
+          "id": "01053db1c42640a661af0c3cc9dd3ad95158cb1031fc6071f404b8d0109a4f2f",
+          "check": "low-level-calls",
+          "impact": "Informational",
+          "confidence": "High"
+        },
+        {
+          "elements": [
+            {
+              "type": "variable",
+              "name": "_implementation",
+              "source_mapping": {
+                "start": 303,
+                "length": 23,
+                "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                "filename_short": "flare-lib-001/vulnerable.sol",
+                "is_dependency": false,
+                "lines": [
+                  12
+                ],
+                "starting_column": 32,
+                "ending_column": 55
+              },
+              "type_specific_fields": {
+                "parent": {
+                  "type": "function",
+                  "name": "setImplementation",
+                  "source_mapping": {
+                    "start": 276,
+                    "length": 110,
+                    "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                    "filename_short": "flare-lib-001/vulnerable.sol",
+                    "is_dependency": false,
+                    "lines": [
+                      12,
+                      13,
+                      14
+                    ],
+                    "starting_column": 5,
+                    "ending_column": 6
+                  },
+                  "type_specific_fields": {
+                    "parent": {
+                      "type": "contract",
+                      "name": "VulnerableProxy",
+                      "source_mapping": {
+                        "start": 117,
+                        "length": 374,
+                        "filename_relative": "../contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_absolute": "/srv/contracts/benchmarks/flare-lib-001/vulnerable.sol",
+                        "filename_short": "flare-lib-001/vulnerable.sol",
+                        "is_dependency": false,
+                        "lines": [
+                          5,
+                          6,
+                          7,
+                          8,
+                          9,
+                          10,
+                          11,
+                          12,
+                          13,
+                          14,
+                          15,
+                          16,
+                          17,
+                          18,
+                          19
+                        ],
+                        "starting_column": 1,
+                        "ending_column": 2
+                      }
+                    },
+                    "signature": "setImplementation(address)"
+                  }
+                }
+              },
+              "additional_fields": {
+                "target": "parameter",
+                "convention": "mixedCase"
+              }
+            }
+          ],
+          "description": "Parameter VulnerableProxy.setImplementation(address)._implementation (flare-lib-001/vulnerable.sol#12) is not in mixedCase\n",
+          "markdown": "Parameter [VulnerableProxy.setImplementation(address)._implementation](../contracts/benchmarks/flare-lib-001/vulnerable.sol#L12) is not in mixedCase\n",
+          "first_markdown_element": "../contracts/benchmarks/flare-lib-001/vulnerable.sol#L12",
+          "id": "07680245b66c60bd0f6fcf9d12a65b4751a2f8893e8dcfb6e3d63321d384b4af",
+          "check": "naming-convention",
+          "impact": "Informational",
+          "confidence": "High"
+        }
+      ]
+    }
+  }
+}

@@ -62,10 +62,41 @@ Run them:
 docker compose run --rm -w /srv/contracts/benchmarks analyzer forge test
 ```
 
+## Independent holdout benchmark
+
+The 40 fixtures above are the *development set* — written alongside, and used while tuning, the
+detectors they test. `contracts/holdout/` is a separate, independently-authored 10-case set
+(6 vulnerable including 3 genuinely multi-contract cases, 4 paired safe negatives), with its
+ground truth (`contracts/holdout/ground-truth.json`) frozen **before** running the registry
+against it — no detector logic changed afterward based on the result. Run it:
+
+```bash
+docker compose run --rm analyzer python3 -m app.core.benchmark holdout \
+  /srv/contracts/holdout /srv/evaluation/holdout-result.json
+```
+
+Dev-set and holdout-set results are **never averaged or combined** — they're reported side by
+side because they measure different things. Full results, root-cause analysis of every
+discrepancy, and a real bug this evaluation found and fixed (multi-file Slither analysis) are in
+[`evaluation/HOLDOUT_EVALUATION.md`](../evaluation/HOLDOUT_EVALUATION.md) — headline: **100%
+recall, 60% precision** on holdout vs. 100%/100% on the dev set, with the precision gap traced
+to one specific, named detector limitation (`FLARE-REC-001` — see
+[`DETECTOR_SPECIFICATION.md`](DETECTOR_SPECIFICATION.md)), not a vague "some false positives."
+
+## Cross-tool comparison (RO3)
+
+`evaluation/cross_tool/` runs Slither (CLI) and Mythril against a frozen 20-fixture subset of
+the dev set and reports precision/recall/F1/runtime alongside FLARE's own numbers on the same
+subset — see [`evaluation/tool-mapping.md`](../evaluation/tool-mapping.md) for the full
+methodology (including why Securify 2.0 could not be run, and what this comparison does and
+doesn't prove) and [`evaluation/CROSS_TOOL_EVALUATION.md`](../evaluation/CROSS_TOOL_EVALUATION.md)
+for results.
+
 ## What this benchmark does not claim
 
-Forty fixtures across ten detectors validate that each detector's specific, documented
+Forty dev-set fixtures across ten detectors validate that each detector's specific, documented
 condition behaves correctly, including against adversarial "looks similar but isn't" cases —
-not that FLARE has been validated against the full diversity of real-world Solidity. It is also
-not a comparison against other static-analysis tools run on the same fixtures — see RO3 in
-[`RESEARCH_ALIGNMENT.md`](RESEARCH_ALIGNMENT.md) for that acknowledged gap.
+not that FLARE has been validated against the full diversity of real-world Solidity (the
+holdout set above is a first, partial step in that direction, not a complete answer). It also
+does not claim to out-detect general-purpose tools at their own strengths — see the cross-tool
+comparison above for exactly what is and isn't measured there.

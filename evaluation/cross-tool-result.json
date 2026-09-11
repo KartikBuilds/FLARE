@@ -1,0 +1,351 @@
+{
+  "frozen_subset_size": 20,
+  "tools": {
+    "flare": {
+      "true_positives": 10,
+      "true_negatives": 10,
+      "false_positives": 0,
+      "false_negatives": 0,
+      "errors": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "false_positive_rate": 0.0,
+      "runtime_seconds": null,
+      "cases": [
+        {
+          "case": "flare-lib-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-lib-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-wd-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-wd-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-rec-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-rec-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-state-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-state-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-state-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-state-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        }
+      ]
+    },
+    "slither": {
+      "true_positives": 5,
+      "true_negatives": 10,
+      "false_positives": 0,
+      "false_negatives": 5,
+      "errors": 0,
+      "precision": 1.0,
+      "recall": 0.5,
+      "f1": 0.6666666666666666,
+      "false_positive_rate": 0.0,
+      "runtime_seconds": 29.14,
+      "cases": [
+        {
+          "case": "flare-lib-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-lib-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-wd-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-002/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-state-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-state-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-state-002/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-state-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        }
+      ]
+    },
+    "mythril": {
+      "true_positives": 5,
+      "true_negatives": 7,
+      "false_positives": 3,
+      "false_negatives": 5,
+      "errors": 0,
+      "precision": 0.625,
+      "recall": 0.5,
+      "f1": 0.5555555555555556,
+      "false_positive_rate": 0.3,
+      "runtime_seconds": 639.67,
+      "cases": [
+        {
+          "case": "flare-lib-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-lib-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-lib-002/safe-negative.sol",
+          "expected": false,
+          "actual": true
+        },
+        {
+          "case": "flare-wd-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-002/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-wd-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-rec-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-rec-002/safe-negative.sol",
+          "expected": false,
+          "actual": true
+        },
+        {
+          "case": "flare-state-001/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-state-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-state-002/vulnerable.sol",
+          "expected": true,
+          "actual": false
+        },
+        {
+          "case": "flare-state-002/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-001/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-001/safe-negative.sol",
+          "expected": false,
+          "actual": false
+        },
+        {
+          "case": "flare-xfer-002/vulnerable.sol",
+          "expected": true,
+          "actual": true
+        },
+        {
+          "case": "flare-xfer-002/safe-negative.sol",
+          "expected": false,
+          "actual": true
+        }
+      ]
+    },
+    "securify": {
+      "status": "could_not_run",
+      "reason": "see evaluation/tool-mapping.md"
+    }
+  }
+}

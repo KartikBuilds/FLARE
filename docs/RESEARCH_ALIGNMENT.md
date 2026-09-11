@@ -55,10 +55,19 @@ represent disputed or unconfirmed details honestly.
 - `contracts/benchmarks/test/*.t.sol` — three executable Foundry proofs (library destruction,
   terminal-state lock, fixed-gas-stipend transfer) that the underlying fund-lock mechanisms
   actually happen, not just that a static pattern matches.
-- **What RO3 does not yet include:** a side-by-side run of *other* static-analysis tools (plain
-  Slither, MythX-equivalents, etc.) against the same fixtures, to show FLARE's registry adds
-  value beyond running Slither alone. That comparative run is not implemented — seen honestly as
-  a gap, not glossed over. See [`LIMITATIONS.md`](LIMITATIONS.md).
+- **Cross-tool comparison — done.** `evaluation/cross_tool/` runs Slither (CLI) and Mythril
+  against a frozen 20-fixture subset and reports precision/recall/F1/runtime alongside FLARE's
+  own numbers on the same subset — see [`evaluation/tool-mapping.md`](../evaluation/tool-mapping.md)
+  for the full methodology (including two real, fixed installation/dependency conflicts found
+  along the way) and [`evaluation/CROSS_TOOL_EVALUATION.md`](../evaluation/CROSS_TOOL_EVALUATION.md)
+  for results. Securify 2.0 could not be run (Ubuntu 18.04 + Python 3.7 + a pinned old Soufflé
+  release + solc 0.5.12 — none of which match this project's environment or fixture Solidity
+  version); documented with the exact investigation, not silently skipped.
+- **Independent holdout benchmark — done.** `contracts/holdout/` (10 independently-authored
+  cases, 3 genuinely multi-contract, ground truth frozen before running) reports **100% recall,
+  60% precision** — a real, disclosed gap from the dev set's 100%/100%, traced to one specific
+  detector limitation (`FLARE-REC-001`) rather than left as a vague number. See
+  [`evaluation/HOLDOUT_EVALUATION.md`](../evaluation/HOLDOUT_EVALUATION.md).
 
 ## RO4 — Ship a working prototype, not just a specification
 

@@ -1,0 +1,79 @@
+{
+  "tool": "mythril",
+  "returncode": 1,
+  "elapsed_seconds": 17.111,
+  "timed_out": false,
+  "output": {
+    "error": null,
+    "issues": [
+      {
+        "address": 120,
+        "code": "to.transfer(amount)",
+        "contract": "VulnerablePayer",
+        "description": "Any sender can withdraw Ether from the contract account.\nArbitrary senders other than the contract creator can profitably extract Ether from the contract account. Verify the business logic carefully and make sure that appropriate security controls are in place to prevent unexpected loss of funds.",
+        "filename": "/srv/contracts/benchmarks/flare-xfer-002/vulnerable.sol",
+        "function": "pay(address,uint256)",
+        "lineno": 7,
+        "max_gas_used": 35685,
+        "min_gas_used": 1404,
+        "severity": "High",
+        "sourceMap": "231:19",
+        "swc-id": "105",
+        "title": "Unprotected Ether Withdrawal",
+        "tx_sequence": {
+          "initialState": {
+            "accounts": {
+              "0xaffeaffeaffeaffeaffeaffeaffeaffeaffeaffe": {
+                "balance": "0x0",
+                "code": "",
+                "nonce": 0,
+                "storage": "{}"
+              },
+              "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef": {
+                "balance": "0x8",
+                "code": "",
+                "nonce": 0,
+                "storage": "{}"
+              }
+            }
+          },
+          "steps": [
+            {
+              "address": "",
+              "calldata": "",
+              "input": "0x608060405234801561000f575f80fd5b506101968061001d5f395ff3fe608060405234801561000f575f80fd5b5060043610610029575f3560e01c8063c40768761461002d575b5f80fd5b61004760048036038101906100429190610122565b610049565b005b8173ffffffffffffffffffffffffffffffffffffffff166108fc8290811502906040515f60405180830381858888f1935050505015801561008c573d5f803e3d5ffd5b505050565b5f80fd5b5f73ffffffffffffffffffffffffffffffffffffffff82169050919050565b5f6100be82610095565b9050919050565b6100ce816100b4565b81146100d8575f80fd5b50565b5f813590506100e9816100c5565b92915050565b5f819050919050565b610101816100ef565b811461010b575f80fd5b50565b5f8135905061011c816100f8565b92915050565b5f806040838503121561013857610137610091565b5b5f610145858286016100db565b92505060206101568582860161010e565b915050925092905056fea2646970667358221220e342704f95a7ddaf927e79447bdb28b1697ff8fdc16ab12576d1304da296876864736f6c63430008180033",
+              "name": "unknown",
+              "origin": "0xaffeaffeaffeaffeaffeaffeaffeaffeaffeaffe",
+              "value": "0x0"
+            },
+            {
+              "address": "0x901d12ebe1b195e5aa8748e62bd7734ae19b51f",
+              "calldata": "0xc40768760000000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f00000000000000000000000000000000000000000000000320fffe2000000000",
+              "input": "0xc40768760000000000000000000000000901d12ebe1b195e5aa8748e62bd7734ae19b51f00000000000000000000000000000000000000000000000320fffe2000000000",
+              "name": "pay(address,uint256)",
+              "origin": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "resolved_input": [
+                "0x0901d12ebe1b195e5aa8748e62bd7734ae19b51f",
+                57718130762795974656
+              ],
+              "value": "0x0"
+            },
+            {
+              "address": "0x901d12ebe1b195e5aa8748e62bd7734ae19b51f",
+              "calldata": "0xc4076876000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000001",
+              "input": "0xc4076876000000000000000000000000deadbeefdeadbeefdeadbeefdeadbeefdeadbeef0000000000000000000000000000000000000000000000000000000000000001",
+              "name": "pay(address,uint256)",
+              "origin": "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+              "resolved_input": [
+                "0xdeadbeefdeadbeefdeadbeefdeadbeefdeadbeef",
+                1
+              ],
+              "value": "0x0"
+            }
+          ]
+        }
+      }
+    ],
+    "success": true
+  }
+}
