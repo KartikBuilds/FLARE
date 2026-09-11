@@ -4,6 +4,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from fastapi import APIRouter, BackgroundTasks, HTTPException, UploadFile
+from fastapi.responses import HTMLResponse
 
 from app.config import settings
 from app.core.intake import (
@@ -15,6 +16,7 @@ from app.core.intake import (
     validate_sol_files,
 )
 from app.core.pipeline import queue_analysis, run_pipeline
+from app.core.report import render_html_report
 from app.core.workspace import cleanup_workspace, persistent_workspace
 from app.db.database import db_session
 from app.schemas.analysis import AnalysisSummary
@@ -41,6 +43,16 @@ def get_analysis(analysis_id: str) -> AnalysisSummary:
     if row is None:
         raise HTTPException(status_code=404, detail="Analysis not found.")
     return AnalysisSummary.model_validate_json(row["result_json"])
+
+
+@router.get("/analyses/{analysis_id}/report.html", response_class=HTMLResponse)
+def get_analysis_report(analysis_id: str) -> HTMLResponse:
+    with db_session() as conn:
+        row = conn.execute("SELECT result_json FROM analyses WHERE id = ?", (analysis_id,)).fetchone()
+    if row is None:
+        raise HTTPException(status_code=404, detail="Analysis not found.")
+    analysis = AnalysisSummary.model_validate_json(row["result_json"])
+    return HTMLResponse(content=render_html_report(analysis))
 
 
 def _run_and_cleanup(analysis_id: str, files: list[Path], project_name: str, workspace: Path) -> None:

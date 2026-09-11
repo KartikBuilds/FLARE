@@ -4,6 +4,13 @@ import { DEMO_ANALYSES } from "./demo-data";
 
 const API_BASE = process.env.NEXT_PUBLIC_ANALYZER_API_URL;
 
+/** Non-throwing accessor for callers that just need to know whether/where a
+ * live backend is configured (e.g. to build a direct link), as opposed to
+ * requireApiBase() which throws for functions that must have one. */
+export function getAnalyzerApiBase(): string | undefined {
+  return API_BASE;
+}
+
 /**
  * Every function here returns the same shape the real FastAPI service will
  * return once ENGINE_STATUS.implemented flips to true and API_BASE is

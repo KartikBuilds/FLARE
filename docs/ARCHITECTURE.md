@@ -37,12 +37,12 @@ input
   → persisted, versioned result (SQLite, content-hash cached)
 ```
 
-Implemented end to end, exercised by 51 backend tests
-(`services/analyzer/tests/`) and manually verified via real HTTP requests. **Not yet
-implemented:** the deterministic risk-scoring stage that turns findings into a FLARE score (the
-formula is fully specified in [`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md), just not wired into
-the live pipeline yet), and a self-contained HTML report renderer (JSON download works today —
-see `apps/web/app/app/analysis/[id]/AnalysisDetailClient.tsx`).
+Implemented end to end, including the deterministic FLARE risk-scoring stage
+(`app/core/scoring.py`, formula v2.0.0 — see [`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md)) and a
+self-contained HTML report renderer (`app/core/report.py`, `GET /analyses/{id}/report.html`) —
+exercised by 90 backend tests (`services/analyzer/tests/`), verified via real HTTP requests, and
+proven end to end through the actual frontend (`tests/e2e/live-analysis.spec.ts`: a real
+submission reaches a real, non-null score and a real downloadable/viewable report).
 
 Every stage's output is cached by content hash (`services/analyzer/app/core/cache.py`), so
 re-analyzing an unchanged project skips recompilation and re-analysis entirely.

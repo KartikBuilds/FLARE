@@ -116,3 +116,22 @@ def test_analyze_benchmark_case_end_to_end(tmp_path, monkeypatch):
 def test_analyze_benchmark_case_rejects_unknown_case():
     res = client.post("/analyses/benchmark", json={"case": "../../etc/passwd"})
     assert res.status_code == 400
+
+
+def test_get_analysis_report_returns_self_contained_html(fixtures_dir):
+    with open(fixtures_dir / "Simple.sol", "rb") as f:
+        res = client.post("/analyses/upload-files", files=[("files", ("Simple.sol", f, "text/plain"))])
+    queued = res.json()
+    body = _poll_until_done(queued["id"])
+    assert body["status"] == "complete"
+
+    report_res = client.get(f"/analyses/{queued['id']}/report.html")
+    assert report_res.status_code == 200
+    assert report_res.headers["content-type"].startswith("text/html")
+    assert report_res.text.strip().startswith("<!doctype html>")
+    assert "<script" not in report_res.text
+
+
+def test_get_analysis_report_404s_for_unknown_id():
+    res = client.get("/analyses/does-not-exist/report.html")
+    assert res.status_code == 404

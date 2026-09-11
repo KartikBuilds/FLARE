@@ -52,14 +52,15 @@ implemented behind one, or clearly marked as an interface-only stub — never si
 | Adapter | Status | Notes |
 | --- | --- | --- |
 | Source provider (files/ZIP, GitHub URL) | Implemented | Safe extraction, size/extension limits |
-| Source provider (verified contract address) | Optional | Requires a user-supplied, free block-explorer API key |
+| Source provider (verified contract address) | Implemented, optional | Requires a user-supplied, free Etherscan API key — every other intake method works without one |
+| Source provider (benchmark case) | Implemented | Runs the real pipeline against any of the 40 fixture contracts |
 | Static analyzer (Slither) | Implemented | Runs inside the Dockerized Python 3.12 environment |
 | Chain adapter — EVM/Solidity | Implemented | The only chain this prototype actually analyzes |
 | Chain adapter — Solana/Rust | Interface only | Not implemented; never claimed as working — see Limitations |
 | Validation provider (Foundry/Anvil) | Implemented, scoped | Local-only execution, never a public network; wired into the live pipeline for FLARE-WD-001/002 only so far |
-| Risk scoring | Specified, not wired in | Formula fully documented (Risk Methodology); `flareScore` is `null` on real analyses today |
+| Risk scoring | Implemented (v2.0.0) | Wired into the live pipeline; `flareScore`/`riskBand`/`scoreBreakdown` are populated on every real completed analysis — see Risk Methodology |
 | AI provider | Not implemented | No code path calls an AI provider yet; the pipeline works fully without one either way |
-| Report renderer | Partial | JSON download works today; self-contained HTML report not built yet |
+| Report renderer | Implemented | JSON download and a self-contained, printable HTML report (`GET /analyses/{id}/report.html`) both work today |
 
 ## Why Docker for the analyzer
 

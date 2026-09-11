@@ -5,6 +5,17 @@ The canonical, most current version of this document. The narrative version on t
 contradict it. Updated as the implementation changes — a limitation removed here means the
 corresponding milestone shipped and was tested, not just described.
 
+## Reports
+
+Both formats are implemented: a versioned JSON export (downloaded client-side from the analysis
+workspace's Report tab) and a self-contained, printable HTML report (`GET
+/analyses/{id}/report.html`, `app/core/report.py`) — findings, evidence, the full FLARE score
+breakdown, a static (non-interactive) fund-flow diagram, and a limitations summary, with print
+CSS for Save-as-PDF. No external requests of any kind (no CDN CSS/JS/fonts) — verified by test
+(`services/analyzer/tests/test_report.py`), which also checks that one analysis's report never
+leaks another analysis's findings. Not yet implemented: a dedicated Tool Comparison / State
+Model / Dependencies view (tracked in `docs/ARCHITECTURE.md`).
+
 ## Frontend ↔ backend wiring: implemented
 
 `/app/analysis/new` submits directly to the real FastAPI service (files, ZIP, GitHub URL,
