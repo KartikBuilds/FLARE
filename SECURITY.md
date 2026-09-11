@@ -45,8 +45,11 @@ on this repository. Include:
   is local-only — uploaded/cloned code is never deployed to a public network.
 - **Containerized analysis toolchain.** Slither, solc-select and Foundry run inside a
   Python 3.12 Docker image (`services/analyzer/Dockerfile`), not against the host.
-- **Per-stage timeouts and concurrency limits** bound how long a single malicious or pathological
-  input can occupy the service (`app/config.py`, `app/core/slither_service.py`).
+- **Per-stage timeouts and a global concurrency cap** bound how long — and how many at once — a
+  malicious or pathological input can occupy the service. `app/config.py`'s
+  `max_concurrent_analyses` is enforced by a semaphore in `app/api/routes.py`; once every slot is
+  in use, new submissions get an immediate `429`, not a silently-queued request
+  (`app/core/slither_service.py` covers the per-stage timeouts).
 - **No secrets in logs.** Error messages returned to callers are deliberately generic
   (`IntakeError` messages never include raw host filesystem paths).
 

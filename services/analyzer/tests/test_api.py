@@ -28,6 +28,13 @@ def test_health():
     assert res.json()["status"] == "ok"
 
 
+def test_responses_carry_baseline_security_headers():
+    res = client.get("/health")
+    assert res.headers["x-content-type-options"] == "nosniff"
+    assert res.headers["x-frame-options"] == "DENY"
+    assert res.headers["referrer-policy"] == "no-referrer"
+
+
 def test_list_analyses_starts_empty_or_returns_json_list():
     res = client.get("/analyses")
     assert res.status_code == 200
@@ -135,3 +142,23 @@ def test_get_analysis_report_returns_self_contained_html(fixtures_dir):
 def test_get_analysis_report_404s_for_unknown_id():
     res = client.get("/analyses/does-not-exist/report.html")
     assert res.status_code == 404
+
+
+def test_upload_returns_429_when_the_concurrency_limit_is_exhausted(fixtures_dir):
+    import app.api.routes as routes_module
+
+    # Simulate every slot already in use without actually running that
+    # many analyses in the test.
+    for _ in range(routes_module.settings.max_concurrent_analyses):
+        routes_module._analysis_semaphore.acquire(blocking=False)
+    try:
+        with open(fixtures_dir / "Simple.sol", "rb") as f:
+            res = client.post(
+                "/analyses/upload-files",
+                files=[("files", ("Simple.sol", f, "text/plain"))],
+            )
+        assert res.status_code == 429
+        assert "Too many analyses" in res.json()["detail"]
+    finally:
+        for _ in range(routes_module.settings.max_concurrent_analyses):
+            routes_module._analysis_semaphore.release()

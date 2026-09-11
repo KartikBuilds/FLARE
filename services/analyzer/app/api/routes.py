@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import threading
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -55,11 +56,42 @@ def get_analysis_report(analysis_id: str) -> HTMLResponse:
     return HTMLResponse(content=render_html_report(analysis))
 
 
+# Bounds how many analyses (Slither/solc/Foundry subprocesses) can run at
+# once — settings.max_concurrent_analyses previously existed but was never
+# enforced anywhere, a real resource-exhaustion gap found during the
+# security/quality audit (see docs/SECURITY.md). A plain threading.Semaphore
+# is sufficient here: every request this gates is handled by FastAPI's sync
+# BackgroundTasks machinery, which runs on a shared worker thread pool, not
+# separate asyncio tasks.
+_analysis_semaphore = threading.Semaphore(settings.max_concurrent_analyses)
+
+
 def _run_and_cleanup(analysis_id: str, files: list[Path], project_name: str, workspace: Path) -> None:
     try:
         run_pipeline(analysis_id, files, project_name)
     finally:
         cleanup_workspace(workspace)
+        _analysis_semaphore.release()
+
+
+def _queue_and_schedule(
+    workspace: Path, sol_files: list[Path], project_name: str, background_tasks: BackgroundTasks
+) -> AnalysisSummary:
+    """Shared by every intake endpoint: enforces the concurrency cap (a
+    full slot table means a clear 429, not a silently-queued request that
+    might sit blocked indefinitely), then queues and schedules the run."""
+    if not _analysis_semaphore.acquire(blocking=False):
+        cleanup_workspace(workspace)
+        raise HTTPException(
+            status_code=429,
+            detail=(
+                f"Too many analyses running at once (limit: {settings.max_concurrent_analyses}). "
+                "Try again shortly."
+            ),
+        )
+    summary = queue_analysis(workspace.name, project_name)
+    background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
+    return summary
 
 
 @router.post("/analyses/upload-files", response_model=AnalysisSummary)
@@ -78,9 +110,7 @@ async def upload_files(files: list[UploadFile], background_tasks: BackgroundTask
         saved_paths.append(path)
 
     project_name = saved_paths[0].stem if saved_paths else "upload"
-    summary = queue_analysis(workspace.name, project_name)
-    background_tasks.add_task(_run_and_cleanup, workspace.name, saved_paths, project_name, workspace)
-    return summary
+    return _queue_and_schedule(workspace, saved_paths, project_name, background_tasks)
 
 
 @router.post("/analyses/upload-zip", response_model=AnalysisSummary)
@@ -96,9 +126,7 @@ async def upload_zip(file: UploadFile, background_tasks: BackgroundTasks) -> Ana
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     project_name = (file.filename or "project.zip").removesuffix(".zip")
-    summary = queue_analysis(workspace.name, project_name)
-    background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
-    return summary
+    return _queue_and_schedule(workspace, sol_files, project_name, background_tasks)
 
 
 @router.post("/analyses/github", response_model=AnalysisSummary)
@@ -114,9 +142,7 @@ async def analyze_github(payload: dict, background_tasks: BackgroundTasks) -> An
 
     owner, repo = url.rstrip("/").split("/")[-2:]
     project_name = repo or owner
-    summary = queue_analysis(workspace.name, project_name)
-    background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
-    return summary
+    return _queue_and_schedule(workspace, sol_files, project_name, background_tasks)
 
 
 @router.post("/analyses/verified-address", response_model=AnalysisSummary)
@@ -141,9 +167,7 @@ async def analyze_verified_address(payload: dict, background_tasks: BackgroundTa
         raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     project_name = address.strip()
-    summary = queue_analysis(workspace.name, project_name)
-    background_tasks.add_task(_run_and_cleanup, workspace.name, sol_files, project_name, workspace)
-    return summary
+    return _queue_and_schedule(workspace, sol_files, project_name, background_tasks)
 
 
 @router.post("/analyses/benchmark", response_model=AnalysisSummary)
@@ -161,6 +185,4 @@ async def analyze_benchmark_case(payload: dict, background_tasks: BackgroundTask
     dest.write_bytes(source_path.read_bytes())
 
     project_name = case
-    summary = queue_analysis(workspace.name, project_name)
-    background_tasks.add_task(_run_and_cleanup, workspace.name, [dest], project_name, workspace)
-    return summary
+    return _queue_and_schedule(workspace, [dest], project_name, background_tasks)
