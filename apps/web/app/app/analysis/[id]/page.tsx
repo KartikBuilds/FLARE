@@ -1,5 +1,10 @@
+import type { Metadata } from "next";
 import { AnalysisDetailClient } from "./AnalysisDetailClient";
 import { getIncidents } from "@/lib/incidents";
+
+export const metadata: Metadata = {
+  title: "Analysis Workspace",
+};
 
 export default async function AnalysisDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
