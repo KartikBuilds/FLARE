@@ -2,16 +2,28 @@
 
 import { motion } from "motion/react";
 import { ButtonLink, Annotation, usePrefersReducedMotion } from "@flare/ui";
-import { AstronautFigure } from "@flare/ui/illustrations";
+import { AstronautFigure, PlanetDisc, DebrisField } from "@flare/ui/illustrations";
+
+const DEBRIS = [
+  { top: "6%", left: "10%", size: 16, variant: 0 as const },
+  { top: "2%", left: "58%", size: 20, variant: 1 as const },
+  { top: "42%", left: "4%", size: 14, variant: 2 as const },
+  { top: "62%", left: "48%", size: 18, variant: 0 as const },
+  { top: "20%", left: "82%", size: 12, variant: 1 as const },
+];
 
 export function NotFoundContent() {
   const reduced = usePrefersReducedMotion();
 
   return (
     <section className="bg-grain relative overflow-hidden py-20 md:py-28">
-      <div className="container-flare grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      {/* planet peeking in from the corner, matching the reference's lower
+          composition — sized to bleed off the section edge */}
+      <PlanetDisc className="pointer-events-none absolute -bottom-32 -right-24 size-72 text-ink-soft/25 sm:size-[26rem] lg:-bottom-40 lg:-right-32 lg:size-[32rem]" />
+
+      <div className="container-flare relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
-          <h1 className="font-display text-7xl font-bold leading-[0.92] tracking-tight sm:text-8xl">
+          <h1 className="font-display text-7xl font-bold leading-[0.92] tracking-tight sm:text-8xl lg:text-9xl">
             Path
             <br />
             Not Found
@@ -24,14 +36,31 @@ export function NotFoundContent() {
           </div>
         </div>
 
-        <div className="relative flex justify-center">
-          <motion.div
-            animate={reduced ? undefined : { y: [0, -14, 0], rotate: [-3, 3, -3] }}
-            transition={reduced ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            className="relative"
-          >
-            <AstronautFigure head="coin" className="h-72 w-auto text-ink-soft sm:h-96" title="An asset drifting off the protocol path" />
-          </motion.div>
+        <div className="relative flex justify-center py-10">
+          {DEBRIS.map((d, i) => (
+            <motion.div
+              key={i}
+              className="pointer-events-none absolute text-ink-soft/50"
+              style={{ top: d.top, left: d.left, width: d.size, height: d.size * 1.1 }}
+              animate={reduced ? undefined : { y: [0, -10, 0] }}
+              transition={reduced ? undefined : { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
+            >
+              <DebrisField variant={d.variant} className="size-full" />
+            </motion.div>
+          ))}
+
+          <div className="relative rotate-[28deg]">
+            <motion.div
+              animate={reduced ? undefined : { y: [0, -14, 0], rotate: [-4, 4, -4] }}
+              transition={reduced ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <AstronautFigure
+                head="coin"
+                className="h-80 w-auto text-ink-soft sm:h-[26rem] lg:h-[30rem]"
+                title="An asset tumbling off the protocol path"
+              />
+            </motion.div>
+          </div>
           <Annotation className="absolute -top-2 right-0 max-w-[10rem] text-xl sm:right-4">
             this asset took a wrong turn...
           </Annotation>
