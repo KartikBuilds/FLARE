@@ -1,5 +1,16 @@
 import { BookStack } from "@flare/ui/illustrations";
 
+// This hero's own stack of sections, not the research pillars used
+// elsewhere — reads RESEARCH / TAXONOMY / CASE STUDIES / METHODOLOGY,
+// matching what /docs actually contains rather than reusing the home
+// page's research-pillar labels on a differently-themed shelf.
+const DOCS_BOOKS = [
+  { label: "METHODOLOGY", rot: 1 },
+  { label: "CASE STUDIES", rot: -0.6 },
+  { label: "TAXONOMY", rot: 0.8 },
+  { label: "RESEARCH", rot: -1.2 },
+];
+
 export function DocsHero() {
   return (
     <section className="border-b border-line py-16 md:py-24">
@@ -13,7 +24,7 @@ export function DocsHero() {
             Research, taxonomy, methodology and real-world case studies — all in one place.
           </p>
         </div>
-        <BookStack className="h-44 w-full text-ink-soft sm:h-56" />
+        <BookStack books={DOCS_BOOKS} className="h-56 w-full text-ink-soft sm:h-72 lg:h-80" />
       </div>
     </section>
   );

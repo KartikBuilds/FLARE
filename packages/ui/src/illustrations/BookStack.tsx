@@ -2,7 +2,12 @@ import * as React from "react";
 import { IllustrationFrame, HatchDef, useIllustrationId } from "./shared";
 import type { IllustrationProps } from "./shared";
 
-const BOOKS = [
+export interface BookSpine {
+  label: string;
+  rot: number;
+}
+
+const DEFAULT_BOOKS: BookSpine[] = [
   { label: "AI REASONING", rot: -1.2 },
   { label: "GRAPH MODELS", rot: 0.8 },
   { label: "FORMAL METHODS", rot: -0.6 },
@@ -10,7 +15,13 @@ const BOOKS = [
 ];
 
 /** A stack of research volumes, spines facing the reader. */
-export function BookStack({ title = "Stack of research volumes", decorative = false, className, ...props }: IllustrationProps) {
+export function BookStack({
+  title = "Stack of research volumes",
+  decorative = false,
+  className,
+  books = DEFAULT_BOOKS,
+  ...props
+}: IllustrationProps & { books?: BookSpine[] }) {
   const hatchId = useIllustrationId("books-hatch");
   const bookHeight = 34;
   const startY = 20;
@@ -26,7 +37,7 @@ export function BookStack({ title = "Stack of research volumes", decorative = fa
       <defs>
         <HatchDef id={hatchId} spacing={5} angle={30} opacity={0.2} />
       </defs>
-      {BOOKS.map((book, i) => {
+      {books.map((book, i) => {
         const y = startY + i * bookHeight;
         return (
           <g key={book.label} transform={`rotate(${book.rot} 160 ${y + bookHeight / 2})`}>
