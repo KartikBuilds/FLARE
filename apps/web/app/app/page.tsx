@@ -31,20 +31,39 @@ export default function DashboardPage() {
         <StatCards />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
-        <RecentAnalysesTable />
-        <RiskDistributionChart />
+      {/* min-w-0 on every grid track: CSS Grid items default to
+          min-width:auto, so below each breakpoint's multi-column layout the
+          single implicit track still sizes to its content's max-content
+          width instead of the viewport — the same overflow trap fixed
+          elsewhere in Phase 3, caught here at 320px specifically. */}
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <div className="min-w-0">
+          <RecentAnalysesTable />
+        </div>
+        <div className="min-w-0">
+          <RiskDistributionChart />
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-2">
-        <TaxonomyDistributionWidget />
-        <ReadyToAnalyseCard />
+      <div className="mt-6 grid min-w-0 gap-6 lg:grid-cols-2">
+        <div className="min-w-0">
+          <TaxonomyDistributionWidget />
+        </div>
+        <div className="min-w-0">
+          <ReadyToAnalyseCard />
+        </div>
       </div>
 
-      <div className="mt-6 grid gap-6 sm:grid-cols-3">
-        <ResearchStatusCard />
-        <EngineHealthCard />
-        <BenchmarkResultCard />
+      <div className="mt-6 grid min-w-0 gap-6 sm:grid-cols-3">
+        <div className="min-w-0">
+          <ResearchStatusCard />
+        </div>
+        <div className="min-w-0">
+          <EngineHealthCard />
+        </div>
+        <div className="min-w-0">
+          <BenchmarkResultCard />
+        </div>
       </div>
 
       <DashboardAstronaut />
