@@ -6,10 +6,13 @@ import { test, expect } from "@playwright/test";
  * inspect a finding -> inspect the asset-flow graph -> download a report ->
  * invalid route -> custom 404.
  *
- * Runs against the real Next.js app (demo data only — services/analyzer is
- * not started for this suite, so ENGINE_STATUS.implemented is false and
- * every "analysis" here is the labeled DEMO fixture data, matching what a
- * real visitor sees today).
+ * Runs against the real Next.js app with NO backend configured
+ * (NEXT_PUBLIC_ANALYZER_API_URL unset for this webServer, matching CI) — the
+ * dashboard/history fall back to explicitly DEMO-labeled fixture data, and
+ * submitting a real analysis correctly surfaces the "not configured" error
+ * rather than a fake result. See tests/e2e/live-analysis.spec.ts for the
+ * separate suite that exercises a *real* upload -> backend -> result round
+ * trip against a running services/analyzer instance.
  */
 
 test("landing page renders the hero", async ({ page }) => {
@@ -49,12 +52,15 @@ test("critical flow: dashboard -> analysis -> finding -> graph -> report downloa
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible();
   await expect(page.getByText(/Demo \/ Fixture Data/i)).toBeVisible();
 
-  // "Run a benchmark analysis" — the New Analysis flow honestly reports the
-  // analyzer engine isn't wired up yet for this method, per correction #11
-  // (DEMO/FIXTURE labels stay visible until the real engine flow works).
+  // "Run a benchmark analysis" — /app/analysis/new submits directly to the
+  // real backend; with no NEXT_PUBLIC_ANALYZER_API_URL configured for this
+  // webServer (matching CI, which doesn't start services/analyzer), the
+  // honest, real error surfaces instead of a fake result.
   await page.goto("/app/analysis/new");
   await page.getByRole("button", { name: "Benchmark Case" }).click();
-  await expect(page.getByText(/not implemented yet/i)).toBeVisible();
+  await expect(page.getByLabel("Built-in benchmark case")).toBeVisible();
+  await page.getByRole("button", { name: "Run Analysis" }).click();
+  await expect(page.getByText(/analyzer service isn.t configured/i)).toBeVisible();
 
   // Open a real (demo-labeled) analysis from the dashboard's recent list —
   // this is the benchmark/fixture analysis a visitor can actually inspect.

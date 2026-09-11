@@ -1,7 +1,7 @@
 "use client";
 
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
-import { Card, DemoBadge } from "@flare/ui";
+import { Card, DemoBadge, LiveEngineBadge } from "@flare/ui";
 import { useAnalyses } from "@/lib/queries";
 import { getDemoRiskDistribution } from "@/lib/demo-data";
 
@@ -40,7 +40,7 @@ export function RiskDistributionChart() {
     <Card>
       <div className="flex items-center justify-between">
         <h2 className="font-sans text-base font-semibold text-ink">Risk Distribution</h2>
-        <DemoBadge />
+        {analyses ? <LiveEngineBadge /> : <DemoBadge />}
       </div>
       {total === 0 ? (
         <p className="mt-6 font-sans text-sm text-muted">No findings to distribute yet.</p>

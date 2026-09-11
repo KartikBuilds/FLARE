@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Card, Badge } from "@flare/ui";
 import { RESEARCH_PILLARS } from "@/lib/research-pillars";
-import { ENGINE_STATUS } from "@/lib/engine-status";
+import { ENGINE_STATUS, hasLiveApiConfigured } from "@/lib/engine-status";
 import { getBenchmarkResult } from "@/lib/benchmark";
 
 export function ResearchStatusCard() {
@@ -27,16 +27,14 @@ export function ResearchStatusCard() {
 }
 
 export function EngineHealthCard() {
+  const configured = hasLiveApiConfigured();
   return (
     <Card>
       <h2 className="font-sans text-base font-semibold text-ink">Engine Health</h2>
       <div className="mt-4 flex items-center gap-2.5">
-        <span
-          aria-hidden="true"
-          className={`size-2.5 rounded-full ${ENGINE_STATUS.implemented ? "bg-success" : "bg-warning"}`}
-        />
+        <span aria-hidden="true" className={`size-2.5 rounded-full ${configured ? "bg-success" : "bg-warning"}`} />
         <span className="font-sans text-sm text-ink">
-          {ENGINE_STATUS.implemented ? "Connected" : "Not connected"}
+          {configured ? "Configured (NEXT_PUBLIC_ANALYZER_API_URL set)" : "Not configured"}
         </span>
       </div>
       <p className="mt-2 font-sans text-[13px] leading-relaxed text-muted">{ENGINE_STATUS.note}</p>

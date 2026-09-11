@@ -70,6 +70,41 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
     );
   }
 
+  if (analysis.status === "failed") {
+    return (
+      <div className="px-5 py-10 sm:px-8 lg:px-10">
+        <h1 className="font-display text-2xl font-bold">Analysis failed</h1>
+        <p className="mt-1 font-sans text-sm text-muted">
+          {analysis.projectName} <span>{analysis.projectVersion}</span>
+        </p>
+        <Card className="mt-4 border-danger-soft bg-danger-soft/20">
+          <p className="font-sans text-sm text-danger">
+            {analysis.error ?? "The analyzer reported a failure with no further detail."}
+          </p>
+        </Card>
+        <Link href="/app/history" className="mt-4 inline-block font-condensed text-[12px] uppercase tracking-[0.06em] underline">
+          Back to history →
+        </Link>
+      </div>
+    );
+  }
+
+  if (analysis.status !== "complete") {
+    return (
+      <div className="px-5 py-10 sm:px-8 lg:px-10">
+        <h1 className="font-display text-2xl font-bold">Analysis in progress</h1>
+        <p className="mt-2 font-sans text-sm text-muted">
+          {analysis.projectName} is still running (status: {analysis.status}). This page doesn&apos;t
+          poll — return to{" "}
+          <Link href="/app/analysis/new" className="underline decoration-line underline-offset-2">
+            New Analysis
+          </Link>{" "}
+          to watch it run, or check back here shortly.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
       <div className="flex flex-wrap items-start justify-between gap-4">
@@ -90,6 +125,9 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             {analysis.flareScore !== null ? <AnimatedCounter value={analysis.flareScore} /> : "—"}
           </p>
           <p className="mt-2 font-sans text-sm text-ink">FLARE Score</p>
+          {analysis.formulaVersion && (
+            <p className="mt-1 font-mono text-[11px] text-muted">formula v{analysis.formulaVersion}</p>
+          )}
         </Card>
         <Card>
           {analysis.riskBand ? (
@@ -110,6 +148,15 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             )}
           </p>
           <p className="mt-2 font-sans text-sm text-ink">Coverage / Confidence</p>
+          {analysis.coverageNotes.length > 0 && (
+            <ul className="mt-2 space-y-1">
+              {analysis.coverageNotes.map((note) => (
+                <li key={note} className="font-sans text-[11px] leading-snug text-muted">
+                  {note}
+                </li>
+              ))}
+            </ul>
+          )}
         </Card>
         <Card>
           <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
@@ -163,6 +210,51 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
                   </Link>{" "}
                   for exactly what was checked.
                 </p>
+              </Card>
+            )}
+
+            {analysis.scoreBreakdown.length > 0 && (
+              <Card className="overflow-x-auto">
+                <h2 className="font-sans text-base font-semibold text-ink">Score breakdown</h2>
+                <p className="mt-1 font-sans text-xs text-muted">
+                  The FLARE score is the highest-contributing finding below, times the coverage
+                  multiplier — see{" "}
+                  <Link href="/docs/risk-methodology" className="underline decoration-line underline-offset-2 hover:decoration-ink">
+                    Risk Methodology
+                  </Link>
+                  .
+                </p>
+                <table className="mt-4 w-full min-w-[560px] font-sans text-[12.5px]">
+                  <thead>
+                    <tr className="border-b border-line text-left text-muted">
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Finding</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Severity</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Confidence</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Reach</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Exposure</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Dependency</th>
+                      <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Recovery</th>
+                      <th className="pb-2 font-condensed uppercase tracking-[0.05em]">Contribution</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {analysis.scoreBreakdown.map((row) => (
+                      <tr key={row.findingId} className="border-b border-line last:border-b-0">
+                        <td className="py-2 pr-3 font-mono text-[11px] text-ink-soft">{row.findingId}</td>
+                        <td className="py-2 pr-3 tabular-nums">{row.severityWeight}</td>
+                        <td className="py-2 pr-3 tabular-nums">
+                          {row.confidence.toFixed(2)}
+                          {row.validated && <span className="ml-1 text-success">✓</span>}
+                        </td>
+                        <td className="py-2 pr-3">{row.reachability}</td>
+                        <td className="py-2 pr-3 tabular-nums">{row.assetExposure.toFixed(2)}</td>
+                        <td className="py-2 pr-3 tabular-nums">{row.dependencyCriticality.toFixed(2)}</td>
+                        <td className="py-2 pr-3 tabular-nums">−{row.recoveryOffset.toFixed(2)}</td>
+                        <td className="py-2 font-semibold tabular-nums">{row.contribution.toFixed(1)}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               </Card>
             )}
           </div>

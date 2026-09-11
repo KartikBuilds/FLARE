@@ -5,6 +5,22 @@ The canonical, most current version of this document. The narrative version on t
 contradict it. Updated as the implementation changes — a limitation removed here means the
 corresponding milestone shipped and was tested, not just described.
 
+## Frontend ↔ backend wiring: implemented
+
+`/app/analysis/new` submits directly to the real FastAPI service (files, ZIP, GitHub URL,
+verified address, benchmark case) and `/app/analysis/[id]` renders whatever the backend actually
+returns — real findings, a real fund-flow graph, and a real FLARE score, polled via
+`AnalysisStatus` until the analysis reaches `complete` or `failed`. `ENGINE_STATUS.implemented`
+is `true`; whether a *given page load* shows live or demo data depends on whether
+`NEXT_PUBLIC_ANALYZER_API_URL` is configured at runtime (`hasLiveApiConfigured()` in
+`apps/web/lib/engine-status.ts`) — the dashboard badges and `/app` header key off that, not off
+the code-completeness flag, so they never claim "Live Engine" while actually showing demo
+fixtures. Verified end to end with a real backend running
+(`tests/e2e/live-analysis.spec.ts`, skipped unless `E2E_ANALYZER_API_URL` is set — see that
+file's header for how to run it). A real backend failure (an unreachable GitHub repo, an
+unconfigured Etherscan key, a compile error) is always shown as the backend's own error message
+— never silently replaced with demo data.
+
 ## Chain support
 
 Only the EVM/Solidity analyzer is implemented. The Solana/Rust adapter is an interface-only

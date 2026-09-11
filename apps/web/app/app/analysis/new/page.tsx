@@ -1,10 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Upload, FileArchive, Github, Hash, FlaskConical, AlertCircle } from "lucide-react";
+import { Upload, FileArchive, Github, Hash, FlaskConical, AlertCircle, Loader2 } from "lucide-react";
 import { Card, Button, cn } from "@flare/ui";
-import { ENGINE_STATUS } from "@/lib/engine-status";
+import { DETECTOR_REGISTRY } from "@flare/rules";
+import type { AnalysisStatus } from "@flare/schemas";
+import { submitFiles, submitZip, submitGithub, submitAddress, submitBenchmarkCase, pollAnalysisUntilDone } from "@/lib/api-client";
 
 type Method = "files" | "zip" | "github" | "address" | "benchmark";
 
@@ -22,14 +25,35 @@ const MAX_ZIP_BYTES = 25 * 1024 * 1024; // 25MB
 const GITHUB_URL_RE = /^https:\/\/github\.com\/[\w.-]+\/[\w.-]+\/?$/;
 const ADDRESS_RE = /^0x[a-fA-F0-9]{40}$/;
 
+const STATUS_LABEL: Record<AnalysisStatus, string> = {
+  queued: "Queued",
+  intake: "Validating & extracting source",
+  compiling: "Compiling with solc",
+  analyzing: "Running Slither static analysis",
+  detecting: "Running the detector registry",
+  validating: "Foundry/Anvil validation",
+  scoring: "Computing the FLARE risk score",
+  complete: "Complete",
+  failed: "Failed",
+};
+
+const BENCHMARK_CASES = DETECTOR_REGISTRY.map((d) => ({
+  value: `${d.id.toLowerCase()}/vulnerable.sol`,
+  label: `${d.id} — ${d.name}`,
+}));
+
 export default function NewAnalysisPage() {
+  const router = useRouter();
   const [method, setMethod] = useState<Method>("files");
   const [files, setFiles] = useState<File[]>([]);
   const [zipFile, setZipFile] = useState<File | null>(null);
   const [githubUrl, setGithubUrl] = useState("");
   const [address, setAddress] = useState("");
+  const [benchmarkCase, setBenchmarkCase] = useState(BENCHMARK_CASES[0]!.value);
   const [errors, setErrors] = useState<string[]>([]);
-  const [submitted, setSubmitted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [progressStatus, setProgressStatus] = useState<AnalysisStatus | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const zipInputRef = useRef<HTMLInputElement>(null);
 
@@ -60,16 +84,46 @@ export default function NewAnalysisPage() {
     return ADDRESS_RE.test(addr.trim()) ? [] : ["Enter a valid 0x-prefixed, 40-character contract address."];
   }
 
-  function handleSubmit() {
+  async function handleSubmit() {
     let validationErrors: string[] = [];
     if (method === "files") validationErrors = validateFiles(files);
     else if (method === "zip") validationErrors = validateZip(zipFile);
     else if (method === "github") validationErrors = validateGithub(githubUrl);
     else if (method === "address") validationErrors = validateAddress(address);
-    else if (method === "benchmark") validationErrors = ["Built-in benchmark cases ship with the benchmark suite."];
 
     setErrors(validationErrors);
-    if (validationErrors.length === 0) setSubmitted(true);
+    if (validationErrors.length > 0) return;
+
+    setSubmitError(null);
+    setSubmitting(true);
+    setProgressStatus(null);
+
+    try {
+      const queued =
+        method === "files"
+          ? await submitFiles(files)
+          : method === "zip"
+            ? await submitZip(zipFile!)
+            : method === "github"
+              ? await submitGithub(githubUrl.trim())
+              : method === "address"
+                ? await submitAddress(address.trim())
+                : await submitBenchmarkCase(benchmarkCase);
+
+      setProgressStatus(queued.status);
+      const final = await pollAnalysisUntilDone(queued.id, (s) => setProgressStatus(s.status));
+
+      if (final.status === "complete") {
+        router.push(`/app/analysis/${final.id}`);
+        return;
+      }
+      // A real backend failure is shown as-is — never swapped for demo data.
+      setSubmitError(final.error ?? "The analysis failed for an unspecified reason.");
+      setSubmitting(false);
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Something went wrong submitting this analysis.");
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -87,13 +141,14 @@ export default function NewAnalysisPage() {
             <button
               key={m.id}
               type="button"
+              disabled={submitting}
               onClick={() => {
                 setMethod(m.id);
                 setErrors([]);
-                setSubmitted(false);
+                setSubmitError(null);
               }}
               className={cn(
-                "flex items-center gap-2 rounded-[var(--radius-control)] border px-3.5 py-2 font-condensed text-[12px] uppercase tracking-[0.06em] transition-colors",
+                "flex items-center gap-2 rounded-[var(--radius-control)] border px-3.5 py-2 font-condensed text-[12px] uppercase tracking-[0.06em] transition-colors disabled:opacity-50",
                 method === m.id ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:border-ink",
               )}
             >
@@ -116,6 +171,7 @@ export default function NewAnalysisPage() {
               type="file"
               accept=".sol"
               multiple
+              disabled={submitting}
               onChange={(e) => setFiles(Array.from(e.target.files ?? []))}
               className="mt-2 block w-full font-sans text-sm"
             />
@@ -142,6 +198,7 @@ export default function NewAnalysisPage() {
               id="zip-file"
               type="file"
               accept=".zip"
+              disabled={submitting}
               onChange={(e) => setZipFile(e.target.files?.[0] ?? null)}
               className="mt-2 block w-full font-sans text-sm"
             />
@@ -169,9 +226,10 @@ export default function NewAnalysisPage() {
               id="github-url"
               type="url"
               value={githubUrl}
+              disabled={submitting}
               onChange={(e) => setGithubUrl(e.target.value)}
               placeholder="https://github.com/owner/repo"
-              className="mt-2 w-full rounded-[var(--radius-control)] border border-line bg-paper-flat px-3 py-2 font-mono text-sm outline-none focus-visible:border-ink"
+              className="mt-2 w-full rounded-[var(--radius-control)] border border-line bg-paper-flat px-3 py-2 font-mono text-sm outline-none focus-visible:border-ink disabled:opacity-50"
             />
             <p className="mt-2 font-sans text-xs text-muted">
               Public repositories only. No repository scripts are ever executed.
@@ -188,27 +246,43 @@ export default function NewAnalysisPage() {
               id="contract-address"
               type="text"
               value={address}
+              disabled={submitting}
               onChange={(e) => setAddress(e.target.value)}
               placeholder="0x…"
-              className="mt-2 w-full rounded-[var(--radius-control)] border border-line bg-paper-flat px-3 py-2 font-mono text-sm outline-none focus-visible:border-ink"
+              className="mt-2 w-full rounded-[var(--radius-control)] border border-line bg-paper-flat px-3 py-2 font-mono text-sm outline-none focus-visible:border-ink disabled:opacity-50"
             />
             <p className="mt-2 font-sans text-xs text-muted">
-              Requires a free, user-supplied block-explorer API key (configured once the analyzer
-              service exists) — optional, degrades cleanly when unset.
+              Requires a free, server-side Etherscan API key (FLARE_ETHERSCAN_API_KEY) — every
+              other intake method works without one. If it isn&apos;t configured, submitting here
+              returns a clear error rather than silently failing.
             </p>
           </div>
         )}
 
         {method === "benchmark" && (
           <div>
-            <p className="font-sans text-sm font-medium text-ink">Built-in benchmark case</p>
+            <label htmlFor="benchmark-case" className="font-sans text-sm font-medium text-ink">
+              Built-in benchmark case
+            </label>
+            <select
+              id="benchmark-case"
+              value={benchmarkCase}
+              disabled={submitting}
+              onChange={(e) => setBenchmarkCase(e.target.value)}
+              className="mt-2 w-full rounded-[var(--radius-control)] border border-line bg-paper-flat px-3 py-2 font-sans text-sm outline-none focus-visible:border-ink disabled:opacity-50"
+            >
+              {BENCHMARK_CASES.map((c) => (
+                <option key={c.value} value={c.value}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
             <p className="mt-2 font-sans text-sm text-muted">
-              The 40-fixture benchmark suite (see{" "}
+              Runs the real pipeline against one of the 40 fixture contracts from the{" "}
               <Link href="/docs/benchmark" className="underline decoration-line underline-offset-2">
                 Benchmark Plan
               </Link>
-              ) is not implemented yet — this option will let you pick any fixture contract
-              directly once it ships.
+              — the same file the automated benchmark scores the detector registry against.
             </p>
           </div>
         )}
@@ -224,27 +298,29 @@ export default function NewAnalysisPage() {
           </div>
         )}
 
-        {submitted && (
-          <div className="mt-4 rounded-[var(--radius-control)] border border-warning-soft bg-warning-soft/40 p-3">
+        {submitError && (
+          <div className="mt-4 flex items-start gap-2 rounded-[var(--radius-control)] border border-danger-soft bg-danger-soft/40 p-3">
+            <AlertCircle className="mt-0.5 size-4 shrink-0 text-danger" aria-hidden="true" />
+            <p className="font-sans text-[13px] text-danger">{submitError}</p>
+          </div>
+        )}
+
+        {submitting && (
+          <div
+            className="mt-4 flex items-center gap-2 rounded-[var(--radius-control)] border border-line bg-paper-flat p-3"
+            role="status"
+            aria-live="polite"
+          >
+            <Loader2 className="size-4 shrink-0 animate-spin text-ink-soft" aria-hidden="true" />
             <p className="font-sans text-[13px] text-ink">
-              {ENGINE_STATUS.implemented
-                ? "Analysis queued."
-                : "Your input is valid, but the analyzer engine isn't connected yet in this milestone — nothing was uploaded anywhere. Explore the demo data instead."}
+              {progressStatus ? STATUS_LABEL[progressStatus] : "Submitting…"}
             </p>
-            {!ENGINE_STATUS.implemented && (
-              <Link
-                href="/app/history"
-                className="mt-2 inline-block font-condensed text-[11.5px] uppercase tracking-[0.06em] text-ink underline decoration-line underline-offset-4"
-              >
-                View demo analyses →
-              </Link>
-            )}
           </div>
         )}
 
         <div className="mt-6">
-          <Button type="button" onClick={handleSubmit}>
-            Run Analysis
+          <Button type="button" onClick={handleSubmit} disabled={submitting}>
+            {submitting ? "Running…" : "Run Analysis"}
           </Button>
         </div>
       </Card>

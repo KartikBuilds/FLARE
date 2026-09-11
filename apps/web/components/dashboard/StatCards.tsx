@@ -16,9 +16,10 @@ export function StatCards() {
   const { data: analyses } = useAnalyses();
   const stats = computeStats(analyses);
 
+  const dataSourceLabel = analyses ? "Live" : "Demo Data";
   const cards = [
     { label: "Analyses", sublabel: "Total", value: stats.analyses },
-    { label: "Findings", sublabel: "Demo Data", value: stats.findings },
+    { label: "Findings", sublabel: dataSourceLabel, value: stats.findings },
     { label: "Protocols", sublabel: "Analyzed", value: stats.protocols },
     { label: "High Risk", sublabel: "Findings", value: stats.highRisk },
   ];

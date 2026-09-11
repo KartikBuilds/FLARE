@@ -29,6 +29,15 @@ export default defineConfig({
         reuseExistingServer: !process.env.CI,
         timeout: 60_000,
         cwd: __dirname,
-        env: { PORT: "3100" },
+        env: {
+          PORT: "3100",
+          // Passed through only when the caller set it (see
+          // tests/e2e/live-analysis.spec.ts's header for how/why) — the
+          // default `pnpm e2e` run leaves this unset, so the dev server it
+          // spawns has no backend configured, matching CI.
+          ...(process.env.NEXT_PUBLIC_ANALYZER_API_URL
+            ? { NEXT_PUBLIC_ANALYZER_API_URL: process.env.NEXT_PUBLIC_ANALYZER_API_URL }
+            : {}),
+        },
       },
 });

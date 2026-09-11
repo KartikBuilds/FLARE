@@ -26,7 +26,9 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     # Local dev origins only — this service is never exposed publicly.
-    allow_origins=["http://localhost:3000", "http://localhost:3001"],
+    # 3000/3001: `pnpm dev`. 3100: the Playwright E2E webServer
+    # (playwright.config.ts) — see tests/e2e/live-analysis.spec.ts.
+    allow_origins=["http://localhost:3000", "http://localhost:3001", "http://localhost:3100"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -78,9 +78,12 @@ see `services/analyzer/app/schemas/base.py`). See [`ARCHITECTURE.md`](ARCHITECTU
 [`RISK_METHODOLOGY.md`](RISK_METHODOLOGY.md), now v2.0.0) is wired into the live pipeline
 (`app/core/scoring.py`) — a completed analysis reports a real score, band, and full per-finding
 factor breakdown, with boundary/monotonicity/regression tests
-(`services/analyzer/tests/test_scoring.py`). What RO4 still does not include: the frontend's
-`/app/analysis/new` flow doesn't call the live API yet (tracked as the remaining piece of this
-objective — see [`LIMITATIONS.md`](LIMITATIONS.md)).
+(`services/analyzer/tests/test_scoring.py`). The frontend's `/app/analysis/new` now submits
+directly to this live pipeline and `/app/analysis/[id]` renders the real result — verified via a
+real upload → backend → result round trip (`tests/e2e/live-analysis.spec.ts`), not just unit
+tests of each side in isolation. RO4 is now fully implemented as a working prototype end to end;
+remaining gaps (RO3's cross-tool comparison, the independent holdout benchmark) are tracked
+separately below and in [`LIMITATIONS.md`](LIMITATIONS.md).
 
 ## RO5 — Developer, governance, standards and insurance recommendations
 
