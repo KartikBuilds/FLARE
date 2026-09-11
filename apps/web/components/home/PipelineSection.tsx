@@ -5,7 +5,7 @@ import { motion } from "motion/react";
 import { SectionLabel, Badge, ButtonLink, usePrefersReducedMotion } from "@flare/ui";
 import { PipelineModule } from "@flare/ui/illustrations";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
-import { ENGINE_STATUS } from "@/lib/engine-status";
+import { hasLiveApiConfigured } from "@/lib/engine-status";
 
 export function PipelineSection() {
   const [activeId, setActiveId] = useState<string>(PIPELINE_STAGES[0]!.id);
@@ -26,11 +26,9 @@ export function PipelineSection() {
               fund-lock assessment.
             </p>
           </div>
-          {!ENGINE_STATUS.implemented && (
-            <Badge tone="outline-dark" className="shrink-0">
-              Engine in progress — see docs/limitations
-            </Badge>
-          )}
+          <Badge tone="outline-dark" className="shrink-0">
+            {hasLiveApiConfigured() ? "Live engine" : "Engine offline"}
+          </Badge>
         </div>
 
         <div
@@ -51,8 +49,13 @@ export function PipelineSection() {
                 className="group flex shrink-0 snap-start flex-col items-center gap-2 rounded-[var(--radius-control)] px-1 py-2 focus-visible:outline-2 focus-visible:outline-offset-4"
               >
                 <motion.div
-                  initial={{ opacity: 0, y: reduced ? 0 : 12 }}
-                  whileInView={{ opacity: 1, y: 0 }}
+                  // See TaxonomySection's comment: no opacity animation on
+                  // above-the-fold content — Motion's `initial` ships as an
+                  // inline SSR style, so opacity:0 here would genuinely hide
+                  // every pipeline module from any client that never runs
+                  // (or hasn't yet run) the reveal JS.
+                  initial={{ y: reduced ? 0 : 12 }}
+                  whileInView={{ y: 0 }}
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ delay: reduced ? 0 : i * 0.05, duration: reduced ? 0.01 : 0.4 }}
                 >
@@ -89,8 +92,8 @@ export function PipelineSection() {
           id="pipeline-panel"
           role="tabpanel"
           aria-labelledby={`pipeline-tab-${active.id}`}
-          initial={{ opacity: 0, y: reduced ? 0 : 8 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ y: reduced ? 0 : 8 }}
+          animate={{ y: 0 }}
           transition={{ duration: reduced ? 0.01 : 0.3 }}
           className="mt-8 max-w-2xl rounded-[var(--radius-card)] border border-charcoal-line bg-charcoal-soft p-6"
         >

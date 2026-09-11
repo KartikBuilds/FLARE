@@ -38,8 +38,16 @@ export function TaxonomySection() {
             return (
               <motion.div
                 key={category.id}
-                initial={{ opacity: 0, y: reduced ? 0 : 16 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                // Never animate opacity for above-the-fold content: Motion
+                // applies `initial` as an inline style during SSR, so an
+                // opacity:0 start ships genuinely invisible markup to any
+                // client that doesn't run (or hasn't yet run) the JS that
+                // flips it back — a real no-JS/crawler/slow-hydration bug,
+                // confirmed directly (curl the SSR HTML: it shipped
+                // `opacity:0` on every card). A translate-only reveal keeps
+                // content fully visible/readable with or without JS.
+                initial={{ y: reduced ? 0 : 16 }}
+                whileInView={{ y: 0 }}
                 viewport={{ once: true, margin: "-60px" }}
                 transition={{ delay: reduced ? 0 : i * 0.06, duration: reduced ? 0.01 : 0.45 }}
               >

@@ -13,19 +13,23 @@ const EASE_OUT = [0.22, 1, 0.36, 1] as const;
 export function Hero() {
   const reduced = usePrefersReducedMotion();
 
+  // Never animate opacity on hero content: Motion applies `initial` as a
+  // synchronous inline SSR style, so an opacity:0 start would ship the
+  // entire above-the-fold hero (headline, copy, CTAs, machine diagram)
+  // genuinely invisible to any client that doesn't run — or hasn't yet
+  // run — the reveal JS (no-JS, crawlers, slow hydration). Translate-only
+  // motion keeps content fully visible/readable with or without JS.
   const lineVariants: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 28 },
+    hidden: { y: reduced ? 0 : 28 },
     show: (i: number) => ({
-      opacity: 1,
       y: 0,
       transition: { delay: reduced ? 0 : 0.15 + i * 0.12, duration: reduced ? 0.01 : 0.6, ease: EASE_OUT },
     }),
   };
 
   const fadeUp: Variants = {
-    hidden: { opacity: 0, y: reduced ? 0 : 16 },
+    hidden: { y: reduced ? 0 : 16 },
     show: (delay = 0) => ({
-      opacity: 1,
       y: 0,
       transition: { delay: reduced ? 0 : delay, duration: reduced ? 0.01 : 0.5, ease: EASE_OUT },
     }),
