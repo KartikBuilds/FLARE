@@ -121,8 +121,13 @@ EIP-6780 still allows, or a pre-Dencun chain.
 ## Case-study data
 
 Five incidents in `research/incidents/`. "Perfect Finance" (2023) could not be independently
-corroborated in public reporting as of this research and is marked `unverified` rather than
-presented as fact. Dollar figures for verified incidents are approximate where they depend on
+corroborated in public reporting — re-checked directly on 2026-09-11 with several targeted
+search-query variants (exact queries and trackers checked are recorded in the incident's own
+`fundLockMechanism` field) — and is marked `unverified` rather than presented as fact. Not
+swapped for a better-documented incident: four independently-verified case studies already give
+the taxonomy real diversity, and replacing it would remove the visible evidence that not every
+claim in an early design reference could be corroborated. Dollar figures for verified incidents
+are approximate where they depend on
 historical token price (most notably Parity, 2017) — the underlying token amount (513,774 ETH)
 is reported as the primary verified fact.
 

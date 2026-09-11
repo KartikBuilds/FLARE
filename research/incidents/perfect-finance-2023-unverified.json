@@ -5,7 +5,7 @@
   "year": 2023,
   "architecture": "Unknown — could not be independently confirmed.",
   "rootCause": "Unknown — could not be independently confirmed.",
-  "fundLockMechanism": "This entry exists because an incident named \"Perfect Finance\" (2023, ~$3M) appears in FLARE's early design references. We deliberately searched public reporting (DeFi hack trackers, rekt.news leaderboard, De.Fi Rekt reports, general web search) as of September 2026 and could not find independent corroborating sources naming a protocol called \"Perfect Finance\" with a 2023 incident. Rather than invent a plausible-sounding root cause to fill the slot, we are labeling it unverified and excluding it from every FLARE statistic.",
+  "fundLockMechanism": "This entry exists because an incident named \"Perfect Finance\" (2023, ~$3M) appears in FLARE's early design references. Searched public reporting on 2026-09-11 with several query variants — [\"Perfect Finance\" DeFi hack exploit 2023 protocol], [\"Perfect Finance\" crypto $3 million exploit rekt], [rekt.news \"Perfect Finance\"], [\"PerfectSwap\" OR \"Perfect Vault\" OR \"PerfectFi\" defi exploit 2023] — checking DeFi hack trackers (Koinly, Blockworks, ChainSec, Frontal), the rekt.news leaderboard directly, and general web search. None returned a protocol named \"Perfect Finance\" (or a plausible close variant) with a 2023 incident; the closest name matches (Grim Finance, Team Finance, MM Finance) are unrelated hacks. Rather than invent a plausible-sounding root cause to fill the slot, this is labeled unverified and excluded from every FLARE statistic.",
   "taxonomy": ["withdrawal-failures"],
   "amount": {
     "valueUsd": null,
@@ -17,6 +17,6 @@
   "amountVerificationStatus": "unverified",
   "recoveryAttempts": "Unknown — could not be independently confirmed.",
   "primarySources": [],
-  "limitations": "This case study could not be verified against public reporting as of the research date. It is retained, clearly flagged, rather than silently dropped, so the gap is visible — and it is excluded from every aggregate figure FLARE displays (the 'affected in case studies' total, taxonomy counts used for marketing copy, etc.). If you have a primary source for this incident, FLARE's data model supports upgrading its verification status once one is added.",
-  "disputedNotes": "Unconfirmed as of 2026-09-10. Not counted in any FLARE total until a primary source is found."
+  "limitations": "This case study could not be verified against public reporting as of the research date (re-checked 2026-09-11 with multiple targeted search queries — see fundLockMechanism — with no new result). It is retained, clearly flagged, rather than silently dropped, so the gap is visible — and it is excluded from every aggregate figure FLARE displays (the 'affected in case studies' total, taxonomy counts used for marketing copy, etc.). A fifth, better-documented incident was deliberately not substituted in its place: four independently-verified case studies already give the taxonomy real diversity, and swapping this entry for a cleaner-looking one would remove the visible evidence that not every claim in an early design reference could be corroborated — which is itself a useful, honest data point about working from secondhand references. If you have a primary source for this incident, FLARE's data model supports upgrading its verification status once one is added.",
+  "disputedNotes": "Unconfirmed as of 2026-09-11 (re-checked; no new result). Not counted in any FLARE total until a primary source is found."
 }
