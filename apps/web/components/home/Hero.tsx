@@ -36,48 +36,44 @@ export function Hero() {
   };
 
   return (
-    <section className="bg-grain relative overflow-hidden pb-20 pt-14 md:pb-28 md:pt-20">
-      <div className="container-flare relative z-10">
-        {/* framing row */}
-        <div className="mb-10 hidden items-start justify-between sm:flex">
-          <motion.div
-            className="flex items-center gap-3"
-            initial="hidden"
-            animate="show"
-            variants={fadeUp}
-            custom={0.5}
-          >
-            <CoinAsset className="size-14 text-ink" title="A digital asset entering the protocol" />
-            <div>
-              <Annotation className="text-lg">asset enters</Annotation>
-              <Annotation className="-mt-1 text-lg">protocol</Annotation>
-            </div>
-          </motion.div>
-
-          <motion.div
-            className="flex items-start gap-3 text-right"
-            initial="hidden"
-            animate="show"
-            variants={fadeUp}
-            custom={0.65}
-          >
-            <div className="flex flex-col items-end gap-1">
-              <Annotation>protocol core</Annotation>
-              <ul className="mt-1 space-y-0.5">
-                {exitStages.map((stage, i) => (
-                  <li
-                    key={stage}
-                    className="font-condensed text-[11px] uppercase tracking-[0.1em] text-muted"
-                  >
-                    0{i + 1} <span className="text-ink-soft">{stage}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <ProtocolCore className="size-16 shrink-0 text-ink" title="The protocol's core logic" />
-          </motion.div>
+    <section className="bg-grain relative overflow-hidden pb-20 pt-14 sm:pt-36 md:pb-28 md:pt-40 lg:pt-36">
+      {/* corner machinery: bleeds toward the true edges so the hero reads as
+          one dense composition rather than text stranded in empty margins */}
+      <motion.div
+        className="pointer-events-none absolute -left-6 top-4 hidden items-start gap-3 sm:flex lg:-left-2 lg:top-6"
+        initial="hidden"
+        animate="show"
+        variants={fadeUp}
+        custom={0.5}
+      >
+        <CoinAsset className="size-24 shrink-0 -rotate-6 text-ink lg:size-32" title="A digital asset entering the protocol" />
+        <div className="mt-6">
+          <Annotation className="text-lg lg:text-xl">asset enters</Annotation>
+          <Annotation className="-mt-1 text-lg lg:text-xl">protocol</Annotation>
         </div>
+      </motion.div>
 
+      <motion.div
+        className="pointer-events-none absolute -right-6 top-2 hidden items-start gap-3 text-right sm:flex lg:-right-4 lg:top-4"
+        initial="hidden"
+        animate="show"
+        variants={fadeUp}
+        custom={0.65}
+      >
+        <div className="mt-8 flex flex-col items-end gap-1">
+          <Annotation className="lg:text-xl">protocol core</Annotation>
+          <ul className="mt-1 space-y-0.5">
+            {exitStages.map((stage, i) => (
+              <li key={stage} className="font-condensed text-[11px] uppercase tracking-[0.1em] text-muted">
+                0{i + 1} <span className="text-ink-soft">{stage}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <ProtocolCore className="size-28 shrink-0 text-ink lg:size-36" title="The protocol's core logic" />
+      </motion.div>
+
+      <div className="container-flare relative z-10">
         <SectionLabel index="FLARE" label="Fund-Lock Assessment & Risk Evaluation" />
 
         <h1 className="mt-6 max-w-4xl font-display text-6xl font-bold leading-[0.94] tracking-tight text-balance sm:text-7xl md:text-8xl">
@@ -119,41 +115,52 @@ export function Hero() {
           </ButtonLink>
         </motion.div>
 
-        {/* the machine: intake -> vault -> exits, one path visibly broken */}
+        {/* the machine: intake -> vault -> exits, one path visibly broken.
+            Spans the full hero width so the composition carries real visual
+            weight instead of a small diagram floating in empty margins. */}
         <motion.div
-          className="mt-20 flex flex-col items-stretch gap-0 md:mt-28 md:flex-row md:items-center"
+          className="mt-20 flex flex-col items-stretch gap-8 md:mt-28 md:flex-row md:items-center md:gap-0"
           initial="hidden"
           animate="show"
           variants={fadeUp}
           custom={0.85}
         >
-          <div className="flex items-center gap-2">
-            <JunctionBox className="size-20 shrink-0 text-ink-soft md:size-24" title="Intake checkpoint" decorative />
-            <PipeSegment className="h-10 w-20 shrink-0 text-ink-soft md:w-28" decorative />
+          <div className="flex items-center gap-1 md:gap-2">
+            <JunctionBox className="size-24 shrink-0 text-ink-soft md:size-28 lg:size-32" title="Intake checkpoint" decorative />
+            <PipeSegment
+              className="h-12 w-14 shrink-0 text-ink-soft sm:w-20 md:w-16 lg:w-24"
+              preserveAspectRatio="none"
+              decorative
+            />
           </div>
 
-          <div className="flex flex-col items-center px-2">
-            <VaultModule className="size-28 shrink-0 text-ink md:size-36" />
+          <div className="flex flex-col items-center px-1 md:px-3">
+            <VaultModule className="size-32 shrink-0 text-ink sm:size-40 md:size-44 lg:size-52" />
             <span className="mt-2 font-condensed text-[11px] uppercase tracking-[0.1em] text-muted">
               Vault holds assets
             </span>
           </div>
 
-          <div className="mt-8 flex flex-1 flex-col gap-6 md:mt-0 md:pl-2">
-            <div className="flex items-center gap-2">
-              <PipeSegment className="h-10 w-16 shrink-0 rotate-180 text-ink-soft md:w-24" decorative />
-              <div className="min-w-0">
+          <div className="flex min-w-0 flex-1 flex-col gap-7 md:pl-1">
+            <div className="flex min-w-0 items-center gap-1 md:gap-2">
+              <PipeSegment
+                className="h-10 w-full min-w-0 shrink text-ink-soft"
+                preserveAspectRatio="none"
+                decorative
+              />
+              <div className="shrink-0 pl-2">
                 <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-muted">Exit path</p>
                 <p className="font-sans text-sm text-ink-soft">Redemption reaches the holder.</p>
               </div>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex min-w-0 items-center gap-1 md:gap-2">
               <PipeSegment
                 broken
-                className="h-10 w-16 shrink-0 rotate-180 text-danger md:w-24"
+                className="h-10 w-full min-w-0 shrink text-danger"
+                preserveAspectRatio="none"
                 title="Withdrawal path blocked"
               />
-              <div className="min-w-0">
+              <div className="shrink-0 pl-2">
                 <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-danger">
                   Withdrawal path fails
                 </p>

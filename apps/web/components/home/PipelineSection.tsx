@@ -34,7 +34,11 @@ export function PipelineSection() {
         <div
           role="tablist"
           aria-label="Analysis pipeline stages"
-          className="mt-14 flex snap-x gap-3 overflow-x-auto pb-4 sm:gap-2 sm:overflow-visible sm:pb-0"
+          // All 9 stage icons only fit without clipping/overflow from the lg
+          // breakpoint up (measured: real horizontal page overflow at 640
+          // and 768px when this switched to overflow-visible at sm) — stay
+          // scrollable below that.
+          className="mt-14 flex snap-x gap-3 overflow-x-auto pb-4 lg:gap-2 lg:overflow-visible lg:pb-0"
         >
           {PIPELINE_STAGES.map((stage, i) => {
             const isActive = stage.id === activeId;
