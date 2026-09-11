@@ -215,7 +215,7 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             )}
 
             {analysis.scoreBreakdown.length > 0 && (
-              <Card className="overflow-x-auto">
+              <Card>
                 <h2 className="font-sans text-base font-semibold text-ink">Score breakdown</h2>
                 <p className="mt-1 font-sans text-xs text-muted">
                   The FLARE score is the highest-contributing finding below, times the coverage
@@ -225,7 +225,13 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
                   </Link>
                   .
                 </p>
-                <table className="mt-4 w-full min-w-[560px] font-sans text-[12.5px]">
+                <div
+                  tabIndex={0}
+                  role="region"
+                  aria-label="Score breakdown table"
+                  className="mt-4 overflow-x-auto focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                <table className="w-full min-w-[560px] font-sans text-[12.5px]">
                   <thead>
                     <tr className="border-b border-line text-left text-muted">
                       <th className="pb-2 pr-3 font-condensed uppercase tracking-[0.05em]">Finding</th>
@@ -256,6 +262,7 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
                     ))}
                   </tbody>
                 </table>
+                </div>
               </Card>
             )}
           </div>

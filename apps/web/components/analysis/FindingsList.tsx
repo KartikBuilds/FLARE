@@ -57,7 +57,12 @@ function FindingCard({ finding, incidents }: { finding: Finding; incidents: Inci
             <p className="font-condensed text-[11px] font-semibold uppercase tracking-[0.06em] text-muted">
               Source
             </p>
-            <pre className="mt-1.5 overflow-x-auto rounded-[var(--radius-control)] border border-line bg-charcoal p-3 font-mono text-[12.5px] leading-relaxed text-paper">
+            <pre
+              tabIndex={0}
+              role="region"
+              aria-label="Source code excerpt"
+              className="mt-1.5 overflow-x-auto rounded-[var(--radius-control)] border border-line bg-charcoal p-3 font-mono text-[12.5px] leading-relaxed text-paper focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
               {finding.codeExcerpt}
             </pre>
           </div>

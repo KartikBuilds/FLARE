@@ -12,8 +12,8 @@ export function ProblemSection() {
     <section id="problem" className="border-t border-line py-20 md:py-28">
       <div className="container-flare">
         <SectionLabel index="01" label="The Problem" />
-        <div className="mt-6 grid gap-12 lg:grid-cols-[1.1fr_0.7fr_1fr] lg:items-start">
-          <div>
+        <div className="mt-6 grid min-w-0 gap-12 lg:grid-cols-[1.1fr_0.7fr_1fr] lg:items-start">
+          <div className="min-w-0">
             <h2 className="font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-6xl">
               Billions locked forever.
             </h2>
@@ -36,7 +36,7 @@ export function ProblemSection() {
             <HourglassGlyph className="h-44 w-auto text-ink-soft sm:h-56" />
           </div>
 
-          <div>
+          <div className="min-w-0">
             <p className="font-display text-5xl font-bold tracking-tight">{formatUsdCompact(total)}</p>
             <p className="mt-1 font-condensed text-[12px] uppercase tracking-[0.1em] text-muted">
               Verified locked principal across FLARE case studies

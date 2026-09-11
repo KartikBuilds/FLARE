@@ -36,8 +36,8 @@ export default async function DocPage({ params }: { params: PageParams }) {
 
   return (
     <DocsShell>
-      <div className="grid gap-10 xl:grid-cols-[1fr_14rem] xl:gap-14">
-        <div>
+      <div className="grid min-w-0 gap-10 xl:grid-cols-[1fr_14rem] xl:gap-14">
+        <div className="min-w-0">
           <SectionLabel
             index={String(DOCS_NAV.findIndex((i) => i.slug === slug) + 1).padStart(2, "0")}
             label="Documentation"
