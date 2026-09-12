@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Card, Button, setReducedMotionOverride, usePrefersReducedMotion } from "@flare/ui";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 type AiProvider = "disabled" | "local" | "api-key";
 
@@ -46,10 +47,11 @@ export default function SettingsPage() {
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Settings</h1>
-      <p className="mt-1 max-w-xl font-sans text-sm text-muted">
-        FLARE has no account system yet — these preferences are stored only in this browser.
-      </p>
+      <AppPageHeader
+        title="Settings"
+        lead="FLARE has no account system yet — these preferences are stored only in this browser."
+        note="this browser only"
+      />
 
       <Card className="mt-6">
         <fieldset>

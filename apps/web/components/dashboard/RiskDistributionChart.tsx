@@ -5,11 +5,17 @@ import { Card, DemoBadge, LiveEngineBadge } from "@flare/ui";
 import { useAnalyses } from "@/lib/queries";
 import { getDemoRiskDistribution } from "@/lib/demo-data";
 
+/* Mirrors --color-critical / severity-high / warning / success in globals.css.
+   Literal hex rather than var(): Recharts serialises these into SVG fills and
+   into the tooltip, where a custom property does not always resolve.
+   Each step differs in hue *and* lightness so the ring is still readable in
+   greyscale, and the legend beside it names every slice — the chart never
+   relies on colour alone to say what a slice means. */
 const COLORS: Record<string, string> = {
-  Critical: "#131210",
-  High: "#37352d",
-  Medium: "#9a9584",
-  Low: "#c7c2af",
+  Critical: "#7f011f",
+  High: "#b33a20",
+  Medium: "#8a5a12",
+  Low: "#4a6741",
 };
 
 export function RiskDistributionChart() {

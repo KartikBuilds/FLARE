@@ -32,7 +32,7 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
               {isActive && (
                 <motion.span
                   layoutId="app-sidebar-active"
-                  className="absolute inset-0 rounded-[var(--radius-control)] bg-paper/10"
+                  className="sketch-control absolute inset-0 border border-paper/15 bg-paper/10"
                   transition={{ type: "spring", stiffness: 500, damping: 42 }}
                 />
               )}
@@ -49,8 +49,10 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
       </nav>
 
       <div className="border-t border-charcoal-line pt-4">
-        <p className="font-condensed text-[10.5px] uppercase tracking-[0.08em] text-paper/65">
-          Open protocols. Safer ecosystems.
+        <p className="font-handwritten text-xl leading-tight text-paper/70">
+          open protocols.
+          <br />
+          safer ecosystems.
         </p>
       </div>
     </div>

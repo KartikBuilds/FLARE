@@ -3,6 +3,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { motion } from "motion/react";
 import { Download, FileJson, FileText } from "lucide-react";
 import { Card, Badge, DemoBadge, LiveEngineBadge, AnimatedCounter, Button, ButtonLink, cn } from "@flare/ui";
 import type { GraphNode } from "@flare/graph";
@@ -12,6 +13,7 @@ import { formatRelativeTime } from "@/lib/format";
 import { getAnalyzerApiBase } from "@/lib/api-client";
 import { FindingsList } from "@/components/analysis/FindingsList";
 import { NodeDetailPanel } from "@/components/analysis/NodeDetailPanel";
+import { RevealGroup, RevealItem } from "@/components/motion";
 
 // React Flow needs the DOM (ResizeObserver, etc.) — never rendered on the server.
 const AssetFlowGraph = dynamic(
@@ -120,7 +122,8 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
         {analysis.origin === "demo" ? <DemoBadge /> : <LiveEngineBadge />}
       </div>
 
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <RevealGroup stagger={0.07} className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <RevealItem>
         <Card>
           <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
             {analysis.flareScore !== null ? <AnimatedCounter value={analysis.flareScore} /> : "—"}
@@ -130,7 +133,9 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             <p className="mt-1 font-mono text-[11px] text-muted">formula v{analysis.formulaVersion}</p>
           )}
         </Card>
-        <Card>
+        </RevealItem>
+        <RevealItem>
+        <Card sketch={2}>
           {analysis.riskBand ? (
             <Badge tone={RISK_TONE[analysis.riskBand]} className="text-sm">
               {analysis.riskBand}
@@ -140,7 +145,9 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
           )}
           <p className="mt-3 font-sans text-sm text-ink">Risk Band</p>
         </Card>
-        <Card>
+        </RevealItem>
+        <RevealItem>
+        <Card sketch={3}>
           <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
             {analysis.coverage !== null ? (
               <AnimatedCounter value={Math.round(analysis.coverage * 100)} formatter={(n) => `${n}%`} />
@@ -159,13 +166,16 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             </ul>
           )}
         </Card>
+        </RevealItem>
+        <RevealItem>
         <Card>
           <p className="font-display text-4xl font-bold tabular-nums tracking-tight">
             <AnimatedCounter value={analysis.findingCount} />
           </p>
           <p className="mt-2 font-sans text-sm text-ink">Findings</p>
         </Card>
-      </div>
+        </RevealItem>
+      </RevealGroup>
 
       <div role="tablist" aria-label="Analysis workspace" className="mt-8 flex gap-1 border-b border-line">
         {TABS.map((t) => (
@@ -180,7 +190,13 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             )}
           >
             {TAB_LABELS[t]}
-            {tab === t && <span className="absolute inset-x-0 -bottom-px h-[2px] bg-ink" />}
+            {tab === t && (
+              <motion.span
+                layoutId="analysis-tab-underline"
+                className="absolute inset-x-0 -bottom-px h-[2px] bg-ink"
+                transition={{ type: "spring", stiffness: 500, damping: 40 }}
+              />
+            )}
           </button>
         ))}
       </div>

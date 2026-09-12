@@ -30,10 +30,12 @@ let hasNavigated = false;
 export function PageTransition({ children }: { children: React.ReactNode }) {
   const reduced = usePrefersReducedMotion();
   const pathname = usePathname();
-  const [wipe, setWipe] = React.useState(false);
+  // Read during the initial render rather than in an effect. On the server
+  // and on a cold load the flag is false, so SSR and the first client render
+  // agree; only a remount triggered by an actual navigation starts out true.
+  const [wipe, setWipe] = React.useState<boolean>(() => hasNavigated);
 
   React.useEffect(() => {
-    if (hasNavigated) setWipe(true);
     hasNavigated = true;
   }, []);
 

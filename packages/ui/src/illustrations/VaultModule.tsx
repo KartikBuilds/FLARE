@@ -26,7 +26,7 @@ export function VaultModule({ title = "Vault holding protocol assets", decorativ
       <Bolt cx={26} cy={184} r={3.4} />
       <Bolt cx={194} cy={184} r={3.4} />
       {/* door */}
-      <circle cx="110" cy="110" r="70" fill="var(--color-paper, #eeece3)" stroke="currentColor" strokeWidth="2.5" />
+      <circle cx="110" cy="110" r="70" fill="var(--color-paper, #f5ebd0)" stroke="currentColor" strokeWidth="2.5" />
       <circle cx="110" cy="110" r="58" fill="none" stroke="currentColor" strokeWidth="1.25" strokeDasharray="1 5" />
       {Array.from({ length: 12 }).map((_, i) => {
         const angle = (i / 12) * Math.PI * 2;

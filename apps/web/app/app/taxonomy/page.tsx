@@ -3,21 +3,30 @@ import { Card } from "@flare/ui";
 import { TaxonomyIcon } from "@flare/ui/illustrations";
 import { TAXONOMY_CATEGORIES } from "@flare/schemas";
 import { getDetectorsByTaxonomy } from "@flare/rules";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 export const metadata = { title: "Taxonomy" };
 
 export default function AppTaxonomyPage() {
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Taxonomy</h1>
-      <p className="mt-1 max-w-xl font-sans text-sm text-muted">
-        Quick reference for the five fund-lock categories FLARE checks for. Full detail and
-        detector mappings live in{" "}
-        <Link href="/docs/taxonomy" className="text-ink underline decoration-line underline-offset-2 hover:decoration-ink">
-          the documentation
-        </Link>
-        .
-      </p>
+      <AppPageHeader
+        title="Taxonomy"
+        note="five categories"
+        lead={
+          <>
+            Quick reference for the five fund-lock categories FLARE checks for. Full detail and
+            detector mappings live in{" "}
+            <Link
+              href="/docs/taxonomy"
+              className="text-ink underline decoration-line underline-offset-2 hover:decoration-ink"
+            >
+              the documentation
+            </Link>
+            .
+          </>
+        }
+      />
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {TAXONOMY_CATEGORIES.map((category) => {

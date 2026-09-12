@@ -8,6 +8,7 @@ import { Card, Button, cn } from "@flare/ui";
 import { DETECTOR_REGISTRY } from "@flare/rules";
 import type { AnalysisStatus } from "@flare/schemas";
 import { submitFiles, submitZip, submitGithub, submitAddress, submitBenchmarkCase, pollAnalysisUntilDone } from "@/lib/api-client";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 type Method = "files" | "zip" | "github" | "address" | "benchmark";
 
@@ -128,11 +129,11 @@ export default function NewAnalysisPage() {
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">New Analysis</h1>
-      <p className="mt-1 max-w-xl font-sans text-sm text-muted">
-        Choose how to bring your project to FLARE. All uploads are validated and extracted into
-        an isolated workspace before any analysis runs.
-      </p>
+      <AppPageHeader
+        title={["New Analysis"]}
+        lead="Choose how to bring your project to FLARE. All uploads are validated and extracted into an isolated workspace before any analysis runs."
+        note="pick a source"
+      />
 
       <div className="mt-6 flex flex-wrap gap-2">
         {METHODS.map((m) => {

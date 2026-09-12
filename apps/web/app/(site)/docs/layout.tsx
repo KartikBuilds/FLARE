@@ -1,11 +1,7 @@
 import type { ReactNode } from "react";
-import { ReadingProgress } from "@/components/docs/ReadingProgress";
 
+/* The reading-progress bar that used to live here is now <ScrollProgress> in
+   the root layout, which draws the same indicator on every route. */
 export default function DocsLayout({ children }: { children: ReactNode }) {
-  return (
-    <div className="bg-paper">
-      <ReadingProgress />
-      {children}
-    </div>
-  );
+  return <div className="bg-paper">{children}</div>;
 }

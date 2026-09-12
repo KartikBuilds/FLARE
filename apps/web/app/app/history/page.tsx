@@ -6,6 +6,7 @@ import { Badge, DemoBadge, LiveEngineBadge, Card } from "@flare/ui";
 import type { RiskBand } from "@flare/schemas";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   critical: "danger",
@@ -31,8 +32,11 @@ export default function HistoryPage() {
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">History</h1>
-      <p className="mt-1 font-sans text-sm text-muted">Every analysis FLARE has run, filterable by risk band.</p>
+      <AppPageHeader
+        title="History"
+        lead="Every analysis FLARE has run, filterable by risk band."
+        note="newest first"
+      />
 
       <div className="mt-6 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
@@ -40,8 +44,10 @@ export default function HistoryPage() {
             key={f.value}
             type="button"
             onClick={() => setFilter(f.value)}
-            className={`rounded-[var(--radius-chip)] border px-3 py-1.5 font-condensed text-[12px] uppercase tracking-[0.06em] transition-colors ${
-              filter === f.value ? "border-ink bg-ink text-paper" : "border-line text-ink-soft hover:border-ink"
+            className={`sketch-control border-[1.5px] px-3.5 py-1.5 font-condensed text-[12px] uppercase tracking-[0.06em] transition-colors ${
+              filter === f.value
+                ? "border-ink bg-ink text-paper"
+                : "border-line-strong/60 text-ink-soft hover:border-ink"
             }`}
           >
             {f.label}

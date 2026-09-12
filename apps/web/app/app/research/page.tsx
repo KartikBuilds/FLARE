@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Card, Badge } from "@flare/ui";
 import { RESEARCH_PILLARS } from "@/lib/research-pillars";
 import { getIncidents } from "@/lib/incidents";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 export const metadata = { title: "Research" };
 
@@ -10,10 +11,11 @@ export default function AppResearchPage() {
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Research</h1>
-      <p className="mt-1 max-w-xl font-sans text-sm text-muted">
-        The research program behind FLARE, and the case studies that motivated its taxonomy.
-      </p>
+      <AppPageHeader
+        title="Research"
+        lead="The research program behind FLARE, and the case studies that motivated its taxonomy."
+        note="what's built, what isn't"
+      />
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2">
         {RESEARCH_PILLARS.map((pillar) => (

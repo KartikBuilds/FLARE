@@ -97,8 +97,11 @@ export function AssetFlowGraph({ graph, onSelectNode }: AssetFlowGraphProps) {
     return { nodes, edges };
   }, [graph]);
 
+  // The frame reads as a hand-drawn box; the nodes inside stay on true
+  // rectangles, because wobbling every node would fight legibility at the
+  // sizes React Flow renders them.
   return (
-    <div className="h-[480px] w-full overflow-hidden rounded-[var(--radius-card)] border border-line bg-paper-flat">
+    <div className="sketch-box h-[480px] w-full overflow-hidden border-[1.5px] border-line-strong/60 bg-paper-flat">
       <ReactFlow
         nodes={nodes}
         edges={edges}

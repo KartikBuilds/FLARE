@@ -5,18 +5,24 @@ import { FileJson, FileText } from "lucide-react";
 import { Card, DemoBadge, LiveEngineBadge } from "@flare/ui";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 export default function ReportsPage() {
   const { data: analyses, isLoading } = useAnalyses();
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Reports</h1>
-      <p className="mt-1 max-w-xl font-sans text-sm text-muted">
-        Every completed analysis has a versioned JSON report (download it from the analysis
-        workspace&apos;s Report tab). A self-contained, printable HTML report is not implemented
-        yet — both links below open the same analysis workspace.
-      </p>
+      <AppPageHeader
+        title="Reports"
+        note="JSON today, HTML later"
+        lead={
+          <>
+            Every completed analysis has a versioned JSON report (download it from the analysis
+            workspace&apos;s Report tab). A self-contained, printable HTML report is not implemented
+            yet — both links below open the same analysis workspace.
+          </>
+        }
+      />
 
       {isLoading && <p className="mt-8 font-sans text-sm text-muted">Loading…</p>}
 

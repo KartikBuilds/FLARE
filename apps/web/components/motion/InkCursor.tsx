@@ -4,6 +4,7 @@ import * as React from "react";
 import { motion, useMotionValue, useSpring } from "motion/react";
 import { usePrefersReducedMotion } from "@flare/ui";
 import { SPRING_CURSOR } from "@/lib/motion";
+import { useFinePointer } from "./use-fine-pointer";
 
 const INTERACTIVE = 'a, button, [role="button"], summary, label, input, textarea, select, [tabindex]:not([tabindex="-1"])';
 
@@ -20,7 +21,7 @@ const INTERACTIVE = 'a, button, [role="button"], summary, label, input, textarea
  */
 export function InkCursor() {
   const reduced = usePrefersReducedMotion();
-  const [active, setActive] = React.useState(false);
+  const finePointer = useFinePointer();
   const [hovering, setHovering] = React.useState(false);
   const [pressed, setPressed] = React.useState(false);
   const [visible, setVisible] = React.useState(false);
@@ -31,17 +32,7 @@ export function InkCursor() {
   const haloY = useSpring(y, SPRING_CURSOR);
 
   // Only arm on a precise pointer that is not in reduced-motion mode.
-  React.useEffect(() => {
-    if (reduced) {
-      setActive(false);
-      return;
-    }
-    const query = window.matchMedia("(pointer: fine)");
-    const sync = () => setActive(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, [reduced]);
+  const active = finePointer && !reduced;
 
   React.useEffect(() => {
     if (!active) return;

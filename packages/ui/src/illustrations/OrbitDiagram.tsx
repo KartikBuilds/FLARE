@@ -52,7 +52,7 @@ export function OrbitDiagram({ title = "FLARE's model of a protocol", decorative
         const y = round2(110 + ry * Math.sin(rad));
         return (
           <g key={i}>
-            <circle cx={x} cy={y} r="10" fill="var(--color-paper, #eeece3)" stroke="currentColor" strokeWidth="2" />
+            <circle cx={x} cy={y} r="10" fill="var(--color-paper, #f5ebd0)" stroke="currentColor" strokeWidth="2" />
             <circle cx={x} cy={y} r="2.4" fill="currentColor" />
           </g>
         );

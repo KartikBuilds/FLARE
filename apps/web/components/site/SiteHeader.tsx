@@ -38,13 +38,18 @@ export function SiteHeader() {
     setHidden(latest > previous && latest > 180);
   });
 
-  // Close the menu when the route actually changes.
-  useEffect(() => {
+  // Close the menu when the route actually changes — including on a back or
+  // forward navigation, which no link handler sees. Adjusting state during
+  // render on a changed prop is React's documented alternative to an effect.
+  const [lastPath, setLastPath] = useState(pathname);
+  if (pathname !== lastPath) {
+    setLastPath(pathname);
     setOpen(false);
-  }, [pathname]);
+  }
 
   useEffect(() => {
     if (!open) return;
+    const trigger = triggerRef.current;
     panelRef.current?.focus();
     function onKey(event: KeyboardEvent) {
       if (event.key === "Escape") setOpen(false);
@@ -55,7 +60,8 @@ export function SiteHeader() {
     return () => {
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = previousOverflow;
-      triggerRef.current?.focus();
+      // Send focus back to the control that opened the menu.
+      trigger?.focus();
     };
   }, [open]);
 

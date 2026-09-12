@@ -10,6 +10,7 @@ import {
   type HTMLMotionProps,
 } from "motion/react";
 import { cn, usePrefersReducedMotion } from "@flare/ui";
+import { useFinePointer } from "./use-fine-pointer";
 
 interface TiltCardProps
   extends Omit<HTMLMotionProps<"div">, "children" | "style" | "onPointerMove" | "onPointerEnter" | "onPointerLeave"> {
@@ -35,8 +36,9 @@ export function TiltCard({
   ...rest
 }: TiltCardProps) {
   const reduced = usePrefersReducedMotion();
+  const finePointer = useFinePointer();
   const ref = React.useRef<HTMLDivElement>(null);
-  const [enabled, setEnabled] = React.useState(false);
+  const enabled = finePointer && !reduced;
   const [hovered, setHovered] = React.useState(false);
 
   const pointerX = useMotionValue(0.5);
@@ -51,18 +53,6 @@ export function TiltCard({
   const glowX = useTransform(pointerX, (value) => `${value * 100}%`);
   const glowY = useTransform(pointerY, (value) => `${value * 100}%`);
   const glow = useMotionTemplate`radial-gradient(240px circle at ${glowX} ${glowY}, rgba(127,1,31,0.10), transparent 72%)`;
-
-  React.useEffect(() => {
-    if (reduced) {
-      setEnabled(false);
-      return;
-    }
-    const query = window.matchMedia("(pointer: fine)");
-    const sync = () => setEnabled(query.matches);
-    sync();
-    query.addEventListener("change", sync);
-    return () => query.removeEventListener("change", sync);
-  }, [reduced]);
 
   const handleMove = (event: React.PointerEvent<HTMLDivElement>) => {
     if (!enabled || !ref.current) return;

@@ -5,6 +5,7 @@ import { Card, Badge, DemoBadge, LiveEngineBadge } from "@flare/ui";
 import type { RiskBand } from "@flare/schemas";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
+import { AppPageHeader } from "@/components/app/AppPageHeader";
 
 const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   critical: "danger",
@@ -26,8 +27,11 @@ export default function ProjectsPage() {
 
   return (
     <div className="px-5 py-8 sm:px-8 lg:px-10 lg:py-10">
-      <h1 className="font-display text-3xl font-bold tracking-tight sm:text-4xl">Projects</h1>
-      <p className="mt-1 font-sans text-sm text-muted">Every protocol FLARE has analyzed, grouped by project.</p>
+      <AppPageHeader
+        title="Projects"
+        lead="Every protocol FLARE has analyzed, grouped by project."
+        note="one card per protocol"
+      />
 
       {isLoading && <p className="mt-8 font-sans text-sm text-muted">Loading…</p>}
 
