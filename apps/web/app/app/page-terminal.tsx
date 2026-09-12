@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { hasLiveApiConfigured } from "@/lib/engine-status";
-import { TerminalStatusBadge } from "@/components/terminal";
+import { TerminalStat, TerminalStatusBadge } from "@/components/terminal";
 import { StatCards } from "@/components/dashboard/StatCards";
 import { RecentAnalysesTable } from "@/components/dashboard/RecentAnalysesTable";
 import { RiskDistributionChart } from "@/components/dashboard/RiskDistributionChart";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   title: "Dashboard",
 };
 
-export default function DashboardPage() {
+export default function DashboardPageTerminal() {
   const live = hasLiveApiConfigured();
 
   return (
@@ -83,16 +83,10 @@ export default function DashboardPage() {
         </div>
 
         {/* Status Cards */}
-        <div className="mt-6 grid min-w-0 gap-6 sm:grid-cols-3">
-          <div className="min-w-0">
-            <ResearchStatusCard />
-          </div>
-          <div className="min-w-0">
-            <EngineHealthCard />
-          </div>
-          <div className="min-w-0">
-            <BenchmarkResultCard />
-          </div>
+        <div className="grid min-w-0 gap-6 lg:grid-cols-3">
+          <ResearchStatusCard />
+          <EngineHealthCard />
+          <BenchmarkResultCard />
         </div>
       </div>
     </div>
