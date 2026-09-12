@@ -177,7 +177,13 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
         </RevealItem>
       </RevealGroup>
 
-      <div role="tablist" aria-label="Analysis workspace" className="mt-8 flex gap-1 border-b border-line">
+      {/* Four tabs do not fit across a 320px viewport, so the strip scrolls
+          rather than pushing the whole page into horizontal scroll. */}
+      <div
+        role="tablist"
+        aria-label="Analysis workspace"
+        className="mt-8 flex snap-x gap-1 overflow-x-auto border-b border-line"
+      >
         {TABS.map((t) => (
           <button
             key={t}
@@ -185,15 +191,17 @@ export function AnalysisDetailClient({ id, incidents }: { id: string; incidents:
             aria-selected={tab === t}
             onClick={() => setTab(t)}
             className={cn(
-              "relative px-4 py-2.5 font-condensed text-[13px] font-medium uppercase tracking-[0.05em] transition-colors",
+              "relative shrink-0 snap-start px-4 py-2.5 font-condensed text-[13px] font-medium uppercase tracking-[0.05em] transition-colors",
               tab === t ? "text-ink" : "text-muted hover:text-ink",
             )}
           >
             {TAB_LABELS[t]}
             {tab === t && (
+              /* bottom-0, not -bottom-px: overflow-x on the strip clips the
+                 cross axis too, which would shave a rule sitting outside it. */
               <motion.span
                 layoutId="analysis-tab-underline"
-                className="absolute inset-x-0 -bottom-px h-[2px] bg-ink"
+                className="absolute inset-x-0 bottom-0 h-[2px] bg-ink"
                 transition={{ type: "spring", stiffness: 500, damping: 40 }}
               />
             )}

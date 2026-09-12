@@ -137,5 +137,16 @@ export function pageVariants(reduced: boolean): Variants {
   };
 }
 
-/** Shared viewport config so reveals fire at a consistent point on screen. */
-export const VIEWPORT = { once: true, margin: "-12% 0px -8% 0px" } as const;
+/**
+ * Shared viewport config so reveals fire at a consistent point on screen.
+ *
+ * The bottom inset is what gives reveals their timing: content has to rise a
+ * little way into the viewport before it animates, rather than triggering the
+ * instant its first pixel appears.
+ *
+ * The top margin must stay at 0. A negative top inset shrinks the observer
+ * root downward, and anything that sits entirely inside that strip on load —
+ * a page header's margin note, for one — never intersects at all and is left
+ * stranded at opacity 0 forever.
+ */
+export const VIEWPORT = { once: true, margin: "0px 0px -8% 0px" } as const;

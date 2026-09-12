@@ -35,10 +35,14 @@ export function AppPageHeader({ title, lead, note, action }: AppPageHeaderProps)
           </Reveal>
         </div>
 
-        <div className="flex shrink-0 flex-col items-end gap-2">
+        {/* min-w-0, not shrink-0: a long status badge ("Demo / Fixture Data —
+            Analyzer Not Configured") cannot fit beside the title at 320px, and
+            a non-shrinking column pushes the page into horizontal scroll.
+            Below sm the column drops under the title and aligns left. */}
+        <div className="flex min-w-0 flex-col items-start gap-2 sm:items-end">
           {action}
           {note ? (
-            <HandNote className="text-right text-xl" delay={0.18}>
+            <HandNote className="text-xl sm:text-right" delay={0.18}>
               {note}
             </HandNote>
           ) : null}

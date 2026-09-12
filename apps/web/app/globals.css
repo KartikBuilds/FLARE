@@ -432,4 +432,16 @@
     transition-duration: 0.001ms !important;
     scroll-behavior: auto !important;
   }
+
+  /* usePrefersReducedMotion resolves in an effect, so it reads false for the
+     first render — by which point Motion has already committed an opacity-0
+     `initial` to every off-screen reveal. Those would then stay hidden until
+     scrolled into view, which is exactly the "content is missing" failure
+     reduced motion is supposed to prevent. A stylesheet !important outranks
+     Motion's inline style, so this makes the guarantee unconditional rather
+     than dependent on when a hook settles or whether an observer fires. */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+  }
 }

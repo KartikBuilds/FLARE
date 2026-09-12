@@ -17,7 +17,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={`${fontVariables} h-full`}>
+    // data-scroll-behavior tells Next about the smooth scrolling set in
+    // globals.css, so it can suppress it while restoring scroll on a route
+    // change — without it every navigation animates its way back to the top.
+    <html lang="en" data-scroll-behavior="smooth" className={`${fontVariables} h-full`}>
       <body className="flex min-h-full flex-col bg-paper text-ink antialiased">
         {/* Scroll reveals ship their hidden state in the server-rendered markup,
             so without this a client that never runs the reveal JS would be left
