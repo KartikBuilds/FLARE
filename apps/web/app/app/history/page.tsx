@@ -7,6 +7,7 @@ import type { RiskBand } from "@flare/schemas";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
+import { StateMessage } from "@/components/app/StateMessage";
 
 const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   critical: "danger",
@@ -56,9 +57,23 @@ export default function HistoryPage() {
       </div>
 
       <Card className="mt-6 p-0">
-        {isLoading && <div className="px-5 py-10 text-center font-sans text-sm text-muted">Loading…</div>}
+        {isLoading && (
+          <StateMessage
+            kind="loading"
+            title="Reading the analysis log"
+            description="Fetching every run FLARE has recorded."
+          />
+        )}
         {!isLoading && filtered.length === 0 && (
-          <div className="px-5 py-10 text-center font-sans text-sm text-muted">No analyses match this filter.</div>
+          <StateMessage
+            kind="empty"
+            title={filter === "all" ? "No analyses yet" : "Nothing at this risk band"}
+            description={
+              filter === "all"
+                ? "Runs appear here once the analyzer has completed one."
+                : "Try a different band, or clear the filter to see every run."
+            }
+          />
         )}
         <ul>
           {filtered.map((analysis) => (

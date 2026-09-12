@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { motion } from "motion/react";
 import { SectionLabel, Badge, ButtonLink, usePrefersReducedMotion } from "@flare/ui";
-import { PipelineModule } from "@flare/ui/illustrations";
+import { StageModule, type StageId } from "@flare/ui/illustrations";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
 import { hasLiveApiConfigured } from "@/lib/engine-status";
 import { HandNote, Reveal, TextReveal } from "@/components/motion";
@@ -75,10 +75,11 @@ export function PipelineSection() {
                   viewport={{ once: true, margin: "-40px" }}
                   transition={{ delay: reduced ? 0 : i * 0.05, duration: reduced ? 0.01 : 0.4 }}
                 >
-                  <PipelineModule
+                  <StageModule
+                    stage={stage.id as StageId}
                     className={
-                      "size-14 transition-colors " +
-                      (isActive ? "text-highlight" : "text-paper/40 group-hover:text-paper/70")
+                      "size-16 transition-colors " +
+                      (isActive ? "text-highlight" : "text-paper/45 group-hover:text-paper/75")
                     }
                   />
                 </motion.div>

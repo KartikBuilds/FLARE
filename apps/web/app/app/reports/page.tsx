@@ -6,6 +6,7 @@ import { Card, DemoBadge, LiveEngineBadge } from "@flare/ui";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
+import { StateMessage } from "@/components/app/StateMessage";
 
 export default function ReportsPage() {
   const { data: analyses, isLoading } = useAnalyses();
@@ -24,7 +25,13 @@ export default function ReportsPage() {
         }
       />
 
-      {isLoading && <p className="mt-8 font-sans text-sm text-muted">Loading…</p>}
+      {isLoading && (
+        <StateMessage
+          kind="loading"
+          title="Gathering reports"
+          description="Listing every analysis that has produced one."
+        />
+      )}
 
       <Card className="mt-6 p-0">
         <ul>

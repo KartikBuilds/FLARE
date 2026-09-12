@@ -6,6 +6,7 @@ import type { RiskBand } from "@flare/schemas";
 import { useAnalyses } from "@/lib/queries";
 import { formatRelativeTime } from "@/lib/format";
 import { AppPageHeader } from "@/components/app/AppPageHeader";
+import { StateMessage } from "@/components/app/StateMessage";
 
 const RISK_TONE: Record<RiskBand, "danger" | "warning" | "success"> = {
   critical: "danger",
@@ -33,7 +34,13 @@ export default function ProjectsPage() {
         note="one card per protocol"
       />
 
-      {isLoading && <p className="mt-8 font-sans text-sm text-muted">Loading…</p>}
+      {isLoading && (
+        <StateMessage
+          kind="loading"
+          title="Collecting projects"
+          description="Grouping analyses by the protocol they ran against."
+        />
+      )}
 
       <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {Array.from(projects.entries()).map(([name, list]) => {

@@ -6,6 +6,7 @@ export { PipeSegment } from "./PipeSegment";
 export { JunctionBox } from "./JunctionBox";
 export { HourglassGlyph } from "./HourglassGlyph";
 export { PipelineModule } from "./PipelineModule";
+export { StageModule, type StageId } from "./StageModule";
 export { TaxonomyIcon } from "./TaxonomyIcons";
 export { BookStack } from "./BookStack";
 export { AstronautFigure } from "./AstronautFigure";

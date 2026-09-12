@@ -45,6 +45,14 @@ class InertObserver {
 window.IntersectionObserver = InertObserver as unknown as typeof window.IntersectionObserver;
 window.ResizeObserver = InertObserver as unknown as typeof window.ResizeObserver;
 
+/**
+ * jsdom has no canvas backend and logs a "Not implemented" error for every
+ * getContext probe. Returning null states the same fact quietly, and is the
+ * environment these tests are asserting against: no WebGL, so every 3D surface
+ * must resolve to its static illustration.
+ */
+HTMLCanvasElement.prototype.getContext = (() => null) as unknown as typeof HTMLCanvasElement.prototype.getContext;
+
 window.matchMedia = ((query: string) => ({
   media: query,
   get matches() {
