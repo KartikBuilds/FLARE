@@ -1,10 +1,12 @@
 # Handwritten Redesign
 
 A full replacement of the FLARE front-end visual system, built on two brand
-colors and a shared motion vocabulary.
+colors, a shared motion vocabulary, and three WebGL scenes backed by static
+illustrations.
 
 - **Branch:** `feat/handwritten-redesign` (branched from `main`)
 - **Screenshots:** [`docs/assets/handwritten-redesign/`](./assets/handwritten-redesign/)
+  — scene routes are captured twice, `-webgl` and `-fallback`.
 
 The previous illustrated editorial design is untouched on `main`; a separate
 ASCII-terminal exploration lives on `feat/ascii-redesign`.
@@ -175,7 +177,86 @@ Verified: with `prefers-reduced-motion: reduce`, 0 of 44 below-fold reveals on
 the home page are hidden before any scroll; without it, 34 are correctly
 waiting to animate.
 
-## 6. Accessibility
+## 6. Three dimensions
+
+Three surfaces carry a real WebGL scene; everything else is drawn as
+dimensional line art. The split is deliberate — WebGL is worth 236KB on the
+three places a reader stops and looks, and is not worth it for a row of nine
+pipeline icons.
+
+### The scenes
+
+| Route | Scene | Role |
+| --- | --- | --- |
+| `/` hero | asset → intake → vault → two exits, one severed | analytical |
+| `/app` | seated researcher on a horizon, seen from behind | atmospheric |
+| 404 | the asset tumbling away from the protocol | atmospheric |
+
+The hero is the one that argues something. A bead of value runs each route out
+of the vault; the second cannot get past the break. Both beads run the same
+path with the same code — only the limit differs — so the failure is stated as
+motion rather than asserted in a caption.
+
+Props are composed, not primitive: the vault is a pressure housing with a
+bolted door, a spoked hand-wheel, reinforcing bands, a shoulder gauge and
+feet; the figure is jointed with a collar, chest panel, analyzer pack,
+shoulder and hip spheres, limbs and boots. Bolt rings, craters and debris are
+instanced. Materials are created once per scene and shared across every mesh
+in it.
+
+### Always an illustration underneath
+
+`Scene3D` hosts a scene over its own line art. The illustration renders first
+and always; the canvas cross-fades over it only once a frame has actually been
+drawn — `onCreated` fires before anything is painted, so fading on that shows
+an empty slot for a frame or two.
+
+The illustration is what a visitor keeps when:
+
+- WebGL is unavailable,
+- reduced motion is on,
+- the device is judged constrained (Save-Data, ≤2GB, ≤2 cores),
+- the scene chunk fails to load,
+- the scene throws (an error boundary catches it), or
+- the WebGL context is lost.
+
+It is a full composition in every case, never a skeleton or a spinner.
+
+### What each decision costs
+
+- **three.js is never in a route's initial bundle.** Each scene is a
+  `next/dynamic` import with `ssr: false`, and `Scene3D` only renders it once
+  an IntersectionObserver says the box is within 400px of the viewport. `/docs`
+  and `/app/history` never fetch it at all.
+- **Frame loop follows visibility.** An off-screen canvas renders no frames
+  rather than quietly spinning a rAF loop behind the fold.
+- **Device pixel ratio is capped** at 1.75 (high) / 1.25 (low). Uncapped, a 3×
+  phone renders nine times the fragments for a scene nobody inspects at pixel
+  level.
+- **No shadow pass.** A flat translucent disc under each prop costs one draw
+  instead of a depth pass per light.
+- **`powerPreference: "low-power"`** asks for the integrated GPU — these are
+  decoration and should not spin up a discrete card.
+- **Geometry detail is halved** on the low tier; mobile resolves to `low`.
+- **Materials are disposed explicitly** on unmount. They are created
+  imperatively so one instance can back dozens of meshes, which also means
+  React will not clean them up.
+
+### Accessibility of the scenes
+
+Canvases are `aria-hidden`. The hero, which carries meaning, has an adjacent
+screen-reader description of what the composition shows; the two atmospheric
+scenes deliberately have none, because the copy beside them already says
+everything and a described backdrop is noise. No text lives inside a canvas,
+every CTA is real HTML, and no scene requires pointer interaction to be
+understood.
+
+`Scene3D` also publishes its state as data attributes
+(`data-scene-quality`, `-near`, `-visible`, `-ready`, `-failed`) so the QA
+harness can assert which path a device actually took rather than inferring it
+from pixels.
+
+## 7. Accessibility
 
 - Pointer-only effects (ink cursor, magnetic, tilt) are gated on
   `(pointer: fine)` **and** reduced motion being off. Touch and keyboard users
@@ -192,26 +273,54 @@ waiting to animate.
   and `pointer-events-none`.
 - Severity is always paired with a text label.
 
-## 7. Verification
+## 8. Verification
 
 | Check | Result |
 | --- | --- |
 | `pnpm typecheck` | pass |
 | `pnpm lint` | pass, 0 problems |
-| `pnpm test` | 38 passed (25 pre-existing + 13 new) |
+| `pnpm test` | 46 passed (25 pre-existing + 21 new) |
 | `pnpm build` | compiled, 24 static pages |
-| Horizontal overflow @ 1440 / 390 / 320 | none on any route |
-| Console errors | none (bar the expected 404 status on `/404`) |
+| Horizontal overflow @ 1440 / 1024 / 768 / 390 / 320 | none, on any route, in either render path |
+| Console errors | none |
 | Reduced-motion content visibility | verified programmatically |
+| Fallback enforced with WebGL blocked | verified on all three scene routes |
 
-New tests in `apps/web/__tests__/motion-primitives.test.tsx` cover the
-guarantees most likely to regress silently: reveals render their children,
-`TextReveal` exposes one accessible name, reduced motion still renders
-everything, and pointer-only effects stay off a coarse pointer.
+Measured on the production build:
 
-`vitest.setup.ts` gained stubs for `matchMedia`, `IntersectionObserver` and
-`ResizeObserver` — jsdom implements none of them, and the inert observers mean
-tests assert the pre-animation state, which is exactly what a crawler sees.
+| Route | Initial JS | 3D chunk | CLS | Notes |
+| --- | --- | --- | --- | --- |
+| `/` | 243 KB | 236 KB, on demand | 0.005 | not fetched until the box nears the viewport |
+| `/app` | 397 KB | 236 KB, on demand | 0.003 | |
+| 404 | 211 KB | 236 KB, on demand | 0 | |
+| `/docs` | 374 KB | **never fetched** | 0 | |
+| `/app/history` | 397 KB | **never fetched** | 0 | |
+
+Memory across five mount/unmount cycles (navigate to the scene, away, force
+GC): **10 → 10 → 10 → 10 → 10 MB, zero growth.** Disposal holds.
+
+Frame rate measures 60fps on non-3D routes and ~21fps on scene routes — but
+that figure is headless SwiftShader doing the rasterising in software, not a
+GPU, so treat it as a floor rather than a representative number. It is also
+why the screenshot harness has to walk the page slowly: at 20fps a fast scroll
+outruns the IntersectionObserver callbacks driving the reveals, and sections
+photograph blank. A visitor on real hardware does not hit this.
+
+New tests:
+
+- `__tests__/motion-primitives.test.tsx` — reveals render their children,
+  `TextReveal` exposes one accessible name rather than per-line fragments,
+  reduced motion still renders everything, pointer-only effects stay off a
+  coarse pointer.
+- `__tests__/scene3d.test.tsx` — the fallback path, which is the one that has
+  to hold: with no WebGL and under reduced motion the scene never starts, the
+  illustration stays, the reserved box keeps its aspect ratio, `fill` mode
+  drops it, and an analytical scene still exposes its description.
+
+`vitest.setup.ts` stubs `matchMedia`, `IntersectionObserver`, `ResizeObserver`
+and `getContext` — jsdom implements none of them. The observers are inert on
+purpose: tests then assert the pre-animation state, which is exactly what a
+crawler sees.
 
 ### Bugs found and fixed along the way
 
@@ -231,8 +340,16 @@ tests assert the pre-animation state, which is exactly what a crawler sees.
   ReadingProgress` was removed.
 - **Smooth scrolling fought route restoration.** `<html>` now carries
   `data-scroll-behavior="smooth"` so Next suppresses it during navigation.
+- **Craters stood on edge.** A torus lies in its own XY plane with its axis on
+  Z; the placement code was aligning Y to the surface normal, which planted
+  every crater like a wheel half-sunk in the ground.
+- **Two planets on the 404.** The section drew one at its own level and the
+  scene drew another — invisible until the canvas came up over the top.
+- **The dashboard's only layout shift** was the recent-analyses card growing
+  from a one-line "Loading…" to five rows, pushing every panel below it down.
+  Skeleton rows now reserve the real height: CLS 0.024 → 0.003.
 
-## 8. What is unchanged
+## 9. What is unchanged
 
 No backend, analyzer, detector, scoring, graph, benchmark or research code was
 touched. `getIncidents()` still reads `research/incidents/*.json`, the FLARE
@@ -241,7 +358,7 @@ untouched, and every figure on screen still comes from the same source with
 its verification status intact. TanStack Query behaviour, upload validation and
 demo/live labelling are unchanged.
 
-## 9. Known limitations
+## 10. Known limitations
 
 - **Below-the-fold reveals rely on JS for their fade.** The `<noscript>` rule
   covers scripting being off entirely, but a client that runs JS and then
@@ -256,5 +373,16 @@ demo/live labelling are unchanged.
 - **The ink cursor hides the native pointer on fine-pointer devices.** Gated
   on reduced motion and pointer type, and text fields keep their caret, but it
   remains a deliberate trade.
-- **Screenshots are dev-server captures**, not production builds. The build is
-  verified separately.
+- **The 3D scenes are not reproductions of the reference artwork.** The
+  reference images are dense ink illustrations with thousands of hatching
+  strokes; these are modelled props sharing their composition, prop roles,
+  material system and mechanical storytelling. They read as the same world,
+  not as the same drawing.
+- **Frame rate is unmeasured on real GPU hardware.** Every figure here comes
+  from headless software rasterisation, which is a floor, not a representative
+  number. Worth re-measuring on a target device before launch.
+- **`Astronaut` is a jointed figure, not a rigged one.** Its seated and
+  drifting poses are fixed rotations, so the seated pose reads a little stiff
+  at large scale.
+- **Screenshots are production-build captures** taken under software WebGL, so
+  the 3D frames are lower-fidelity than a real GPU would produce.

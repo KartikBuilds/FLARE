@@ -29,7 +29,26 @@ export function RecentAnalysesTable() {
         </Link>
       </div>
 
-      {isLoading && <div className="px-5 py-8 text-center font-sans text-sm text-muted">Loading…</div>}
+      {/* Skeleton rows rather than a single "Loading…" line. This card grew
+          from about 70px to five rows when the query resolved, pushing every
+          panel below it down the page — it was the dashboard's layout shift.
+          Standing in one row per eventual row reserves the real height. */}
+      {isLoading && (
+        <ul aria-hidden="true">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <li key={i} className="border-b border-line last:border-b-0">
+              <div className="flex items-center justify-between gap-4 px-5 py-3.5">
+                <div className="min-w-0 flex-1 space-y-2">
+                  <div className="h-3.5 w-2/5 rounded-full bg-line-soft motion-safe:animate-pulse" />
+                  <div className="h-2.5 w-3/5 rounded-full bg-line-soft/70 motion-safe:animate-pulse" />
+                </div>
+                <div className="h-5 w-16 shrink-0 rounded-full bg-line-soft motion-safe:animate-pulse" />
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+      {isLoading && <span className="sr-only">Loading recent analyses…</span>}
 
       {analyses && analyses.length === 0 && (
         <div className="px-5 py-10 text-center">

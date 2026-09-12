@@ -26,6 +26,12 @@ export function TaxonomyDistributionWidget() {
         <h2 className="font-sans text-base font-semibold text-ink">Taxonomy Distribution</h2>
         {analyses ? <LiveEngineBadge /> : <DemoBadge />}
       </div>
+      {/* Reserve the full five-category height. This widget shows fixture
+          counts first and swaps to live ones when the query resolves; a live
+          run covering fewer categories would otherwise shrink the card and
+          shift the panel beside it. The taxonomy has exactly five categories,
+          so this is the tallest the list can ever be. */}
+      <div className="min-h-[13.5rem]">
       {distribution.length === 0 ? (
         <p className="mt-4 font-sans text-sm text-muted">No findings to distribute yet.</p>
       ) : (
@@ -49,6 +55,7 @@ export function TaxonomyDistributionWidget() {
           })}
         </ul>
       )}
+      </div>
     </Card>
   );
 }
