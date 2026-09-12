@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { fontVariables } from "./fonts";
 import { Providers } from "./providers";
+import { InkCursor, ScrollProgress } from "@/components/motion";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -18,6 +19,16 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fontVariables} h-full`}>
       <body className="flex min-h-full flex-col bg-paper text-ink antialiased">
+        {/* Scroll reveals ship their hidden state in the server-rendered markup,
+            so without this a client that never runs the reveal JS would be left
+            looking at blank sections. Everything marked data-reveal is forced
+            to its resting, visible state when scripting is off. */}
+        <noscript>
+          <style>{`[data-reveal]{opacity:1 !important;transform:none !important;}`}</style>
+        </noscript>
+
+        <ScrollProgress />
+        <InkCursor />
         <Providers>{children}</Providers>
       </body>
     </html>

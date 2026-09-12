@@ -3,12 +3,14 @@ import { cn } from "../lib/cn";
 
 type BadgeTone = "neutral" | "accent" | "danger" | "warning" | "success" | "outline-dark";
 
+/* Each tone carries a hairline in its own hue so a chip reads as something
+   outlined on the page rather than a flat block of fill. */
 const tones: Record<BadgeTone, string> = {
-  neutral: "bg-line-soft text-ink-soft",
-  accent: "bg-accent text-accent-ink",
-  danger: "bg-danger-soft text-danger",
-  warning: "bg-warning-soft text-warning",
-  success: "bg-success-soft text-success",
+  neutral: "border border-line-strong/50 bg-line-soft text-ink-soft",
+  accent: "border border-ink bg-accent text-accent-ink",
+  danger: "border border-danger/30 bg-danger-soft text-danger",
+  warning: "border border-warning/30 bg-warning-soft text-warning",
+  success: "border border-success/30 bg-success-soft text-success",
   "outline-dark": "border border-charcoal-line text-paper",
 };
 

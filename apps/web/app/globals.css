@@ -13,41 +13,81 @@
 }
 
 /* ---------------------------------------------------------------------- */
-/* FLARE design tokens — monochrome editorial / retro-futuristic-lab.    */
-/* Fixed light "research paper" + dark "app shell" palette by design,    */
-/* not an OS dark-mode toggle (see design/references).                   */
+/* FLARE design tokens — "handwritten research journal".                  */
+/*                                                                        */
+/* Two brand colors drive everything: burgundy ink (#7F011F) written on   */
+/* warm cream paper (#F5EBD0). Every other token is a tint, shade or      */
+/* neighbour of those two, so the whole product reads as one notebook.    */
+/*                                                                        */
+/* Contrast (WCAG 2.1, vs --color-paper):                                 */
+/*   ink 9.18:1 · ink-soft 6.37:1 · muted 5.42:1 · danger 6.53:1          */
+/*   warning 4.98:1 · success 5.34:1 · high 4.99:1                        */
 /* ---------------------------------------------------------------------- */
 @theme {
-  --color-paper: #eeece3;
-  --color-paper-dim: #e4e1d5;
-  --color-paper-flat: #f6f5f0;
-  --color-ink: #131210;
-  --color-ink-soft: #37352d;
-  --color-charcoal: #16160f;
-  --color-charcoal-soft: #211f17;
-  --color-charcoal-line: #38362a;
-  --color-line: #c7c2af;
-  --color-line-soft: #dad6c7;
-  --color-muted: #5f5843;
-  --color-muted-soft: #9a9584;
-  --color-accent: #c9f24c;
-  --color-accent-soft: #e5f9ab;
-  --color-accent-ink: #1c2404;
-  --color-danger: #8a2c1c;
-  --color-danger-soft: #f3ded7;
-  --color-warning: #734810;
-  --color-warning-soft: #f1e2c6;
-  --color-success: #245030;
-  --color-success-soft: #dbe9df;
+  /* Paper — the cream substrate. */
+  --color-paper: #f5ebd0;
+  --color-paper-dim: #ebddbb;
+  --color-paper-flat: #fbf6e7;
+  --color-paper-deep: #e3d2ac;
 
-  --radius-control: 0.625rem;
-  --radius-card: 1.125rem;
+  /* Ink — burgundy, the writing. */
+  --color-ink: #7f011f;
+  --color-ink-soft: #9a2a3e;
+  --color-ink-deep: #56010f;
+
+  /* Wine — the dark shell (app sidebar, footer, inverted panels). */
+  --color-charcoal: #4a0113;
+  --color-charcoal-soft: #61061f;
+  --color-charcoal-line: #7d2c3c;
+
+  /* Rules and hairlines drawn on paper. */
+  --color-line: #d8c49b;
+  --color-line-soft: #e6d8b8;
+  --color-line-strong: #b99c63;
+
+  /* Pencil / secondary writing. */
+  --color-muted: #8e4a55;
+  --color-muted-soft: #b38a90;
+
+  /* Accent — the brand burgundy used as a fill. */
+  --color-accent: #7f011f;
+  --color-accent-soft: #efd3d6;
+  --color-accent-ink: #f5ebd0;
+
+  /* Marker highlighter — the one warm non-burgundy note. */
+  --color-highlight: #e8b44f;
+  --color-highlight-soft: #f6e3bb;
+
+  /* Status. Severity is never encoded by color alone — every use is
+     paired with a text label or an icon. */
+  --color-danger: #a4161a;
+  --color-danger-soft: #f3dcd8;
+  --color-warning: #8a5a12;
+  --color-warning-soft: #f2e4c5;
+  --color-success: #4a6741;
+  --color-success-soft: #dfe7d5;
+  --color-severity-high: #b33a20;
+  --color-severity-high-soft: #f6ddd2;
+
+  /* Tape, used for "pinned to the page" decorations. */
+  --color-tape: #e8d5a8;
+
+  --radius-control: 0.5rem;
+  --radius-card: 0.75rem;
   --radius-chip: 999px;
 
-  --shadow-card: 0 1px 0 0 rgba(19, 18, 16, 0.04);
+  --shadow-card: 0 1px 0 0 rgba(127, 1, 31, 0.06);
+  --shadow-lift: 0 10px 30px -18px rgba(86, 1, 15, 0.45);
 
   --animate-marquee: marquee 28s linear infinite;
   --animate-pulse-slow: pulse-slow 2.4s ease-in-out infinite;
+  --animate-ink-drift: ink-drift 26s ease-in-out infinite;
+  --animate-float-slow: float-slow 14s ease-in-out infinite;
+
+  /* Shared motion curves. lib/motion.ts mirrors these for JS animations so
+     CSS transitions and Motion springs agree on the house feel. */
+  --ease-paper: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-ink: cubic-bezier(0.65, 0, 0.35, 1);
 }
 
 @layer base {
@@ -58,6 +98,7 @@
   html {
     background: var(--color-paper);
     color-scheme: light;
+    scroll-behavior: smooth;
   }
 
   body {
@@ -69,8 +110,8 @@
   }
 
   ::selection {
-    background: var(--color-accent);
-    color: var(--color-accent-ink);
+    background: var(--color-ink);
+    color: var(--color-paper);
   }
 
   :focus-visible {
@@ -80,7 +121,7 @@
   }
 
   .shell-dark :focus-visible {
-    outline-color: var(--color-accent);
+    outline-color: var(--color-paper);
   }
 
   h1,
@@ -90,11 +131,119 @@
     font-family: var(--font-display);
     letter-spacing: -0.01em;
     font-weight: 700;
+    color: var(--color-ink-deep);
+  }
+
+  .shell-dark h1,
+  .shell-dark h2,
+  .shell-dark h3,
+  .shell-dark h4 {
+    color: var(--color-paper);
   }
 }
 
 @layer utilities {
-  /* Editorial "torn paper" section divider, used between light sections. */
+  /* ------------------------------------------------------------------ */
+  /* Hand-drawn boxes. Asymmetric elliptical corner radii make a plain   */
+  /* border read as a rectangle sketched by hand. Three variants so a    */
+  /* grid of cards never shows the same wobble twice in a row.           */
+  /* ------------------------------------------------------------------ */
+  .sketch-box {
+    border-radius: 14px 220px 12px 190px / 200px 12px 210px 14px;
+  }
+
+  .sketch-box-2 {
+    border-radius: 205px 12px 195px 14px / 12px 190px 14px 215px;
+  }
+
+  .sketch-box-3 {
+    border-radius: 12px 195px 16px 205px / 190px 16px 200px 12px;
+  }
+
+  /* Smaller radii for controls, so buttons stay legible targets. */
+  .sketch-control {
+    border-radius: 12px 58px 10px 54px / 52px 10px 60px 12px;
+  }
+
+  .sketch-control-2 {
+    border-radius: 56px 10px 60px 12px / 10px 54px 12px 58px;
+  }
+
+  /* A circle drawn by hand — never quite closes. */
+  .sketch-circle {
+    border-radius: 47% 53% 51% 49% / 52% 48% 52% 48%;
+  }
+
+  /* ------------------------------------------------------------------ */
+  /* Paper surfaces                                                      */
+  /* ------------------------------------------------------------------ */
+
+  /* Grainy paper texture — fractal-noise SVG filter, no raster asset. */
+  .bg-grain {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .bg-grain::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  .shell-dark .bg-grain::before {
+    opacity: 0.09;
+    mix-blend-mode: screen;
+  }
+
+  /* Feint notebook ruling. Decorative only — aria-hidden at the usage site. */
+  .paper-ruled {
+    background-image: repeating-linear-gradient(
+      to bottom,
+      transparent,
+      transparent 31px,
+      color-mix(in oklab, var(--color-line) 55%, transparent) 31px,
+      color-mix(in oklab, var(--color-line) 55%, transparent) 32px
+    );
+  }
+
+  /* Squared/graph paper, for diagram backdrops. */
+  .paper-grid {
+    background-image:
+      linear-gradient(
+        to right,
+        color-mix(in oklab, var(--color-line) 40%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklab, var(--color-line) 40%, transparent) 1px,
+        transparent 1px
+      );
+    background-size: 24px 24px;
+  }
+
+  /* The red margin rule down the left of a notebook page. */
+  .paper-margin {
+    position: relative;
+  }
+
+  .paper-margin::before {
+    content: "";
+    position: absolute;
+    inset-block: 0;
+    left: 2.25rem;
+    width: 1px;
+    background: color-mix(in oklab, var(--color-ink) 22%, transparent);
+    pointer-events: none;
+  }
+
+  /* Editorial "torn paper" section divider. */
   .edge-torn-bottom {
     clip-path: polygon(
       0% 0%,
@@ -120,27 +269,57 @@
     );
   }
 
-  /* Grainy paper texture overlay — fractal-noise SVG filter, no raster asset. */
-  .bg-grain {
-    position: relative;
-    isolation: isolate;
+  /* ------------------------------------------------------------------ */
+  /* Ink marks                                                           */
+  /* ------------------------------------------------------------------ */
+
+  /* Marker swipe behind inline text. Sits behind the glyphs, so the text
+     keeps its own contrast against the paper underneath. */
+  .ink-highlight {
+    background-image: linear-gradient(
+      to bottom,
+      transparent 58%,
+      color-mix(in oklab, var(--color-highlight) 45%, transparent) 58%
+    );
+    background-repeat: no-repeat;
+    padding-inline: 0.1em;
   }
 
-  .bg-grain::before {
+  /* Hand-underlined text: a slightly sloped, uneven rule. */
+  .ink-underline {
+    background-image: linear-gradient(
+      to right,
+      color-mix(in oklab, var(--color-ink) 55%, transparent),
+      color-mix(in oklab, var(--color-ink) 85%, transparent) 40%,
+      color-mix(in oklab, var(--color-ink) 45%, transparent)
+    );
+    background-repeat: no-repeat;
+    background-size: 100% 2px;
+    background-position: 0 100%;
+    padding-bottom: 0.12em;
+  }
+
+  /* A strip of masking tape, for "pinned" cards. */
+  .tape::after {
     content: "";
     position: absolute;
-    inset: 0;
-    z-index: 1;
+    top: -0.6rem;
+    left: 50%;
+    width: 4.5rem;
+    height: 1.35rem;
+    transform: translateX(-50%) rotate(-2.5deg);
+    background: color-mix(in oklab, var(--color-tape) 88%, transparent);
+    box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--color-line-strong) 35%, transparent);
     pointer-events: none;
-    opacity: 0.055;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-    background-size: 180px 180px;
   }
 
-  .shell-dark .bg-grain::before {
-    opacity: 0.08;
-    mix-blend-mode: screen;
+  /* Slight physical rotations — "laid on the desk", not pixel-aligned. */
+  .tilt-left {
+    transform: rotate(-0.6deg);
+  }
+
+  .tilt-right {
+    transform: rotate(0.6deg);
   }
 
   .text-balance {
@@ -158,6 +337,39 @@
     .container-flare {
       padding-inline: 2.5rem;
     }
+  }
+
+  /* Draw-on SVG stroke. The dash offset is animated by Motion; this is the
+     no-JS resting state, which must be the *finished* stroke so the mark is
+     never invisible to a client that doesn't run the animation. */
+  .stroke-draw {
+    stroke-dasharray: 1;
+    stroke-dashoffset: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------- */
+/* Custom cursor. Only on precise pointers, and only while the app has     */
+/* actually mounted its cursor layer (body gets .has-ink-cursor), so a     */
+/* no-JS or reduced-motion visitor always keeps the native pointer.        */
+/* ---------------------------------------------------------------------- */
+@media (pointer: fine) {
+  body.has-ink-cursor,
+  body.has-ink-cursor a,
+  body.has-ink-cursor button,
+  body.has-ink-cursor [role="button"],
+  body.has-ink-cursor summary,
+  body.has-ink-cursor label {
+    cursor: none;
+  }
+
+  /* Text-entry always keeps a real caret cursor — losing it hurts far more
+     than the effect adds. */
+  body.has-ink-cursor input,
+  body.has-ink-cursor textarea,
+  body.has-ink-cursor select,
+  body.has-ink-cursor [contenteditable="true"] {
+    cursor: auto;
   }
 }
 
@@ -180,10 +392,38 @@
   }
 }
 
-/* Global reduced-motion safety net. Component-level Motion/GSAP code also
+/* Slow wandering of decorative ink blots in section backgrounds. */
+@keyframes ink-drift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(2%, -3%, 0) scale(1.04);
+  }
+  66% {
+    transform: translate3d(-2%, 2%, 0) scale(0.97);
+  }
+}
+
+@keyframes float-slow {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(1deg);
+  }
+}
+
+/* Global reduced-motion safety net. Component-level Motion code also
    checks usePrefersReducedMotion() before starting any transform/scroll
    animation — this rule is a backstop, not the only mechanism. */
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   *,
   *::before,
   *::after {

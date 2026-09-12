@@ -17,20 +17,24 @@ interface SharedProps {
   children: React.ReactNode;
 }
 
+/* `sketch-control` gives the button the uneven elliptical corners of a box
+   drawn by hand; `active:translate-y-px` gives it the small give of a pen
+   pressing into paper. */
 const base =
-  "group inline-flex items-center justify-center gap-2 rounded-[var(--radius-control)] " +
+  "sketch-control group inline-flex items-center justify-center gap-2 " +
   "px-5 py-3 font-condensed text-[13px] font-medium uppercase tracking-[0.08em] " +
-  "transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-offset-2 " +
-  "disabled:pointer-events-none disabled:opacity-40";
+  "transition-[background-color,border-color,color,transform] duration-200 " +
+  "focus-visible:outline-2 focus-visible:outline-offset-2 active:translate-y-px " +
+  "disabled:pointer-events-none disabled:opacity-40 motion-reduce:active:translate-y-0";
 
 const variants: Record<Variant, Record<Tone, string>> = {
   solid: {
-    ink: "bg-ink text-paper hover:bg-ink-soft",
+    ink: "bg-ink text-paper hover:bg-ink-deep",
     paper: "bg-paper text-ink hover:bg-paper-dim",
   },
   outline: {
-    ink: "border border-line text-ink hover:border-ink bg-transparent",
-    paper: "border border-charcoal-line text-paper hover:border-paper bg-transparent",
+    ink: "border-[1.5px] border-ink/35 text-ink hover:border-ink hover:bg-ink/5 bg-transparent",
+    paper: "border-[1.5px] border-paper/40 text-paper hover:border-paper hover:bg-paper/10 bg-transparent",
   },
   ghost: {
     ink: "text-ink hover:bg-ink/5",

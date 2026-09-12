@@ -43,7 +43,7 @@ export function NavLink({
       {active ? (
         <motion.span
           layoutId={underlineId}
-          className={cn("absolute -bottom-0.5 left-0 right-0 h-[2px]", tone === "ink" ? "bg-ink" : "bg-accent")}
+          className={cn("absolute -bottom-0.5 left-0 right-0 h-[2px]", tone === "ink" ? "bg-ink" : "bg-paper")}
           transition={{ type: "spring", stiffness: 500, damping: 40 }}
         />
       ) : (
