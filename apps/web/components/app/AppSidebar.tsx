@@ -38,7 +38,7 @@ export function AppSidebar({ onNavigate }: { onNavigate?: () => void }) {
               )}
               <Icon
                 aria-hidden="true"
-                className={cn("relative z-10 size-4 shrink-0", isActive ? "text-accent" : "text-paper/50 group-hover:text-paper/80")}
+                className={cn("relative z-10 size-4 shrink-0", isActive ? "text-highlight" : "text-paper/50 group-hover:text-paper/80")}
               />
               <span className={cn("relative z-10", isActive ? "text-paper" : "text-paper/60 group-hover:text-paper/85")}>
                 {item.label}

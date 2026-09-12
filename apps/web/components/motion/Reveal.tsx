@@ -21,9 +21,15 @@ const TAGS = {
   ul: motion.ul,
   ol: motion.ol,
   li: motion.li,
+  dl: motion.dl,
+  dt: motion.dt,
+  dd: motion.dd,
   p: motion.p,
   span: motion.span,
   figure: motion.figure,
+  nav: motion.nav,
+  header: motion.header,
+  footer: motion.footer,
 } as const;
 
 type Tag = keyof typeof TAGS;

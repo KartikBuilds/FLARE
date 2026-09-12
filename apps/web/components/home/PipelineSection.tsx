@@ -6,6 +6,7 @@ import { SectionLabel, Badge, ButtonLink, usePrefersReducedMotion } from "@flare
 import { PipelineModule } from "@flare/ui/illustrations";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
 import { hasLiveApiConfigured } from "@/lib/engine-status";
+import { HandNote, Reveal, TextReveal } from "@/components/motion";
 
 export function PipelineSection() {
   const [activeId, setActiveId] = useState<string>(PIPELINE_STAGES[0]!.id);
@@ -13,22 +14,33 @@ export function PipelineSection() {
   const active = PIPELINE_STAGES.find((s) => s.id === activeId) ?? PIPELINE_STAGES[0]!;
 
   return (
-    <section className="shell-dark bg-charcoal py-20 text-paper md:py-28">
-      <div className="container-flare">
+    <section className="shell-dark bg-grain relative overflow-hidden bg-charcoal py-20 text-paper md:py-28">
+      <div className="container-flare relative z-10">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <SectionLabel index="02" label="Analysis Pipeline" tone="paper" />
-            <h2 className="mt-6 max-w-lg font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-6xl">
-              From code to clarity.
-            </h2>
-            <p className="mt-5 max-w-md font-sans text-base text-paper/70">
-              A nine-stage analysis pipeline turns Solidity source into a deterministic, evidenced
-              fund-lock assessment.
-            </p>
+            <Reveal>
+              <SectionLabel index="02" label="Analysis Pipeline" tone="paper" />
+            </Reveal>
+            <TextReveal
+              as="h2"
+              lines={["From code", "to clarity."]}
+              className="mt-6 max-w-lg font-display text-5xl font-bold leading-[0.95] tracking-tight text-balance sm:text-6xl"
+            />
+            <Reveal delay={0.1}>
+              <p className="mt-5 max-w-md font-sans text-base text-paper/70">
+                A nine-stage analysis pipeline turns Solidity source into a deterministic, evidenced
+                fund-lock assessment.
+              </p>
+            </Reveal>
           </div>
-          <Badge tone="outline-dark" className="shrink-0">
-            {hasLiveApiConfigured() ? "Live engine" : "Engine offline"}
-          </Badge>
+          <Reveal delay={0.16} className="shrink-0">
+            <Badge tone="outline-dark">
+              {hasLiveApiConfigured() ? "Live engine" : "Engine offline"}
+            </Badge>
+            <HandNote className="mt-3 max-w-[13rem] text-xl text-paper/70" delay={0.25}>
+              pick a stage —
+            </HandNote>
+          </Reveal>
         </div>
 
         <div
@@ -66,14 +78,14 @@ export function PipelineSection() {
                   <PipelineModule
                     className={
                       "size-14 transition-colors " +
-                      (isActive ? "text-accent" : "text-paper/40 group-hover:text-paper/70")
+                      (isActive ? "text-highlight" : "text-paper/40 group-hover:text-paper/70")
                     }
                   />
                 </motion.div>
                 <span
                   className={
-                    "font-condensed text-[10px] uppercase tracking-[0.08em] " +
-                    (isActive ? "text-accent" : "text-paper/50")
+                    "font-handwritten text-base font-bold leading-none " +
+                    (isActive ? "text-highlight" : "text-paper/50")
                   }
                 >
                   {stage.index}
@@ -99,10 +111,16 @@ export function PipelineSection() {
           initial={{ y: reduced ? 0 : 8 }}
           animate={{ y: 0 }}
           transition={{ duration: reduced ? 0.01 : 0.3 }}
-          className="mt-8 max-w-2xl rounded-[var(--radius-card)] border border-charcoal-line bg-charcoal-soft p-6"
+          className="sketch-box-2 mt-8 max-w-2xl border-[1.5px] border-charcoal-line bg-charcoal-soft p-6"
         >
-          <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-accent">
-            {active.index} / {active.title}
+          <p className="flex items-baseline gap-2 font-condensed text-[11px] uppercase tracking-[0.1em] text-highlight">
+            <span className="font-handwritten text-lg leading-none tracking-normal">
+              {active.index}
+            </span>
+            <span aria-hidden="true" className="text-paper/30">
+              /
+            </span>
+            {active.title}
           </p>
           <p className="mt-2 font-sans text-sm text-paper/80">{active.summary}</p>
         </motion.div>

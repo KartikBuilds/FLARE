@@ -60,7 +60,7 @@ export function SiteFooter() {
                     <li key={link.href}>
                       <Link
                         href={link.href}
-                        className="font-condensed text-[13px] uppercase tracking-[0.06em] text-paper/75 transition-colors hover:text-accent"
+                        className="font-condensed text-[13px] uppercase tracking-[0.06em] text-paper/75 transition-colors hover:text-highlight"
                       >
                         {link.label}
                       </Link>
@@ -78,7 +78,7 @@ export function SiteFooter() {
             href="https://github.com/KartikBuilds/FLARE"
             target="_blank"
             rel="noreferrer noopener"
-            className="font-condensed uppercase tracking-[0.08em] text-paper/60 transition-colors hover:text-accent"
+            className="font-condensed uppercase tracking-[0.08em] text-paper/60 transition-colors hover:text-highlight"
           >
             Repository ↗
           </a>

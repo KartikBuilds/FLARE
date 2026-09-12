@@ -78,10 +78,10 @@ export function InkUnderline({ className, delay = 0.15, weight = 3 }: InkMarkPro
       aria-hidden="true"
       viewBox="0 0 200 12"
       preserveAspectRatio="none"
-      className={cn("absolute inset-x-0 bottom-0 h-[0.38em] w-full overflow-visible text-ink", className)}
+      className={cn("absolute inset-x-0 bottom-0 h-[0.2em] w-full overflow-visible text-ink", className)}
     >
       <motion.path
-        d="M2 8C38 3 62 10.5 98 6.2 134 1.9 164 9.4 198 4.4"
+        d="M2 7.4C38 5 62 9.4 98 7 134 4.7 164 8.8 198 6.2"
         fill="none"
         stroke="currentColor"
         strokeWidth={weight}
