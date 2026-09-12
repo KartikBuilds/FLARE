@@ -38,7 +38,14 @@ export function TextReveal({
   immediate = false,
 }: TextRevealProps) {
   const reduced = usePrefersReducedMotion();
-  const Host = as as React.ElementType;
+  // Narrowed to the props actually passed. A bare React.ElementType would now
+  // also match the three.js intrinsics that @react-three/fiber adds to the JSX
+  // namespace, several of which type `children` as never.
+  const Host = as as unknown as React.ComponentType<{
+    className?: string;
+    "aria-label"?: string;
+    children?: React.ReactNode;
+  }>;
   const label = lines.join(" ");
 
   const trigger = immediate

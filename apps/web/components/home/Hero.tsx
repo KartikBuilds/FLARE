@@ -1,16 +1,18 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { motion } from "motion/react";
 import { ButtonLink, SectionLabel, usePrefersReducedMotion } from "@flare/ui";
-import {
-  CoinAsset,
-  ProtocolCore,
-  JunctionBox,
-  VaultModule,
-  PipeSegment,
-} from "@flare/ui/illustrations";
+import { CoinAsset, ProtocolCore } from "@flare/ui/illustrations";
 import { HandNote, InkBlots, InkUnderline, Magnetic, Parallax } from "@/components/motion";
+import { Scene3D } from "@/components/three/Scene3D";
+import { HeroFallback } from "@/components/three/fallbacks/HeroFallback";
 import { maskLineVariants, riseSafeVariants, staggerVariants } from "@/lib/motion";
+
+// ssr:false plus a dynamic import keeps three.js out of this route's initial
+// bundle entirely — the chunk is only fetched once Scene3D decides the device
+// should render it.
+const HeroScene = dynamic(() => import("@/components/three/HeroScene"), { ssr: false });
 
 const exitStages = ["States", "Dependencies", "Exits", "Recovery"];
 
@@ -153,64 +155,40 @@ export function Hero() {
         </motion.div>
 
         {/* The machine: intake -> vault -> exits, one path visibly broken.
-            Spans the full hero width so the composition carries real visual
-            weight instead of a small diagram floating in empty margins. */}
+            Rendered in WebGL where the device can carry it, and as the same
+            composition in line art everywhere else. The route labels stay in
+            HTML below it — nothing a reader needs is inside the canvas. */}
         <motion.div
-          className="mt-20 flex flex-col items-stretch gap-8 md:mt-28 md:flex-row md:items-center md:gap-0"
+          className="mt-14 md:mt-20"
           initial="hidden"
           animate="show"
-          variants={staggerVariants(reduced, 0.12, 0.85)}
+          variants={rise}
+          custom={0.85}
         >
-          <motion.div className="flex items-center gap-1 md:gap-2" variants={rise}>
-            <JunctionBox
-              className="size-24 shrink-0 text-ink-soft md:size-28 lg:size-32"
-              title="Intake checkpoint"
-              decorative
-            />
-            <PipeSegment
-              className="h-12 w-14 shrink-0 text-ink-soft sm:w-20 md:w-16 lg:w-24"
-              preserveAspectRatio="none"
-              decorative
-            />
-          </motion.div>
+          <Scene3D
+            Scene={HeroScene}
+            fallback={<HeroFallback />}
+            aspect="16 / 7"
+            description="An asset approaches the protocol from the left, passes an intake checkpoint and enters the vault. Two withdrawal routes leave the vault: one intact route along which value reaches the holder, and one severed route where the withdrawal path fails and the asset cannot get out."
+          />
 
-          <motion.div className="flex flex-col items-center px-1 md:px-3" variants={rise}>
-            <VaultModule className="size-32 shrink-0 text-ink sm:size-40 md:size-44 lg:size-52" />
-            <span className="mt-2 font-condensed text-[11px] uppercase tracking-[0.1em] text-muted">
-              Vault holds assets
-            </span>
-          </motion.div>
-
-          <div className="flex min-w-0 flex-1 flex-col gap-7 md:pl-1">
-            <motion.div className="flex min-w-0 items-center gap-1 md:gap-2" variants={rise}>
-              <PipeSegment
-                className="h-10 w-full min-w-0 shrink text-ink-soft"
-                preserveAspectRatio="none"
-                decorative
-              />
-              <div className="shrink-0 pl-2">
-                <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-muted">
-                  Exit path
-                </p>
-                <p className="font-sans text-sm text-ink-soft">Redemption reaches the holder.</p>
-              </div>
-            </motion.div>
-            <motion.div className="flex min-w-0 items-center gap-1 md:gap-2" variants={rise}>
-              <PipeSegment
-                broken
-                className="h-10 w-full min-w-0 shrink text-danger"
-                preserveAspectRatio="none"
-                title="Withdrawal path blocked"
-              />
-              <div className="shrink-0 pl-2">
-                <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-danger">
-                  Withdrawal path fails
-                </p>
-                <p className="font-sans text-sm text-ink-soft">
-                  A dependency, state, or check blocks the exit.
-                </p>
-              </div>
-            </motion.div>
+          <div className="mt-6 grid gap-5 sm:grid-cols-2">
+            <div className="border-l-2 border-success pl-4">
+              <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-success">
+                Exit path
+              </p>
+              <p className="mt-0.5 font-sans text-sm text-ink-soft">
+                Redemption reaches the holder.
+              </p>
+            </div>
+            <div className="border-l-2 border-danger pl-4">
+              <p className="font-condensed text-[11px] uppercase tracking-[0.1em] text-danger">
+                Withdrawal path fails
+              </p>
+              <p className="mt-0.5 font-sans text-sm text-ink-soft">
+                A dependency, state, or check blocks the exit.
+              </p>
+            </div>
           </div>
         </motion.div>
 
