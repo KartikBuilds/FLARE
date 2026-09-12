@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { Hero } from "@/components/home/Hero";
-import { ProblemSection } from "@/components/home/ProblemSection";
-import { PipelineSection } from "@/components/home/PipelineSection";
-import { TaxonomySection } from "@/components/home/TaxonomySection";
-import { ResearchSection } from "@/components/home/ResearchSection";
-import { CaseStudiesSection } from "@/components/home/CaseStudiesSection";
+import { HeroTerminal } from "@/components/home/HeroTerminal";
+import { ProblemSectionTerminal } from "@/components/home/ProblemSectionTerminal";
+import { PipelineSectionTerminal } from "@/components/home/PipelineSectionTerminal";
+import { TaxonomySectionTerminal } from "@/components/home/TaxonomySectionTerminal";
+import { ResearchSectionTerminal } from "@/components/home/ResearchSectionTerminal";
+import { CaseStudiesSectionTerminal } from "@/components/home/CaseStudiesSectionTerminal";
 
 export const metadata: Metadata = {
   title: "FLARE — Can the assets get back out?",
@@ -15,12 +15,12 @@ export const metadata: Metadata = {
 export default function HomePage() {
   return (
     <>
-      <Hero />
-      <ProblemSection />
-      <PipelineSection />
-      <TaxonomySection />
-      <ResearchSection />
-      <CaseStudiesSection />
+      <HeroTerminal />
+      <ProblemSectionTerminal />
+      <PipelineSectionTerminal />
+      <TaxonomySectionTerminal />
+      <ResearchSectionTerminal />
+      <CaseStudiesSectionTerminal />
     </>
   );
 }

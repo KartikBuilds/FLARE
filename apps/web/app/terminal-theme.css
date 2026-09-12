@@ -1,0 +1,274 @@
+/* ========================================================================== */
+/* FLARE Terminal Theme — ASCII Research Platform Color System               */
+/* ========================================================================== */
+
+@theme {
+  /* Terminal Background & Surfaces */
+  --terminal-bg: #080B09;
+  --terminal-panel: #0D120F;
+  --terminal-elevated: #121914;
+  --terminal-line: #263229;
+
+  /* Text & Readability */
+  --terminal-text: #D8E2D9;
+  --terminal-muted: #778279;
+  --terminal-white: #F0F4EF;
+
+  /* Status Colors */
+  --terminal-green: #9EF01A;
+  --terminal-green-soft: #5F8F17;
+  --terminal-amber: #E8B44F;
+  --terminal-red: #E65F5C;
+  --terminal-cyan: #65C7D0;
+
+  /* CRT & Effects */
+  --scanline-opacity: 0.03;
+  --phosphor-glow: 0.04;
+  --vignette-start: rgba(8, 11, 9, 0);
+  --vignette-end: rgba(8, 11, 9, 0.4);
+}
+
+/* Terminal Theme Application */
+.terminal-shell {
+  background: var(--terminal-bg);
+  color: var(--terminal-text);
+  font-family: var(--font-mono, "IBM Plex Mono", "Geist Mono", monospace);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  position: relative;
+}
+
+.terminal-shell ::selection {
+  background: var(--terminal-green);
+  color: var(--terminal-bg);
+}
+
+.terminal-shell :focus-visible {
+  outline: 2px solid var(--terminal-green);
+  outline-offset: 1px;
+}
+
+/* Headings in Terminal Theme */
+.terminal-shell h1,
+.terminal-shell h2,
+.terminal-shell h3,
+.terminal-shell h4,
+.terminal-shell h5,
+.terminal-shell h6 {
+  font-family: var(--font-mono, "IBM Plex Mono", monospace);
+  letter-spacing: -0.01em;
+  font-weight: 700;
+  color: var(--terminal-white);
+}
+
+/* Terminal Panels */
+.terminal-panel {
+  background: var(--terminal-panel);
+  border: 1px solid var(--terminal-line);
+  color: var(--terminal-text);
+}
+
+.terminal-elevated {
+  background: var(--terminal-elevated);
+  border: 1px solid var(--terminal-line);
+}
+
+/* Terminal Text Utilities */
+.terminal-text {
+  color: var(--terminal-text);
+}
+
+.terminal-muted {
+  color: var(--terminal-muted);
+}
+
+.terminal-white {
+  color: var(--terminal-white);
+}
+
+/* Status Color Utilities */
+.terminal-success {
+  color: var(--terminal-green);
+}
+
+.terminal-warning {
+  color: var(--terminal-amber);
+}
+
+.terminal-error {
+  color: var(--terminal-red);
+}
+
+.terminal-info {
+  color: var(--terminal-cyan);
+}
+
+/* Background Status Colors */
+.terminal-success-bg {
+  background: var(--terminal-green);
+  color: var(--terminal-bg);
+}
+
+.terminal-warning-bg {
+  background: var(--terminal-amber);
+  color: var(--terminal-bg);
+}
+
+.terminal-error-bg {
+  background: var(--terminal-red);
+  color: var(--terminal-bg);
+}
+
+.terminal-info-bg {
+  background: var(--terminal-cyan);
+  color: var(--terminal-bg);
+}
+
+/* Terminal Box Drawing Utilities */
+.terminal-box-h {
+  border-left: 1px solid var(--terminal-line);
+  border-right: 1px solid var(--terminal-line);
+}
+
+.terminal-box-v {
+  border-top: 1px solid var(--terminal-line);
+  border-bottom: 1px solid var(--terminal-line);
+}
+
+.terminal-box-full {
+  border: 1px solid var(--terminal-line);
+}
+
+.terminal-box-top {
+  border-top: 1px solid var(--terminal-line);
+}
+
+.terminal-box-bottom {
+  border-bottom: 1px solid var(--terminal-line);
+}
+
+.terminal-box-left {
+  border-left: 1px solid var(--terminal-line);
+}
+
+.terminal-box-right {
+  border-right: 1px solid var(--terminal-line);
+}
+
+/* Separator Lines */
+.terminal-separator {
+  border-top: 1px solid var(--terminal-line);
+  margin: 1rem 0;
+}
+
+.terminal-separator-horizontal {
+  border-left: 1px solid var(--terminal-line);
+  margin: 0 1rem;
+}
+
+/* CRT Effects (Optional, Toggleable) */
+.terminal-shell.crt-enabled {
+  position: relative;
+}
+
+/* Subtle scanlines */
+.terminal-shell.crt-enabled::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(255, 255, 255, var(--scanline-opacity)),
+    rgba(255, 255, 255, var(--scanline-opacity)) 1px,
+    transparent 1px,
+    transparent 2px
+  );
+  z-index: 9999;
+}
+
+/* Phosphor glow effect */
+.terminal-shell.crt-enabled .terminal-text {
+  text-shadow:
+    0 0 0.5px rgba(158, 240, 26, var(--phosphor-glow)),
+    0 0 2px rgba(158, 240, 26, var(--phosphor-glow) * 0.5);
+}
+
+/* Vignette effect on hero areas only */
+.terminal-hero-vignette {
+  position: relative;
+}
+
+.terminal-hero-vignette::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    var(--vignette-start) 0%,
+    var(--vignette-end) 100%
+  );
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .terminal-shell.crt-enabled::before {
+    display: none;
+  }
+
+  .terminal-shell.crt-enabled .terminal-text {
+    text-shadow: none;
+  }
+
+  .terminal-shell {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* Blinking cursor animation (respects prefers-reduced-motion) */
+@keyframes blink-cursor {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+
+.terminal-cursor {
+  animation: blink-cursor 1s infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-cursor {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* Mobile Responsive Terminal */
+@media (max-width: 768px) {
+  .terminal-shell {
+    font-size: 0.875rem;
+  }
+
+  .terminal-shell h1 {
+    font-size: 1.5rem;
+  }
+
+  .terminal-shell h2 {
+    font-size: 1.25rem;
+  }
+
+  .terminal-shell h3 {
+    font-size: 1rem;
+  }
+}

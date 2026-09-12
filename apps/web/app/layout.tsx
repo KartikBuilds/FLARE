@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { fontVariables } from "./fonts";
 import { Providers } from "./providers";
 import "./globals.css";
+import "./terminal-theme.css";
 
 export const metadata: Metadata = {
   title: {
