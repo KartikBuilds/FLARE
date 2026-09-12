@@ -1,7 +1,7 @@
 "use client";
 
 import * as React from "react";
-import { Canvas, type CameraProps } from "@react-three/fiber";
+import { Canvas, useFrame, type CameraProps } from "@react-three/fiber";
 import { LIGHTING } from "./palette";
 import type { SceneQuality } from "./capabilities";
 
@@ -49,11 +49,8 @@ export function SceneCanvas({
         },
         { once: true },
       );
-      // One frame's grace before the illustration underneath is faded out, so
-      // the cross-fade never passes through an empty slot.
-      requestAnimationFrame(() => requestAnimationFrame(onReady));
     },
-    [onFailure, onReady],
+    [onFailure],
   );
 
   return (
@@ -73,7 +70,29 @@ export function SceneCanvas({
       <ambientLight intensity={LIGHTING.ambient} />
       <directionalLight position={LIGHTING.keyPosition} intensity={LIGHTING.keyIntensity} />
       <directionalLight position={LIGHTING.rimPosition} intensity={LIGHTING.rimIntensity} />
+      <FirstFrame onReady={onReady} />
       {children}
     </Canvas>
   );
+}
+
+/**
+ * Signals upward once the scene has actually drawn a frame.
+ *
+ * Deliberately not onCreated: that fires when the renderer is constructed,
+ * which is before anything has been painted. Fading the illustration out at
+ * that moment shows an empty slot for a frame or two. Waiting for a real frame
+ * also means the illustration correctly stays put on a canvas that never draws
+ * one — an off-screen scene with frameloop "never", for instance.
+ */
+function FirstFrame({ onReady }: { onReady: () => void }) {
+  const done = React.useRef(false);
+
+  useFrame(() => {
+    if (done.current) return;
+    done.current = true;
+    onReady();
+  });
+
+  return null;
 }

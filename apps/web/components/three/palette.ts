@@ -57,6 +57,23 @@ export const OUTLINE = {
 } as const;
 
 /**
+ * Deterministic value in [0, 1) from an integer key.
+ *
+ * A pure function of its argument rather than a seeded generator carrying
+ * mutable state: scatter layouts must be identical on every mount (so a
+ * screenshot diff means a real change, not a reshuffle), and the React
+ * Compiler cannot verify that a closure reassigning its own seed stays inside
+ * the render that created it.
+ *
+ * Scene-only, so the client/server float divergence that round2() guards
+ * against elsewhere does not apply — these never render on the server.
+ */
+export function noise(key: number): number {
+  const value = Math.sin(key * 127.1 + 311.7) * 43758.5453;
+  return value - Math.floor(value);
+}
+
+/**
  * Segment counts per quality tier. Curved geometry is the cheapest thing to
  * over-specify and the first thing worth cutting on constrained hardware.
  */

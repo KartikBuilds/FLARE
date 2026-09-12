@@ -28,6 +28,14 @@ interface Scene3DProps {
   fallback: React.ReactNode;
   /** CSS aspect-ratio for the reserved box. Fixed to keep layout shift at zero. */
   aspect?: string;
+  /**
+   * Fill the nearest positioned ancestor instead of reserving a box of its
+   * own. Use when the scene is a full-bleed backdrop — a composition designed
+   * to run off the edge of the page looks boxed if it is confined to a cell.
+   * The ancestor must already be sized by its own content, so there is still
+   * nothing to shift.
+   */
+  fill?: boolean;
   className?: string;
   /**
    * Screen-reader description. Supply it when the scene carries analytical
@@ -71,6 +79,7 @@ export function Scene3D({
   Scene,
   fallback,
   aspect = "16 / 10",
+  fill = false,
   className,
   description,
 }: Scene3DProps) {
@@ -115,8 +124,15 @@ export function Scene3D({
   return (
     <div
       ref={containerRef}
-      className={cn("relative w-full", className)}
-      style={{ aspectRatio: aspect }}
+      className={cn(fill ? "absolute inset-0" : "relative w-full", className)}
+      style={fill ? undefined : { aspectRatio: aspect }}
+      // Surfaced so the QA harness can assert which path a device actually
+      // took — WebGL or illustration — instead of inferring it from pixels.
+      data-scene-quality={quality}
+      data-scene-near={String(near)}
+      data-scene-visible={String(visible)}
+      data-scene-ready={String(ready)}
+      data-scene-failed={String(failed)}
     >
       {/* Always mounted and always sized, so the slot is never empty and the
           box never resizes. It only fades out once the renderer actually

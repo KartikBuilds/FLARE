@@ -1,28 +1,31 @@
 "use client";
 
-import { motion } from "motion/react";
-import { ButtonLink, usePrefersReducedMotion } from "@flare/ui";
-import { AstronautFigure, PlanetDisc, DebrisField } from "@flare/ui/illustrations";
+import dynamic from "next/dynamic";
+import { ButtonLink } from "@flare/ui";
 import { HandNote, InkBlots, Magnetic, Reveal, TextReveal } from "@/components/motion";
+import { Scene3D } from "@/components/three/Scene3D";
+import { NotFoundFallback } from "@/components/three/fallbacks/SpaceFallbacks";
 
-const DEBRIS = [
-  { top: "6%", left: "10%", size: 16, variant: 0 as const },
-  { top: "2%", left: "58%", size: 20, variant: 1 as const },
-  { top: "42%", left: "4%", size: 14, variant: 2 as const },
-  { top: "62%", left: "48%", size: 18, variant: 0 as const },
-  { top: "20%", left: "82%", size: 12, variant: 1 as const },
-];
+const NotFoundScene = dynamic(() => import("@/components/three/NotFoundScene"), { ssr: false });
 
 export function NotFoundContent() {
-  const reduced = usePrefersReducedMotion();
-
   return (
-    <section className="bg-grain relative overflow-hidden py-20 md:py-28">
+    <section className="bg-grain relative min-h-[34rem] overflow-hidden py-20 md:min-h-[40rem] md:py-28">
       <InkBlots count={2} />
 
-      {/* planet peeking in from the corner, matching the reference's lower
-          composition — sized to bleed off the section edge */}
-      <PlanetDisc className="pointer-events-none absolute -bottom-32 -right-24 size-72 text-ink-soft/25 sm:size-[26rem] lg:-bottom-40 lg:-right-32 lg:size-[32rem]" />
+      {/* Full-bleed rather than confined to a grid cell: the composition is
+          built to run off the edge of the page, and a scene that bleeds looks
+          boxed the moment you give it a visible frame. The section is sized by
+          its own copy, so filling it still shifts nothing.
+
+          The planet is inside the scene in both forms — drawing one here at
+          section level too would put two on the page once the canvas came up. */}
+      <Scene3D
+        Scene={NotFoundScene}
+        fallback={<NotFoundFallback />}
+        fill
+        description="An asset in a pressure suit tumbles slowly through open space, away from the protocol, with detached fragments drifting around it and a cratered body turning below."
+      />
 
       <div className="container-flare relative z-10 grid gap-12 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div>
@@ -56,32 +59,10 @@ export function NotFoundContent() {
           </Reveal>
         </div>
 
-        <div className="relative flex justify-center py-10">
-          {DEBRIS.map((d, i) => (
-            <motion.div
-              key={i}
-              className="pointer-events-none absolute text-ink-soft/50"
-              style={{ top: d.top, left: d.left, width: d.size, height: d.size * 1.1 }}
-              animate={reduced ? undefined : { y: [0, -10, 0] }}
-              transition={reduced ? undefined : { duration: 4 + i * 0.5, repeat: Infinity, ease: "easeInOut", delay: i * 0.3 }}
-            >
-              <DebrisField variant={d.variant} className="size-full" />
-            </motion.div>
-          ))}
-
-          <div className="relative rotate-[28deg]">
-            <motion.div
-              animate={reduced ? undefined : { y: [0, -14, 0], rotate: [-4, 4, -4] }}
-              transition={reduced ? undefined : { duration: 6, repeat: Infinity, ease: "easeInOut" }}
-            >
-              <AstronautFigure
-                head="coin"
-                className="h-80 w-auto text-ink-soft sm:h-[26rem] lg:h-[30rem]"
-                title="An asset tumbling off the protocol path"
-              />
-            </motion.div>
-          </div>
-          <HandNote className="absolute -top-2 right-0 max-w-[10rem] text-xl sm:right-4" delay={0.5}>
+        {/* Sits above the drifting figure rather than beside it — the scene is
+            full-bleed now, so a note inside the grid column lands on top of it. */}
+        <div className="relative hidden lg:block">
+          <HandNote className="absolute -top-40 right-[2%] max-w-[11rem] text-xl" delay={0.5}>
             this asset took a wrong turn...
           </HandNote>
         </div>

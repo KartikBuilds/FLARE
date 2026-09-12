@@ -3,7 +3,7 @@
 import * as React from "react";
 import * as THREE from "three";
 import { Instance, Instances, Outlines } from "@react-three/drei";
-import { PALETTE, OUTLINE, detail } from "./palette";
+import { PALETTE, OUTLINE, detail, noise } from "./palette";
 
 export type Materials = ReturnType<typeof useSceneMaterials>;
 
@@ -384,24 +384,26 @@ export function Fragments({
   spread?: number;
   seed?: number;
 }) {
-  const items = React.useMemo(() => {
-    // Deterministic pseudo-random so the layout is identical every mount and
-    // never causes a visual diff between screenshot runs.
-    let s = seed;
-    const rand = () => {
-      s = (s * 16807) % 2147483647;
-      return s / 2147483647;
-    };
-    return Array.from({ length: count }, () => ({
-      position: [
-        (rand() - 0.5) * spread * 2,
-        (rand() - 0.5) * spread,
-        (rand() - 0.5) * spread,
-      ] as [number, number, number],
-      rotation: [rand() * Math.PI, rand() * Math.PI, rand() * Math.PI] as [number, number, number],
-      scale: 0.05 + rand() * 0.1,
-    }));
-  }, [count, spread, seed]);
+  const items = React.useMemo(
+    () =>
+      Array.from({ length: count }, (_, i) => {
+        const k = seed * 1000 + i * 7;
+        return {
+          position: [
+            (noise(k) - 0.5) * spread * 2,
+            (noise(k + 1) - 0.5) * spread,
+            (noise(k + 2) - 0.5) * spread,
+          ] as [number, number, number],
+          rotation: [
+            noise(k + 3) * Math.PI,
+            noise(k + 4) * Math.PI,
+            noise(k + 5) * Math.PI,
+          ] as [number, number, number],
+          scale: 0.05 + noise(k + 6) * 0.1,
+        };
+      }),
+    [count, spread, seed],
+  );
 
   return (
     <Instances limit={count} material={materials.metalMid}>
