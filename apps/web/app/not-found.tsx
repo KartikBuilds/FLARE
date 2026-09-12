@@ -1,20 +1,10 @@
 import type { Metadata } from "next";
-import { SiteHeader } from "@/components/site/SiteHeader";
-import { SiteFooter } from "@/components/site/SiteFooter";
-import { NotFoundContent } from "@/components/site/NotFoundContent";
+import { NotFoundContentTerminal } from "@/components/site/NotFoundContentTerminal";
 
 export const metadata: Metadata = {
   title: "Path Not Found",
 };
 
 export default function NotFound() {
-  return (
-    <>
-      <SiteHeader />
-      <main className="flex-1">
-        <NotFoundContent />
-      </main>
-      <SiteFooter />
-    </>
-  );
+  return <NotFoundContentTerminal />;
 }
