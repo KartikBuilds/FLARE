@@ -16,3 +16,15 @@ jobs:
         run: solc-select install 0.4.26 0.5.17 0.6.12 0.7.6 0.8.24
       - name: Test
         run: pytest -v
+  merge-gate:
+    # A phase-* branch cannot merge without docs/reviews/<branch>-gate.md
+    # containing a Reviewer line and "Verdict: PASS".
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Check independent review gate
+        run: python -m scripts.check_gate "${{ github.head_ref }}"
