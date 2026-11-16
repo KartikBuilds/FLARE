@@ -1,0 +1,30 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "flare-fundlock"
+version = "0.1.0"
+description = "FLARE: Fund-Lock Assessment and Risk Evaluation for Solidity"
+requires-python = ">=3.11"
+license = { text = "AGPL-3.0-only" }
+dependencies = [
+    "slither-analyzer==0.11.6",
+    "crytic-compile==0.4.2",
+    "solc-select==1.2.0",
+    "semantic_version==2.10.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest==9.2.0"]
+
+[project.scripts]
+flare = "flare.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["flare*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+markers = ["slither: needs Slither and solc installed"]
