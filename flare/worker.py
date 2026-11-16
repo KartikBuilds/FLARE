@@ -11,36 +11,40 @@ import sys
 
 from flare.mapping import DETECTOR_MAP
 
-_SOLC_ERROR = re.compile(r"\b(\w*Error): (.{1,200})$")
-_SOLC_LOCATION = re.compile(r"-->\s*[^\n]*?:(\d+):\d+")
-
-
-_QUOTED = re.compile(r"\"[^\"]*\"|'[^']*'")
+# Compiler messages are never shown to the user: they can quote source in many
+# ways (literals, identifiers, old-solc excerpts). The worker recognizes known
+# message types and reports FLARE's own fixed wording plus the line number.
+_HEADER = re.compile(r"(?:^|\s)\w*Error: ")
+_OLD_LOCATION = re.compile(r":(\d+):\d+:\s*$")          # solc < 0.6: "file:LINE:COL: Error: ..."
+_NEW_LOCATION = re.compile(r"-->\s*[^\n]*?:(\d+):\d+")  # solc >= 0.6: " --> file:LINE:COL:"
+_TEMPLATES = [
+    (re.compile(r"^Expected "), "Syntax error"),
+    (re.compile(r"^(Function|Contract|Expected)? ?(declaration|definition|pragma)", re.I), "Syntax error"),
+    (re.compile(r"not implicitly convertible|Invalid type|Type .* is not"), "Type mismatch"),
+    (re.compile(r"^Undeclared identifier"), "Undeclared identifier"),
+    (re.compile(r"^Member .* not found|not found or not visible"), "Unknown member or name"),
+    (re.compile(r"already declared"), "Duplicate declaration"),
+    (re.compile(r"requires different compiler version"), "Compiler version mismatch"),
+    (re.compile(r"Wrong argument count|Invalid number of arguments"), "Wrong number of arguments"),
+]
 
 
 def compile_reason(text: str) -> str:
-    """The first solc error, its line, and no submitted source.
+    """FLARE-owned description of the first compiler error, with its line.
 
-    solc prints the offending code under the message (lines with "|"); those
-    are skipped. The message itself can quote source (string literals,
-    identifiers, tokens), so every quoted part is replaced by "…". The line
-    number comes from the location that follows the error, not an earlier
-    warning's.
+    No compiler text is passed through: the message only selects one of the
+    fixed labels above (or a generic one), so nothing from the source can
+    reach the output.
     """
-    lines = text.splitlines()
-    for index, line in enumerate(lines):
-        if "|" in line:
-            continue
-        match = _SOLC_ERROR.search(line.strip())
-        if not match:
-            continue
-        reason = f"{match.group(1)}: {_QUOTED.sub('…', match.group(2))}"
-        for following in lines[index + 1:index + 3]:
-            location = _SOLC_LOCATION.search(following)
-            if location:
-                return f"{reason} (line {location.group(1)})"
-        return reason
-    return "The compiler reported an error."
+    header = _HEADER.search(text)
+    if not header:
+        return "The compiler reported an error."
+    message = text[header.end():header.end() + 300].split("\n", 1)[0]
+    label = next((name for pattern, name in _TEMPLATES if pattern.search(message)), "Compiler error")
+    location = _OLD_LOCATION.search(text[max(0, header.start() - 300):header.start() + 1])
+    if location is None:
+        location = _NEW_LOCATION.search(text, header.end())
+    return f"{label} (line {location.group(1)})" if location else label
 
 
 def _emit(obj: dict) -> None:
