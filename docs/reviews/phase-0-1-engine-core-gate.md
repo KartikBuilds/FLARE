@@ -6,6 +6,44 @@
 - Environment: Linux x86-64, Python 3.11 venv, slither-analyzer 0.11.6, solc 0.4.26 / 0.5.17 / 0.8.24 / 0.8.38 installed.
 - Probe contracts: throwaway files under `/tmp/qa-fable` (not kept in the repo). Every result below was produced by running the command shown; nothing is invented.
 
+## Round 3 result (commit 6fc07f9): final
+
+**I-1 is RESOLVED. No Critical or Important finding remains open.**
+
+`compile_reason` (`flare/worker.py:34-48`) no longer passes any compiler text through. Its return value is built only from a fixed label chosen from `_TEMPLATES` (or `Compiler error` / `The compiler reported an error.`) and the digits of a line number, so text from the source cannot reach the message by construction. I confirmed that by reading the code and by probes. Suite at `6fc07f9`: `76 passed`.
+
+Probes (`/tmp/qa-fable/r2`, 42 files, each run with `.venv/bin/flare scan <file> --format json`; all exit 2, `COMPILE_FAILED`):
+
+| Input | Round 2 message | Round 3 message |
+|---|---|---|
+| `lit.sol` (TOPSECRET literal) | redacted | `Type mismatch (line 2)` |
+| `member.sol` (`mySecretMember`) | redacted | `Unknown member or name (line 2)` |
+| `q_embedded.sol` (escaped quote) | leaked `SECRET TEXT HERE` | `Type mismatch (line 2)` |
+| `q_embedded2.sol`, `q_single.sol` | leaked middle part | `Type mismatch (line 2)` |
+| `long_err.sol` (190-char prefix + fake `MyError:`) | leaked | `Type mismatch (line 2)` |
+| `old_long.sol` (0.4.26), `five_long.sol` (0.5.17) | leaked raw source line | `Type mismatch (line 2)` |
+| `num.sol`, `hexnum.sol`, `old_num.sol` (numeric literals) | echoed the number | `Type mismatch (line 2)` |
+| `contractname.sol`, `structname.sol`, `enumname.sol` | echoed the name | `Type mismatch (line 2 or 3)` |
+| `unicode.sol`, `bidi.sol`, `hexlit.sol` | n/a | `Type mismatch` / `Compiler error (line 2)` |
+| `wl.sol`, `wl2.sol`, `wl3.sol`, `warnfirst.sol` (warning before error) | correct | line 8, 8, 7, 7: correct |
+| `oldwarn.sol`, `old_literal.sol` (0.4.26) | no line | line 4, line 2: correct (**M-2 resolved**) |
+
+A search of all 42 outputs for `secret`, `…`, `int_const` and `literal` matched nothing except the file name `old_literal.sol`.
+
+Minor status changes: **M-2 resolved** (old compilers now give a line). **M-3 resolved** (no `|` skipping any more; `pipe.sol`-style messages get a label). **M-12 resolved** (no "…" in any message; `Expected ';' but got '}'` is now `Syntax error (line N)`).
+
+New minor:
+
+**M-13 (round 3). The label and line number can be steered by text in the source or the file name.**
+`flare/worker.py:17` and `flare/worker.py:41-47`. `_HEADER` takes the first `<word>Error: ` anywhere in the compiler output, including a warning's code excerpt printed before the real error, and `_OLD_LOCATION` then reads a line number from the text just before it.
+
+- `fake2.sol`: line 4 has a shadowing warning and the string `"z:999:1: FooError: Undeclared identifier"`; the real error is a type mismatch on line 8. Output: `Undeclared identifier (line 999)`.
+- A file named `a FooError: Expected x.sol` with a type mismatch on line 5 gives `Syntax error (line 5)` (wrong label, right line).
+
+The output is still only a fixed label plus digits, the scan is still `failed` with exit 2, and the author of the file is the only person misled, so this is Minor. An ordinary file can hit it too if a line that draws a warning also holds a string such as `"Transfer Error: ..."`. To fix: ignore excerpt lines (those matching `^\s*\d*\s*\|` in the new format, and the lines after a header in the old format) and the path when looking for the header, or take errors from solc's JSON output instead of the text.
+
+Open after round 3: Critical 0, Important 0, Minor 9 (M-4 to M-11, M-13). M-4 (file name forging lines in text output) should be fixed before any report or web surface exists.
+
 ## Round 2 result (commit 623f27a)
 
 **I-1 is still open.** The fix replaces quoted spans in solc's message with "…". That closes the two inputs from round 1 (`lit.sol`, `member.sol`) but three new inputs still put submitted source text in the error message; see "I-1, round 2" below. The line-number minor **M-1 is resolved** (`wl.sol`, `wl2.sol` now report line 8; `wl3.sol`, with a warning on line 4 and errors on lines 7 and 8, reports line 7). The gate stays at FAIL.
@@ -64,7 +102,7 @@ Why Important: spec §2 anti-goal ("Submitted source stored, logged or returned 
 
 Suggested direction (for the builder, not applied): do not pass solc's message through. Either map solc error codes/types to fixed FLARE text, or strip every quoted span and identifier-bearing tail from the message, and add tests for the three inputs above.
 
-**I-1, round 2: still open after `623f27a`.**
+**I-1, round 2: still open after `623f27a`. (RESOLVED in round 3 by `6fc07f9`; see top.)**
 `flare/worker.py:14` (`_SOLC_ERROR`), `flare/worker.py:18` (`_QUOTED`), `flare/worker.py:31-37`. All output below is the `error.message` from `.venv/bin/flare scan <file> --format json`, exit 2.
 
 Closed by the fix: `lit.sol` gives `Type literal_string … is not implicitly convertible ...`; `member.sol` gives `Member … not found ...`; `multiline.sol`, `old_literal.sol` (0.4.26), a literal containing an apostrophe, and the "Did you mean …?" suggestion are all redacted.
@@ -169,7 +207,9 @@ Benchmarking: no benchmark corpus or test set exists in the repository yet, and 
 
 Pins: every entry in `pyproject.toml` uses `==`.
 
-## Release quality: 6 / 10
+## Release quality: 7.5 / 10 (round 3; was 6 in rounds 1 and 2)
+
+Round 3: the privacy promise now holds by construction rather than by filtering, the regression tests cover every reported shape on three compiler versions, and all error messages are FLARE-owned text. It is not higher because nine minors remain open, including tracebacks on odd `--timeout` values (M-8), the unchecked worker exit status (M-9) and steerable error labels (M-13), and because it took three rounds to close one finding. The paragraphs below are the round 1 reasoning.
 
 Round 2 does not change the rating: the line-number fix is correct, but the source-leak fix was again validated against only the reported inputs and misses adjacent shapes.
 
@@ -189,4 +229,4 @@ Against: the one explicit privacy promise in `errors.py` is still broken after a
 - Commit `63f1129` (departments, hooks, CI merge gate): outside the requested range, not reviewed.
 
 Reviewer: qa-security-validation (fable)
-Verdict: FAIL
+Verdict: PASS

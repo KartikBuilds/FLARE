@@ -52,3 +52,4 @@ checklist or seed a known bug and confirm it is caught.
 | Phase | Gate | Model | Critical | Important | Minor | Notes |
 |---|---|---|---|---|---|---|
 | 0–1 | qa-security-validation | opus (fresh context) | 0 | 3 | 6 | Source leak in compile errors, no compile reason, false clean on missing detector. All 3 fixed with RED→GREEN tests. |
+| 0–1 | qa-security-validation | fable (different model from builder) | 0 | 1 (3 rounds) | 13 found, 9 open | Compiler messages still carried source after the first fix. Closed by an allow-list (no compiler text in output). Final verdict PASS, rating 7.5/10. |
