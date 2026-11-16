@@ -1,11 +1,16 @@
 # Gate review: Phase 0-1 engine core
 
 - Range reviewed: `9ae9bc8..799c8ac` (read on branch `process-departments`, HEAD `63f1129`)
+- Re-review (round 2): fix commit `623f27a` (`flare/worker.py`, `tests/test_review_fixes.py`). Probes under `/tmp/qa-fable/r2`. Suite at `623f27a`: `71 passed`.
 - Builder model: Opus. Reviewer model: Fable.
 - Environment: Linux x86-64, Python 3.11 venv, slither-analyzer 0.11.6, solc 0.4.26 / 0.5.17 / 0.8.24 / 0.8.38 installed.
 - Probe contracts: throwaway files under `/tmp/qa-fable` (not kept in the repo). Every result below was produced by running the command shown; nothing is invented.
 
-## Outcome in one paragraph
+## Round 2 result (commit 623f27a)
+
+**I-1 is still open.** The fix replaces quoted spans in solc's message with "…". That closes the two inputs from round 1 (`lit.sol`, `member.sol`) but three new inputs still put submitted source text in the error message; see "I-1, round 2" below. The line-number minor **M-1 is resolved** (`wl.sol`, `wl2.sol` now report line 8; `wl3.sol`, with a warning on line 4 and errors on lines 7 and 8, reports line 7). The gate stays at FAIL.
+
+## Outcome in one paragraph (round 1)
 
 Two of the three earlier Important fixes hold. The third (no source in compile errors) is only partly fixed: the source excerpt lines are gone, but the compiler's own message line is passed through verbatim, and solc puts string literals and identifier names from the submitted file into that line. That is one open Important finding, so the gate fails. I found no route to a clean result when analysis did not run.
 
@@ -59,9 +64,36 @@ Why Important: spec §2 anti-goal ("Submitted source stored, logged or returned 
 
 Suggested direction (for the builder, not applied): do not pass solc's message through. Either map solc error codes/types to fixed FLARE text, or strip every quoted span and identifier-bearing tail from the message, and add tests for the three inputs above.
 
+**I-1, round 2: still open after `623f27a`.**
+`flare/worker.py:14` (`_SOLC_ERROR`), `flare/worker.py:18` (`_QUOTED`), `flare/worker.py:31-37`. All output below is the `error.message` from `.venv/bin/flare scan <file> --format json`, exit 2.
+
+Closed by the fix: `lit.sol` gives `Type literal_string … is not implicitly convertible ...`; `member.sol` gives `Member … not found ...`; `multiline.sol`, `old_literal.sol` (0.4.26), a literal containing an apostrophe, and the "Did you mean …?" suggestion are all redacted.
+
+Still leaking:
+
+1. **A string literal that contains an escaped quote.** Pairing quotes breaks when the literal itself holds one.
+   `contract A { uint x = "abc\"SECRET TEXT HERE"; }` (`q_embedded.sol`) gives
+   `Error: Type literal_string …SECRET TEXT HERE" is not implicitly convertible to expected type uint256. (line 2)`.
+   `"abc\"SECRET MIDDLE\"def"` and `'he said \"SECRET-DQ\" ok'` leak the middle part the same way.
+2. **A message longer than 200 characters.** `(.{1,200})$` cannot match from the real `Error:`, so the search re-anchors on any later `...Error: ` in the line, which can be inside the user's literal; the remaining text then has one unpaired quote and is not redacted.
+   `uint x = "<190 x a> MyError: SECRET AFTER LONG PREFIX";` (`long_err.sol`) gives
+   `The source did not compile. MyError: SECRET AFTER LONG PREFIX" is not implicitly convertible to expected type uint256. (line 2)`.
+3. **solc below 0.6: a raw source line is returned.** Old solc prints the offending code without a `|` prefix, so the excerpt is not skipped. When the header line is over 200 characters it does not match and the loop moves on to the excerpt.
+   `pragma solidity 0.4.26; contract A { uint x = "<210 x a>"; string s = "MyError: OLD EXCERPT SECRET"; }` (`old_long.sol`) gives
+   `The source did not compile. MyError: OLD EXCERPT SECRET"; }`. Same on 0.5.17 (`five_long.sol`). This is the original round-0 defect (code excerpt in the error) on old compilers.
+
+Also unquoted, lower sensitivity, listed so the builder can decide deliberately:
+
+- Numeric literals: `bool b = 31337420000001234567;` gives `Type int_const 31337420000001234567 is not ...`; a hex constant is echoed as its decimal value (`hexnum.sol`); same on 0.4.26.
+- Declared names inside type descriptions: `Type contract MySecretVaultName is not ...`, `struct A.SecretStructName memory`, `enum A.SecretEnum`. Findings already print contract and function names by design, so I would not hold the gate on names alone.
+
+Why this keeps happening: the code edits compiler text and tries to subtract the source from it. Every round finds another shape. A fix that cannot leak is an allow-list: recognise a fixed set of solc message templates (or solc's numeric error codes via `--error-codes` / standard-JSON `errorCode`) and emit FLARE-owned text for each, with a generic "The compiler reported an error (line N)" for anything unrecognised. The line number is not source text and can always be kept. At minimum: anchor the regex at the start of the message (`^` after the optional `path:line:col: ` prefix), never search inside the message, drop rather than truncate over-long messages, skip old-format excerpt lines, and replace everything between the first and last quote of a quoted region. Tests should include the three inputs above.
+
 ### Minor
 
-**M-1. Compile-error line number points at an earlier warning, not the error.**
+**M-12 (round 2). Redaction removes useful fixed text.** `Expected ';' but got '}'` now reads `Expected … but got …`, and `use a unicode"..." string literal` reads `use a unicode… string literal`. Cosmetic; an allow-list approach would fix it as a side effect.
+
+**M-1. RESOLVED in `623f27a`.** Compile-error line number points at an earlier warning, not the error.**
 `flare/worker.py:34`: `_SOLC_LOCATION.search(text)` takes the first `-->` in the whole compiler output. Input `wl.sol`: line 4 holds a shadowing warning (`uint tx`), line 8 holds the error (`uint x = true;`). Output: `Error: Type bool is not implicitly convertible to expected type uint256. (line 4)`. Reproduced on 0.8.24 and 0.8.38. Any file with a located warning before its first error gets the wrong line. Search for the location after the matched error line instead.
 
 **M-2. No line number on solc < 0.6.**
@@ -138,6 +170,8 @@ Benchmarking: no benchmark corpus or test set exists in the repository yet, and 
 Pins: every entry in `pyproject.toml` uses `==`.
 
 ## Release quality: 6 / 10
+
+Round 2 does not change the rating: the line-number fix is correct, but the source-leak fix was again validated against only the reported inputs and misses adjacent shapes.
 
 For: small, readable modules; fail-closed design that held up under every false-clean probe; killable worker with clean temp-directory handling; honest `not_checked` list and disclaimer on every output; 9 of 9 safe look-alikes quiet; old-compiler variants work.
 
