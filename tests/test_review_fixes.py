@@ -27,7 +27,7 @@ def test_compile_error_gives_reason_and_line(tmp_path):
     r = _scan(tmp_path, "contract A {\n  function f() public { uint x = 1 }\n}")
     msg = r.error["message"]
     assert r.error["code"] == "COMPILE_FAILED"
-    assert "Expected ';'" in msg and "line 3" in msg
+    assert "Expected … but got …" in msg and "line 3" in msg
 
 
 def test_missing_detector_fails_instead_of_clean(tmp_path, monkeypatch, capsys):
@@ -46,3 +46,27 @@ def test_every_mapped_detector_exists_in_slither():
     names = {c.ARGUMENT for c in vars(all_detectors).values()
              if isinstance(c, type) and issubclass(c, AbstractDetector)}
     assert set(DETECTOR_MAP) <= names
+
+
+# --- Fable QA gate, finding I-1: solc's message line can carry source text ---
+
+def test_string_literal_never_in_compile_error(tmp_path):
+    r = _scan(tmp_path, 'contract A { uint x = "TOPSECRET literal"; }')
+    assert r.error["code"] == "COMPILE_FAILED"
+    assert "TOPSECRET" not in r.error["message"]
+    assert "not implicitly convertible" in r.error["message"]
+
+
+def test_identifier_never_in_compile_error(tmp_path):
+    r = _scan(tmp_path, "contract A { struct S { uint a; } function f(S memory s) public pure "
+                        "returns (uint) { return s.mySecretMember; } }")
+    assert r.error["code"] == "COMPILE_FAILED"
+    assert "mySecretMember" not in r.error["message"]
+
+
+def test_line_number_is_the_errors_not_a_warnings():
+    from flare.worker import compile_reason
+    text = ("Warning: Function state mutability can be restricted to pure\n --> C.sol:4:3:\n  |\n"
+            "4 |   function g() public returns (uint) { return 1; }\n"
+            "Error: Expected ';' but got '}'\n --> C.sol:8:36:\n  |\n8 |   uint x = 1 }\n")
+    assert compile_reason(text).endswith("(line 8)")

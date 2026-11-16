@@ -15,24 +15,32 @@ _SOLC_ERROR = re.compile(r"\b(\w*Error): (.{1,200})$")
 _SOLC_LOCATION = re.compile(r"-->\s*[^\n]*?:(\d+):\d+")
 
 
-def compile_reason(text: str) -> str:
-    """First solc error message and its line, never the quoted source excerpt.
+_QUOTED = re.compile(r"\"[^\"]*\"|'[^']*'")
 
-    solc prints the offending source under the message in lines containing
-    "|"; those lines are skipped so no submitted code reaches the output.
+
+def compile_reason(text: str) -> str:
+    """The first solc error, its line, and no submitted source.
+
+    solc prints the offending code under the message (lines with "|"); those
+    are skipped. The message itself can quote source (string literals,
+    identifiers, tokens), so every quoted part is replaced by "…". The line
+    number comes from the location that follows the error, not an earlier
+    warning's.
     """
-    reason = None
-    for line in text.splitlines():
+    lines = text.splitlines()
+    for index, line in enumerate(lines):
         if "|" in line:
             continue
         match = _SOLC_ERROR.search(line.strip())
-        if match:
-            reason = f"{match.group(1)}: {match.group(2)}"
-            break
-    if reason is None:
-        return "The compiler reported an error."
-    location = _SOLC_LOCATION.search(text)
-    return f"{reason} (line {location.group(1)})" if location else reason
+        if not match:
+            continue
+        reason = f"{match.group(1)}: {_QUOTED.sub('…', match.group(2))}"
+        for following in lines[index + 1:index + 3]:
+            location = _SOLC_LOCATION.search(following)
+            if location:
+                return f"{reason} (line {location.group(1)})"
+        return reason
+    return "The compiler reported an error."
 
 
 def _emit(obj: dict) -> None:
